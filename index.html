@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Modul pembelajaran interaktif Jelajah Tata Surya dengan 45 ragam pola aktivitas edukasi.">
+  <title>Jelajah Tata Surya: 45 Cara Belajar Interaktif</title>
+  
+  <!-- CSS Terstruktur & Modular -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/interactions.css">
+</head>
+<body>
+
+  <!-- Sticky Header Aplikasi -->
+  <header id="app-header">
+    <div class="brand-title">
+      <span>🪐</span> <span>Tata Surya</span>
+    </div>
+    
+    <div class="progress-container" role="progressbar" aria-label="Progres Belajar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+      <span id="progress-bar"></span>
+    </div>
+    
+    <span id="stats-badge" class="stats-badge">Kadet · 0 XP · 0/45</span>
+    
+    <div class="header-actions">
+      <button id="btn-toggle-sound" class="btn-icon" title="Matikan/Nyalakan Suara" aria-label="Pengaturan Suara">🔊</button>
+      <button id="btn-toggle-theme" class="btn-icon" title="Ubah Tema Terang/Gelap" aria-label="Ubah Tema">🌗</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Filter Kategori Aktivitas -->
+    <nav id="category-nav" aria-label="Navigasi Kategori Aktivitas"></nav>
+
+    <!-- Kartu Pengantar & Pengaturan Aksesibilitas -->
+    <section class="card" id="intro-card">
+      <h1 style="margin: 0 0 8px;">Jelajah Tata Surya 🚀</h1>
+      <p>Modul interaktif ini menyajikan <b>45 variasi pola pembelajaran</b> dalam satu kesatuan materi. Selesaikan tiap tantangan untuk mengumpulkan XP dan raih pangkat tertinggi: <b>Kadet → Astronot → Komandan!</b></p>
+      
+      <div class="accessibility-panel">
+        <b style="font-size:0.875rem;">♿ Pengaturan Aksesibilitas:</b>
+        <div class="btn-group">
+          <button id="btn-font-dec" aria-label="Perkecil Ukuran Huruf">A−</button>
+          <button id="btn-font-inc" aria-label="Perbesar Ukuran Huruf">A+</button>
+          <button id="btn-toggle-contrast" aria-pressed="false">Kontras Tinggi</button>
+          <button id="btn-print">🖨 Cetak Halaman</button>
+          <button id="btn-reset-progress">↺ Reset Progres</button>
+        </div>
+        <p id="streak-text" class="text-muted" style="margin-top: 10px;"></p>
+        <p class="text-subtle">Setiap kartu dilengkapi tombol pembaca suara <b>🔈 Baca (#27)</b> · Animasi menghormati mode kurangi gerakan · Progres tersimpan otomatis di perangkat ini.</p>
+      </div>
+    </section>
+
+    <!-- #1 Tooltip Glosarium -->
+    <section class="card" data-category="explore" data-task-id="tip">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#1 Tooltip glosarium</span>
+          <span class="category-tag">Eksplorasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Istilah Penting Tata Surya</h2>
+      <p>Tata Surya kita berpusat pada <span class="tip" tabindex="0" data-t="Bintang: bola gas panas bercahaya mandiri yang menjadi pusat gravitasi.">Matahari</span> dan dikelilingi berbagai benda yang mengorbitnya. Skala jarak antariksa sering diukur dalam <span class="tip" tabindex="0" data-t="1 AU (Astronomical Unit) = jarak rata-rata Bumi ke Matahari, sekitar 149,6 juta km.">AU (Satuan Astronomi)</span>.</p>
+      <p class="text-muted">💡 Arahkan kursor atau ketuk kata bergaris putus-putus untuk membuka glosarium.</p>
+    </section>
+
+    <!-- #2 Kartu Balik 3D -->
+    <section class="card" data-category="explore" data-task-id="flip">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#2 Kartu balik 3D</span>
+          <span class="category-tag">Eksplorasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Fakta Menarik 8 Planet</h2>
+      <div id="flip-container" class="flip-grid"></div>
+      <p id="flip-info" class="text-muted">Balik semua 8 kartu untuk menyelesaikan misi ini.</p>
+    </section>
+
+    <!-- #3 Animasi Orbit Canvas 2D -->
+    <section class="card" data-category="sim" data-task-id="orb">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#3 Animasi canvas + interaksi</span>
+          <span class="category-tag">Simulasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Simulasi Orbit Planet</h2>
+      <div class="orbit-canvas-wrapper">
+        <canvas id="canvas-orbit" width="340" height="340" aria-label="Simulasi orbit planet mengelilingi matahari"></canvas>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px; margin-top:12px; flex-wrap:wrap;">
+        <label class="text-muted" style="flex:1; min-width:180px;">
+          Kecepatan Orbit:
+          <input type="range" id="orbit-speed" min="0" max="4" step="0.5" value="1">
+        </label>
+        <button id="orbit-pause">⏸ Jeda</button>
+      </div>
+      <p id="orbit-info" class="text-muted" style="margin-top:8px;">Ketuk salah satu planet pada simulasi untuk menginspeksi datanya. (Skala kecepatan diilustrasikan proporsional).</p>
+    </section>
+
+    <!-- #4 Tab Kategori Benda Langit -->
+    <section class="card" data-category="explore" data-task-id="tab">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#4 Tab navigasi</span>
+          <span class="category-tag">Eksplorasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Klasifikasi Benda Langit</h2>
+      <div id="tab-nav" class="tab-nav"></div>
+      <div id="tab-content" class="tab-content-box"></div>
+      <p class="text-subtle" style="margin-top:6px;">Buka dan baca seluruh tab kategori di atas.</p>
+    </section>
+
+    <!-- #5 Kalkulator Berat Badan di Planet Lain -->
+    <section class="card" data-category="sim" data-task-id="wt">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#5 Kalkulator gravitasi</span>
+          <span class="category-tag">Simulasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Berapa Berat Badanmu di Planet Lain?</h2>
+      <label>
+        Massa tubuh di Bumi: <b id="weight-mass-val">45</b> kg
+        <input type="range" id="weight-mass" min="20" max="100" value="45">
+      </label>
+      <label style="margin-top:8px; display:block;">
+        Pilih planet tujuan:
+        <select id="weight-planet"></select>
+      </label>
+      <p id="weight-output" style="margin-top:10px;" class="text-bold"></p>
+      <div class="weight-bar-container">
+        <div id="weight-bar-fill"></div>
+      </div>
+    </section>
+
+    <!-- #6 Prediksi Lalu Jawaban -->
+    <section class="card" data-category="quiz" data-task-id="pred">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#6 Prediksi awal</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Tebak Dulu: Planet Apa yang Paling Panas?</h2>
+      <div id="predict-buttons">
+        <button data-ans="m">Merkurius</button>
+        <button data-ans="v">Venus</button>
+        <button data-ans="r">Mars</button>
+      </div>
+      <div id="predict-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #7 Tebak Angka Slider -->
+    <section class="card" data-category="quiz" data-task-id="est">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#7 Estimasi angka slider</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Berapa Menit Cahaya Matahari Sampai ke Bumi?</h2>
+      <input type="range" id="estimate-slider" min="1" max="60" value="30">
+      <p>Estimasi tebakanmu: <b id="estimate-val">30</b> menit</p>
+      <button id="estimate-btn" class="btn-primary">Kunci Jawaban</button>
+      <div id="estimate-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #8 Seret & Lepas / Urutkan Planet -->
+    <section class="card" data-category="game" data-task-id="ord">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#8 Susun urutan</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Urutkan dari Terdekat ke Matahari</h2>
+      <p class="text-muted">Seret kartu dengan mouse/jari, atau ketuk dua kartu untuk saling menukar urutan.</p>
+      <div id="order-list" class="order-list"></div>
+      <button id="order-check-btn" class="btn-primary">Periksa Susunan</button>
+      <div id="order-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #9 Diagram Hotspot Lapisan Matahari -->
+    <section class="card" data-category="explore" data-task-id="hot">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#9 Diagram hotspot SVG</span>
+          <span class="category-tag">Eksplorasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Lapisan Dalam Matahari</h2>
+      <div class="hotspot-svg-wrap">
+        <svg id="hotspot-svg" viewBox="0 0 200 200" role="img" aria-label="Diagram lapisan matahari"></svg>
+      </div>
+      <p id="hotspot-info" class="text-muted" style="margin-top:10px;">Ketuk tiap lapisan lingkaran konsentris untuk membaca strukturnya.</p>
+    </section>
+
+    <!-- #10 Stepper Pembentukan Tata Surya -->
+    <section class="card" data-category="explore" data-task-id="step">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#10 Stepper proses</span>
+          <span class="category-tag">Eksplorasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Bagaimana Tata Surya Terbentuk?</h2>
+      <div class="stepper-view">
+        <div id="stepper-emoji" class="stepper-emoji"></div>
+        <p id="stepper-desc" class="text-bold" style="min-height: 2.8em;"></p>
+        <div id="stepper-dots" class="stepper-dots"></div>
+      </div>
+      <div style="display:flex; justify-content:center; gap:8px;">
+        <button id="stepper-prev">← Kembali</button>
+        <button id="stepper-next" class="btn-primary">Lanjut →</button>
+      </div>
+    </section>
+
+    <!-- #11 Checklist Multi-Pilih -->
+    <section class="card" data-category="quiz" data-task-id="ck">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#11 Checklist multi-pilih</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Pilih Semua Planet Berbatu (Kebumian)</h2>
+      <div id="checklist-items" class="checklist-grid"></div>
+      <button id="checklist-btn" class="btn-primary">Periksa Jawaban</button>
+      <div id="checklist-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #12 Isian Singkat -->
+    <section class="card" data-category="quiz" data-task-id="fill">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#12 Isian singkat</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Lengkapi Kalimat Rumpang</h2>
+      <p>
+        Planet dengan ukuran paling raksasa adalah 
+        <input type="text" id="fill-planet-1" placeholder="Nama planet..." style="width: auto; min-width: 130px; display: inline-block;"> 
+        dan planet dengan sistem cincin paling megah adalah 
+        <input type="text" id="fill-planet-2" placeholder="Nama planet..." style="width: auto; min-width: 130px; display: inline-block;">.
+      </p>
+      <button id="fill-check-btn" class="btn-primary">Periksa Isian</button>
+      <div id="fill-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #13 Anagram -->
+    <section class="card" data-category="game" data-task-id="ana">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#13 Susun huruf anagram</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Pecahkan Huruf Acak: <span style="letter-spacing:3px; color:var(--primary);">UNTNEPSU</span></h2>
+      <input type="text" id="anagram-input" placeholder="Tuliskan nama planet yang benar...">
+      <div style="margin-top:6px;">
+        <button id="anagram-check-btn" class="btn-primary">Cek Jawaban</button>
+        <button id="anagram-hint-btn">💡 Petunjuk</button>
+      </div>
+      <div id="anagram-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #14 Game Memori -->
+    <section class="card" data-category="game" data-task-id="mem">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#14 Game memori pasangan</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Cocokkan Planet dengan Cirinya</h2>
+      <div id="memory-grid"></div>
+      <p id="memory-info" class="text-muted">Langkah: 0 · Pasangan: 0/6</p>
+    </section>
+
+    <!-- #15 Kilat Benar / Salah -->
+    <section class="card" data-category="quiz" data-task-id="tf">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#15 Kilat benar / salah</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Tantangan Cepat Benar / Salah</h2>
+      <div id="tf-container"></div>
+    </section>
+
+    <!-- #16 Kuis Pilihan Ganda -->
+    <section class="card" data-category="quiz" data-task-id="quiz">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#16 Kuis pemahaman konsep</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Kuis Evaluasi Tata Surya</h2>
+      <div id="quiz-container"></div>
+    </section>
+
+    <!-- #17 Skenario Bercabang -->
+    <section class="card" data-category="reflect" data-task-id="br">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#17 Skenario bercabang (CYOA)</span>
+          <span class="category-tag">Refleksi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Simulasi Pengambilan Keputusan: Misi ke Mars</h2>
+      <div id="branching-container"></div>
+    </section>
+
+    <!-- #18 Polling Emoji -->
+    <section class="card" data-category="reflect" data-task-id="poll">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#18 Polling pemahaman diri</span>
+          <span class="category-tag">Refleksi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Sejauh Mana Pemahamanmu Hari Ini?</h2>
+      <div id="poll-container" class="poll-list"></div>
+      <p class="text-subtle">Data komparasi teman belajar akan tampil setelah kamu memilih tingkat pemahamanmu.</p>
+    </section>
+
+    <!-- #19 Toggle Skala Grafik Diameter -->
+    <section class="card" data-category="sim" data-task-id="log">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#19 Visualisasi data dinamis</span>
+          <span class="category-tag">Simulasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Perbandingan Diameter Planet</h2>
+      <label style="font-weight:600; display:flex; align-items:center; gap:8px; cursor:pointer;">
+        <input type="checkbox" id="chart-log-toggle" style="width:18px; height:18px; accent-color:var(--primary);">
+        Gunakan Skala Logaritmik (agar planet kecil tetap terlihat jelas)
+      </label>
+      <div id="chart-list" class="chart-list"></div>
+    </section>
+
+    <!-- #20 Catatan Refleksi -->
+    <section class="card" data-category="reflect" data-task-id="note">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#20 Jurnal refleksi</span>
+          <span class="category-tag">Refleksi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Catatan Pribadi Pembelajaran</h2>
+      <p class="text-muted">Apa fakta atau konsep antariksa yang paling mengejutkan atau berkesan bagimu?</p>
+      <textarea id="note-textarea" rows="3" maxlength="200" placeholder="Ketik refleksimu di sini..."></textarea>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+        <span id="note-counter" class="text-subtle">0/200</span>
+        <button id="note-save-btn" class="btn-primary">Simpan Catatan</button>
+      </div>
+      <div id="note-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #21 Kanvas Bebas Menggambar -->
+    <section class="card" data-category="game" data-task-id="draw">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#21 Kanvas gambar interaktif</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Gambarkan Orbit Revolusi Bumi</h2>
+      <canvas id="canvas-draw" aria-label="Kanvas menggambar lintasan bumi mengelilingi matahari"></canvas>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="text-muted">Gambarkan Matahari di tengah dan lintasan melingkar Bumi.</span>
+        <button id="canvas-clear-btn">🧹 Bersihkan</button>
+      </div>
+    </section>
+
+    <!-- #22 Klasifikasi ke Keranjang -->
+    <section class="card" data-category="game" data-task-id="kls">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#22 Pilah kategori keranjang</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Kelompokkan Benda Langit</h2>
+      <p class="text-muted">Ketuk salah satu nama benda di bawah, kemudian ketuk keranjang kategori yang sesuai.</p>
+      <div id="bucket-items" class="bucket-items"></div>
+      <div id="bucket-targets" class="bucket-targets"></div>
+      <div id="bucket-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #23 Pembanding Geser Bumi vs Mars -->
+    <section class="card" data-category="sim" data-task-id="cmp">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#23 Split compare slider</span>
+          <span class="category-tag">Simulasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Komparasi Berdampingan: Bumi vs Mars</h2>
+      <div class="split-compare-view">
+        <div class="split-left">
+          🌍 BUMI<br>
+          Suhu: ±15 °C<br>
+          Gravitasi: 1,0×<br>
+          Panjang Hari: 24 Jam<br>
+          Atmosfer: Kaya Nitrogen & Oksigen
+        </div>
+        <div id="compare-right-pane" class="split-right">
+          🔴 MARS<br>
+          Suhu: ±-65 °C<br>
+          Gravitasi: 0,38×<br>
+          Panjang Hari: ±24,6 Jam<br>
+          Atmosfer: Tipis Karbon Dioksida
+        </div>
+      </div>
+      <input type="range" id="compare-slider" min="0" max="100" value="50" aria-label="Geser untuk membandingkan karakteristik Bumi dan Mars">
+      <p class="text-subtle" style="text-align:center;">Geser tombol slider ke kiri dan kanan untuk membuka data kedua planet.</p>
+    </section>
+
+    <!-- #24 Timeline Geser Eksplorasi Antariksa -->
+    <section class="card" data-category="explore" data-task-id="tl">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#24 Garis waktu penjelajahan</span>
+          <span class="category-tag">Eksplorasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Linimasa Sejarah Eksplorasi Antariksa</h2>
+      <input type="range" id="timeline-slider" min="0" max="6" value="0" aria-label="Pilih tonggak peristiwa antariksa">
+      <p id="timeline-display" class="text-bold" style="font-size:1.05rem; margin-top:10px;"></p>
+    </section>
+
+    <!-- #25 Uji Tingkat Keyakinan -->
+    <section class="card" data-category="quiz" data-task-id="conf">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#25 Asesmen keyakinan diri</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Gas Apa yang Menjadi Unsur Terbanyak di Matahari?</h2>
+      <p class="text-muted">Langkah 1: Tentukan seberapa yakin kamu dengan pengetahuanmu saat ini.</p>
+      <div id="confidence-buttons">
+        <button data-conf="0">😬 Masih Ragu</button>
+        <button data-conf="1">😎 Sangat Yakin</button>
+      </div>
+      <div id="confidence-answers" hidden style="margin-top:10px;">
+        <p class="text-muted">Langkah 2: Pilih jawabanmu:</p>
+        <button data-ans="h">Hidrogen</button>
+        <button data-ans="o">Oksigen</button>
+        <button data-ans="he">Helium</button>
+      </div>
+      <div id="confidence-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #26 Tantangan Berwaktu -->
+    <section class="card" data-category="game" data-task-id="time">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#26 Tantangan kilat berwaktu</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Ketuk Semua Planet Raksasa Gas/Es Secepat Mungkin! (15 Detik)</h2>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+        <button id="speed-start-btn" class="btn-primary">▶ Mulai Uji Kecepatan</button>
+        <b id="speed-info" class="text-muted"></b>
+      </div>
+      <div id="time-attack-grid"></div>
+    </section>
+
+    <!-- #27 Narasi Suara (Web Speech API) -->
+    <section class="card" data-category="reflect" data-task-id="tts">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#27 Narasi suara TTS</span>
+          <span class="category-tag">Refleksi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Audio Narator Belajar Interaktif</h2>
+      <p>Fitur Text-to-Speech (TTS) membaca penjelasan materi dengan artikulasi suara alami berbahasa Indonesia. Setiap kartu modul juga dilengkapi tombol <b>🔈 Baca</b> di sudut kanan atas.</p>
+      <div style="display:flex; align-items:center; gap:10px; margin-top:10px; flex-wrap:wrap;">
+        <button id="tts-demo-btn" class="btn-primary">🔊 Putar Contoh Narasi Suara</button>
+        <span class="text-muted">Ketuk tombol di atas atau tombol 🔈 Baca pada kartu mana saja.</span>
+      </div>
+    </section>
+
+    <!-- #28 Word Search Matrix -->
+    <section class="card" data-category="game" data-task-id="ws">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#28 Cari kata tersembunyi</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Teka-Teki Matriks Kata Antariksa</h2>
+      <p class="text-muted">Ketuk huruf berurutan sampai merangkai nama target (dapat dibaca maju maupun mundur). <span id="word-search-list"></span></p>
+      <div id="word-search-grid"></div>
+      <div style="text-align:center;">
+        <button id="word-search-clear">Hapus Pilihan Huruf</button>
+      </div>
+    </section>
+
+    <!-- #29 Pengulangan Berjarak (Leitner System) -->
+    <section class="card" data-category="reflect" data-task-id="sr">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#29 Flashcard pengulangan cerdas</span>
+          <span class="category-tag">Refleksi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Kartu Pengulangan Berjarak (Spaced Repetition)</h2>
+      <p class="text-muted">Konsep yang kamu ingat akan muncul semakin jarang, sementara yang kamu lupakan akan dijadwalkan ulang lebih cepat untuk mematangkan memori jangka panjang.</p>
+      <div id="leitner-container"></div>
+    </section>
+
+    <!-- #30 Zona Layak Huni -->
+    <section class="card" data-category="sim" data-task-id="zone">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#30 Sensor gerak / giroskop</span>
+          <span class="category-tag">Simulasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Tempatkan Bumi di Zona Layak Huni (Goldilocks Zone)</h2>
+      <button id="zone-tilt-btn">📱 Aktifkan Sensor Miring (HP)</button>
+      <div id="zone-board" tabindex="0" aria-label="Area simulasi gravitasi dan zona layak huni. Gunakan sentuhan kursor atau tombol panah keyboard.">
+        <span class="zone-sun">☀️</span>
+        <span id="zone-earth" class="zone-earth">🌍</span>
+      </div>
+      <p id="zone-status-text" class="text-bold" style="font-size:1rem;"></p>
+      <p class="text-subtle">Tarik Bumi 🌍 dengan mouse/jari, gunakan tombol panah pada keyboard, atau miringkan perangkat HP-mu.</p>
+    </section>
+
+    <!-- #31 Teka-Teki Silang (TTS) -->
+    <section class="card" data-category="game" data-task-id="cw">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#31 Teka-teki silang interaktif</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>TTS Kosmik Tata Surya</h2>
+      <p class="text-muted">Ketuk salah satu kotak atau pilih tombol petunjuk di bawah untuk mengetikkan jawaban. Kursor otomatis maju ke kotak selanjutnya.</p>
+      <div id="crossword-grid" role="group" aria-label="Kotak teka-teki silang"></div>
+      <div id="crossword-clues" class="crossword-clues"></div>
+      <div style="margin-top:10px;">
+        <button id="crossword-check-btn" class="btn-primary">Periksa Jawaban</button>
+        <button id="crossword-hint-btn">💡 Buka 1 Huruf</button>
+      </div>
+      <div id="crossword-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #32 Roda Acak Planet -->
+    <section class="card" data-category="game" data-task-id="wheel">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#32 Roda putar acak</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Putar Roda Keberuntungan Planet</h2>
+      <canvas id="canvas-wheel" width="280" height="280" role="img" aria-label="Roda acak berisi delapan planet"></canvas>
+      <div style="text-align:center;">
+        <button id="wheel-spin-btn" class="btn-primary">🎡 Putar Roda!</button>
+      </div>
+      <div id="wheel-question-box" style="margin-top:12px;"></div>
+    </section>
+
+    <!-- #33 Whack-a-Mole Pertanyaan Cepat -->
+    <section class="card" data-category="game" data-task-id="mole">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#33 Game reaksi kilat</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Whack-a-Mole: Tangkap Jawaban Tepat!</h2>
+      <p class="text-muted">Jawaban akan muncul bergantian di lubang kawah. Ketuk pilihan yang benar (+1 skor), hindari jawaban yang salah (-1 skor). Batas waktu 25 detik.</p>
+      <button id="mole-start-btn" class="btn-primary">▶ Mulai Permainan</button>
+      <p id="mole-prompt" class="text-bold" style="font-size:1.05rem; margin-top:10px;"></p>
+      <div id="mole-grid"></div>
+    </section>
+
+    <!-- #34 Seret Kata ke Kalimat (Cloze Test) -->
+    <section class="card" data-category="game" data-task-id="dw">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#34 Rangkum kalimat berumpang</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Lengkapi Paragraf Rangkuman</h2>
+      <p class="text-muted">Seret kata ke kolom isian, atau ketuk kata lalu ketuk kotak yang dituju. Hati-hati, ada kata pengecoh!</p>
+      <div id="drag-text-box"></div>
+      <div id="drag-word-bank" class="word-bank"></div>
+      <button id="drag-check-btn" class="btn-primary">Periksa Paragraf</button>
+      <div id="drag-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #35 Pin Lokasi Gambar (hotspotimg) -->
+    <section class="card" data-category="quiz" data-task-id="hotpin">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#35 Pin lokasi gambar (hotspotimg)</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Detektif Kosmik: Tancapkan Pin pada Fitur Planet</h2>
+      <p class="text-muted">Pilih misi planet di bawah, lalu ketuk atau sentuh area fitur tertentu pada gambar untuk menancapkan pin koordinatmu.</p>
+      
+      <!-- Pilihan Misi Planet -->
+      <div id="hotspot-pin-nav" class="hotspot-mission-nav"></div>
+
+      <!-- Deskripsi Misi Aktif -->
+      <p id="hotspot-pin-prompt" class="text-bold" style="font-size: 1.05rem; margin: 10px 0 8px;"></p>
+
+      <!-- Kanvas Gambar & Pin Interaktif -->
+      <div id="hotspot-img-canvas-wrap" class="hotspot-img-wrapper" role="region" aria-label="Gambar planet interaktif untuk menancapkan pin">
+        <div id="hotspot-img-svg-container"></div>
+        <div id="hotspot-pin-elem" class="hotspot-pin" aria-hidden="true">📍</div>
+        <div id="hotspot-target-zone-elem" class="hotspot-target-zone" aria-hidden="true"></div>
+      </div>
+
+      <!-- Tombol Aksi -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:10px;">
+        <button id="hotspot-pin-check" class="btn-primary">📍 Periksa Posisi Pin</button>
+        <button id="hotspot-pin-hint">💡 Bantuan Petunjuk</button>
+      </div>
+      <div id="hotspot-pin-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #36 Mencocokkan Dua Kolom (pairing) -->
+    <section class="card" data-category="game" data-task-id="pair">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#36 Mencocokkan dua kolom (pairing)</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Cocokkan Planet dengan Karakteristik Uniknya</h2>
+      <p class="text-muted">Seret kartu planet di kiri lalu jatuhkan pada ciri khasnya di kanan, atau ketuk satu kartu kiri lalu ketuk kartu kanan pasangannya.</p>
+      <div class="pairing-grid">
+        <div id="pairing-left-col" class="pairing-column"></div>
+        <div id="pairing-right-col" class="pairing-column"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:10px;">
+        <button id="pairing-check-btn" class="btn-primary">Periksa Pasangan</button>
+        <button id="pairing-reset-btn">↺ Reset Pilihan</button>
+      </div>
+      <div id="pairing-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #37 Rangkaian Benar / Salah Beruntun (truefalse_chain) -->
+    <section class="card" data-category="quiz" data-task-id="tfchain">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#37 Tantangan combo beruntun (truefalse_chain)</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Kilat Benar / Salah: Bangun Kombo Skormu!</h2>
+      <p class="text-muted">Jawab rangkaian pernyataan sebelum waktu per soal habis. Tiap jawaban benar beruntun menggandakan skormu!</p>
+      <button id="tf-chain-start-btn" class="btn-primary">▶ Mulai Rangkaian Pernyataan (7 Dtk/Soal)</button>
+      <div id="tf-chain-play-view" hidden style="margin-top:12px;">
+        <div class="tf-chain-hud">
+          <span id="tf-chain-combo" class="tf-combo-badge">⚡ Beruntun: 0</span>
+          <b id="tf-chain-score" class="text-muted">Skor: 0</b>
+        </div>
+        <div class="tf-timer-wrap">
+          <div id="tf-chain-timer-bar" class="tf-timer-bar"></div>
+        </div>
+        <div id="tf-chain-question" class="numeric-step-card" style="font-size:1.05rem;"></div>
+        <div class="tf-action-btns">
+          <button id="tf-chain-btn-true" class="tf-action-btn btn-primary">✅ BENAR</button>
+          <button id="tf-chain-btn-false" class="tf-action-btn">❌ SALAH</button>
+        </div>
+      </div>
+      <div id="tf-chain-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #38 Kuis Pilihan Berganda Multi-Select (quiz_multi_select) -->
+    <section class="card" data-category="quiz" data-task-id="quizmulti">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#38 Kuis multi-jawaban (quiz_multi_select)</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Pilih Semua Jawaban yang Tepat Mengenai Planet Mars</h2>
+      <p>Manakah fakta di bawah ini yang <b>BENAR</b> tentang Mars? <span class="text-muted">(Pilih tepat 3 fakta benar)</span></p>
+      <div id="multi-quiz-options" class="multi-quiz-list"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:10px;">
+        <span id="multi-quiz-counter" class="text-bold" style="color:var(--primary);">Dipilih: 0 / 3</span>
+        <button id="multi-quiz-check-btn" class="btn-primary">Periksa Jawaban</button>
+      </div>
+      <div id="multi-quiz-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #39 Isian Angka Presisi (numeric_entry) -->
+    <section class="card" data-category="quiz" data-task-id="numentry">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#39 Isian angka kuantitatif (numeric_entry)</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Kuis Angka & Skala Antariksa</h2>
+      <p class="text-muted">Ketikkan angka yang tepat berdasarkan data astronomi tata surya.</p>
+      <div class="numeric-step-card">
+        <span id="numeric-progress" class="text-subtle"></span>
+        <p id="numeric-prompt" class="text-bold" style="font-size:1.05rem; margin:8px 0;"></p>
+        <div class="numeric-input-group">
+          <input type="number" id="numeric-input" placeholder="0" step="any" aria-label="Ketikkan nilai angka">
+          <span id="numeric-unit-text" class="numeric-unit-tag"></span>
+        </div>
+        <button id="numeric-check-btn" class="btn-primary">Periksa Angka</button>
+      </div>
+      <div id="numeric-feedback" class="feedback"></div>
+    </section>
+
+    <!-- #40 Toggle Lapisan Bumi & Atmosfer (layer_toggle) -->
+    <section class="card" data-category="explore" data-task-id="layertoggle">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#40 Saklar lapisan interaktif (layer_toggle)</span>
+          <span class="category-tag">Eksplorasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Eksplorasi 3D Lapisan Interior & Atmosfer Bumi</h2>
+      <p class="text-muted">Potongan melintang 3 dimensi bola Bumi. Matikan atau nyalakan saklar lapisan untuk melihat perbedaannya secara nyata, atau ketuk lapisan langsung pada gambar 3D.</p>
+      
+      <!-- Toolbar: Pilihan Mode Tampilan & Preset Cepat -->
+      <div class="layer-toolbar-container">
+        <div id="layer-view-modes" class="layer-view-modes" role="tablist" aria-label="Mode Tampilan Lapisan Bumi">
+          <button class="btn-layer-view active" data-view="cutaway" role="tab" aria-selected="true">🌐 3D Potongan Melintang</button>
+          <button class="btn-layer-view" data-view="exploded" role="tab" aria-selected="false">🚀 3D Lapisan Terurai</button>
+          <button class="btn-layer-view" data-view="depth" role="tab" aria-selected="false">📏 Skala Kedalaman</button>
+        </div>
+        <div id="layer-presets-bar" class="layer-presets-bar"></div>
+      </div>
+
+      <div class="layers-visual-layout">
+        <div id="earth-layers-svg-wrap" class="layers-svg-wrap" role="region" aria-label="Visualisasi 3D Potongan Melintang Lapisan Bumi"></div>
+        <div id="layer-toggle-controls" class="layers-control-list"></div>
+      </div>
+      <div id="layer-info-card" class="layer-info-card"></div>
+    </section>
+
+    <!-- #41 Temukan Kesalahan Konsep (spot_bug) -->
+    <section class="card" data-category="quiz" data-task-id="spotbug">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#41 Kesalahan konsep tersembunyi (spot_bug)</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Detektif Sains: Temukan Kesalahan Konsep</h2>
+      <p class="text-muted" id="spot-bug-prompt">Perhatikan diagram ilmiah antariksa berikut. Terdapat satu kesalahan konsep atau miskonsepsi yang sering salah digambarkan. Temukan dan ketuk bagian yang salah!</p>
+      
+      <!-- Pilihan Kasus Miskonsepsi -->
+      <div id="spot-bug-cases" class="spot-bug-cases-bar"></div>
+
+      <div class="spot-bug-canvas-wrap">
+        <div id="spot-bug-svg-container" role="region" aria-label="Diagram Detektif Kesalahan Konsep"></div>
+      </div>
+      <div id="spot-bug-options" class="spot-bug-options-grid"></div>
+      <div id="spot-bug-feedback" class="spot-bug-feedback" hidden></div>
+    </section>
+
+    <!-- #42 Bagan Alir Proses Daur Hidup Bintang (flow_diagram) -->
+    <section class="card" data-category="explore" data-task-id="flow">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#42 Bagan alir proses bertahap (flow_diagram)</span>
+          <span class="category-tag">Eksplorasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Daur Hidup Bintang & Asal Usul Materi Kosmik</h2>
+      <p class="text-muted">Klik setiap simpul (node) alur proses untuk menelusuri bagaimana bintang lahir, hidup, dan menempa atom-atom pembentuk planet serta tubuh manusia.</p>
+      
+      <div class="flow-diagram-container">
+        <div id="flow-nodes-track" class="flow-nodes-track"></div>
+        <div id="flow-detail-panel" class="flow-detail-panel"></div>
+      </div>
+    </section>
+
+    <!-- #43 Pohon Taksonomi Benda Langit (visual_tree) -->
+    <section class="card" data-category="explore" data-task-id="tree">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#43 Eksplorasi taksonomi hierarkis (visual_tree)</span>
+          <span class="category-tag">Eksplorasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Pohon Taksonomi Benda Langit Tata Surya</h2>
+      <p class="text-muted">Jelajahi klasifikasi resmi benda langit menurut International Astronomical Union (IAU). Klik cabang untuk membuka atau menutup sub-kategori.</p>
+      
+      <div class="visual-tree-container">
+        <div class="tree-toolbar">
+          <div class="btn-group">
+            <button id="btn-tree-expand-all" class="btn-sm">Buka Semua</button>
+            <button id="btn-tree-collapse-all" class="btn-sm">Tutup Semua</button>
+          </div>
+          <input type="search" id="tree-search-input" class="tree-search-input" placeholder="🔍 Cari objek..." aria-label="Cari objek taksonomi">
+        </div>
+        <div id="visual-tree-nodes" class="tree-nodes-wrapper" role="tree" aria-label="Pohon Taksonomi Tata Surya"></div>
+        <div id="tree-leaf-info" class="tree-leaf-info-box" hidden></div>
+      </div>
+    </section>
+
+    <!-- #44 Penjelajahan Ketinggian Atmosfer & Angkasa Parallaks (parallax) -->
+    <section class="card" data-category="explore" data-task-id="parallax">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#44 Penjelajahan ketinggian parallaks (parallax)</span>
+          <span class="category-tag">Eksplorasi</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Ekspedisi Ketinggian Atmosfer & Batas Antariksa</h2>
+      <p class="text-muted">Geser slider atau gulir vertikal untuk meluncur dari permukaan tanah Bumi (0 m) menembus troposfer, stratosfer, mesosfer, termosfer hingga stasiun luar angkasa ISS di orbit antariksa!</p>
+      
+      <!-- Quick Nav Buttons -->
+      <div class="parallax-quick-nav" id="altitude-quick-nav"></div>
+
+      <!-- Slider Kontrol Ketinggian -->
+      <div class="parallax-slider-container">
+        <span style="font-size:0.8125rem; font-weight:700;">🌍 0 m</span>
+        <input type="range" id="parallax-alt-slider" class="parallax-slider" min="0" max="420" value="0" step="1" aria-label="Penggeser Ketinggian Atmosfer">
+        <span style="font-size:0.8125rem; font-weight:700;">🛰️ 420 km</span>
+      </div>
+
+      <!-- Viewport Parallaks -->
+      <div class="parallax-altitude-viewport" id="parallax-viewport">
+        <div class="parallax-sky-bg" id="parallax-sky-bg"></div>
+        <div class="parallax-stars-layer" id="parallax-stars-layer"></div>
+        
+        <!-- HUD Ketinggian -->
+        <div class="parallax-altitude-hud">
+          <div class="parallax-hud-item">
+            <span>Ketinggian:</span>
+            <b id="hud-altitude-val">0 Meter (0 km)</b>
+          </div>
+          <div class="parallax-hud-item">
+            <span>Lapisan Atmosfer:</span>
+            <b id="hud-layer-val">Troposfer</b>
+          </div>
+          <div class="parallax-hud-item">
+            <span>Suhu Rata-rata:</span>
+            <b id="hud-temp-val">+15 °C</b>
+          </div>
+        </div>
+
+        <!-- Panggung Objek Parallaks Melayang -->
+        <div class="parallax-objects-stage" id="parallax-objects-stage"></div>
+      </div>
+      <div id="altitude-object-info" class="layer-info-card" hidden></div>
+    </section>
+
+    <!-- #45 Kuis Kilat Berwaktu (timer_challenge) -->
+    <section class="card" data-category="game" data-task-id="timer">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#45 Tantangan kuis kilat berwaktu (timer_challenge)</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Astronomy Speed Run: Kuis Kilat 45 Detik</h2>
+      <p class="text-muted">Uji kecepatan nalar dan ingatan astronomimu! Jawab sebanyak mungkin pertanyaan sebelum waktu habis. Kumpulkan kombo beruntun untuk bonus XP berlipat!</p>
+      
+      <div class="timer-challenge-arena" id="timer-challenge-arena">
+        <div id="timer-start-screen" style="text-align:center; padding:24px 10px;">
+          <div style="font-size:3rem; margin-bottom:10px;">⏱️⚡</div>
+          <p style="font-weight:600; font-size:1.05rem;">Siap untuk ujian kecepatan kosmik?</p>
+          <p class="text-muted" style="max-width:400px; margin:0 auto 16px;">Waktu: <b>45 Detik</b> · Jawaban Benar: <b>+2 Detik & Naikkan Kombo</b> · Jawaban Salah: <b>-2 Detik</b></p>
+          <button id="btn-start-timer-challenge" class="btn-primary" style="font-size:1rem; padding:10px 24px;">Mulai Tantangan Kilat 🚀</button>
+        </div>
+
+        <div id="timer-game-screen" hidden>
+          <div class="timer-hud-bar">
+            <div class="timer-gauge">
+              <span>⏱️</span>
+              <span id="timer-countdown" class="timer-countdown-pill">45s</span>
+            </div>
+            <div id="timer-combo-badge" class="timer-combo-badge" hidden>🔥 COMBO x1</div>
+            <div class="timer-score-pill">Skor: <b id="timer-score-val" style="color:var(--primary); font-size:1.15rem;">0</b> XP</div>
+          </div>
+          
+          <div class="speed-question-card">
+            <div id="speed-question-text" class="speed-question-text"></div>
+            <div id="speed-options-grid" class="speed-options-grid"></div>
+          </div>
+        </div>
+
+        <div id="timer-result-screen" class="timer-summary-screen" hidden></div>
+      </div>
+    </section>
+
+    <!-- Kartu Kemenangan / Trophy Komandan -->
+    <section class="card" id="final-trophy-card" hidden style="background:linear-gradient(135deg, var(--bg-card), var(--primary-light)); border:2px solid var(--accent); text-align:center; padding:32px 20px;">
+      <h2 style="font-size:1.75rem; margin-bottom:8px;">🏆 Selamat, Komandan Tata Surya!</h2>
+      <p style="font-size:1.05rem; font-weight:600;">Kamu telah berhasil menuntaskan seluruh 45 ragam pola interaksi pembelajaran secara lengkap!</p>
+      <p class="text-muted" style="max-width:540px; margin:12px auto;">
+        Setiap variasi aktivitas yang kamu jalankan dirancang dengan peran pedagogis tersendiri: memicu rasa ingin tahu, menguji pemahaman fakta, melatih daya ingat jangka panjang, hingga merangsang analisis kritis.
+      </p>
+    </section>
+  </main>
+
+  <!-- JavaScript Modular & Terstruktur -->
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/interactions.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>

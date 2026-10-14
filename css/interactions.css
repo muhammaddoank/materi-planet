@@ -1,0 +1,1884 @@
+/* ==========================================================================
+   INTERACTION-SPECIFIC STYLES (34 Interaksi)
+   Jelajah Tata Surya: 34 Cara Belajar Interaktif
+   ========================================================================== */
+
+/* #1 Tooltip Glosarium */
+.tip {
+  border-bottom: 2px dashed var(--primary);
+  position: relative;
+  cursor: help;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.tip:hover::after,
+.tip:focus::after {
+  content: attr(data-t);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translateX(-50%);
+  background-color: #111827;
+  color: #f9fafb;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.4;
+  width: max-content;
+  max-width: 240px;
+  z-index: 50;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+/* #2 Kartu Balik 3D */
+.flip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.flip-card {
+  perspective: 800px;
+  height: 120px;
+  cursor: pointer;
+  outline: none;
+}
+
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  border-radius: var(--radius-md);
+}
+
+.flip-card.is-flipped .flip-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-front,
+.flip-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  padding: 10px;
+  text-align: center;
+}
+
+.flip-front {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-sm);
+}
+
+.flip-back {
+  transform: rotateY(180deg);
+  background-color: var(--bg-card-subtle);
+  border: 2px solid var(--primary);
+  color: var(--tx-main);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+/* #3 Canvas Orbit */
+.orbit-canvas-wrapper {
+  position: relative;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+#canvas-orbit {
+  width: 100%;
+  max-width: 340px;
+  height: 340px;
+  display: block;
+  margin: auto;
+  background: radial-gradient(circle at center, #111a3d 0%, #060814 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+}
+
+/* #4 Tab Benda Langit */
+.tab-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tab-btn {
+  border-radius: var(--radius-md);
+  padding: 7px 14px;
+  font-size: 0.875rem;
+}
+
+.tab-btn.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--tx-inverse);
+}
+
+.tab-content-box {
+  background-color: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  font-size: 0.9375rem;
+}
+
+/* #5 Kalkulator Berat */
+.weight-bar-container {
+  height: 14px;
+  background-color: var(--bg-card-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: 10px;
+  border: 1px solid var(--border-light);
+}
+
+#weight-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+/* #8 Drag & Drop / Urutkan */
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background-color: var(--bg-card-subtle);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  cursor: grab;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.order-item:active {
+  cursor: grabbing;
+}
+
+.order-item.selected {
+  border-color: var(--primary);
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+/* #9 Hotspot SVG */
+.hotspot-svg-wrap {
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+.hotspot-svg-wrap circle {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.hotspot-svg-wrap circle:hover {
+  opacity: 0.85;
+  stroke: #ffffff;
+  stroke-width: 2px;
+}
+
+/* #10 Stepper Proses */
+.stepper-view {
+  text-align: center;
+  padding: 16px;
+  background: var(--bg-card-subtle);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+}
+
+.stepper-emoji {
+  font-size: 52px;
+  margin-bottom: 8px;
+}
+
+.stepper-dots {
+  letter-spacing: 6px;
+  font-size: 1.1rem;
+  color: var(--primary);
+  margin-top: 10px;
+}
+
+/* #11 Checklist */
+.checklist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.check-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.check-label:hover {
+  border-color: var(--primary);
+}
+
+.check-label input {
+  accent-color: var(--primary);
+  width: 18px;
+  height: 18px;
+}
+
+/* #14 Game Memori */
+#memory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.memory-card {
+  height: 68px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card-subtle);
+  border: 2px solid var(--border-light);
+  transition: all var(--transition-fast);
+}
+
+.memory-card.is-open {
+  background: var(--primary);
+  color: var(--tx-inverse);
+  border-color: var(--primary);
+}
+
+.memory-card.is-matched {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+  opacity: 0.9;
+}
+
+/* #18 Polling Emoji */
+.poll-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.poll-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--bg-card-subtle);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.poll-option:hover {
+  border-color: var(--primary);
+}
+
+.poll-bar-track {
+  flex: 1;
+  height: 12px;
+  background: var(--border-light);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.poll-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: var(--radius-full);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* #19 Grafik Diameter */
+.chart-list {
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chart-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8125rem;
+}
+
+.chart-label {
+  width: 82px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.chart-bar-wrap {
+  flex: 1;
+  background: var(--bg-card-subtle);
+  height: 16px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.chart-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 4px;
+}
+
+/* #21 Kanvas Gambar */
+#canvas-draw {
+  width: 100%;
+  max-width: 340px;
+  height: 220px;
+  display: block;
+  margin: 0 auto 10px;
+  background: #ffffff;
+  border: 2px dashed var(--border-light);
+  border-radius: var(--radius-md);
+  touch-action: none;
+  cursor: crosshair;
+}
+
+/* #22 Keranjang Klasifikasi */
+.bucket-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.bucket-targets {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+}
+
+.bucket-btn {
+  min-height: 52px;
+  padding: 8px;
+  font-size: 0.875rem;
+}
+
+/* #23 Pembanding Geser */
+.split-compare-view {
+  position: relative;
+  height: 140px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  color: #fff;
+}
+
+.split-left {
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  position: absolute;
+  inset: 0;
+  padding: 12px 16px;
+}
+
+.split-right {
+  background: linear-gradient(135deg, #b91c1c, #ef4444);
+  position: absolute;
+  inset: 0;
+  padding: 12px 16px;
+  text-align: right;
+  clip-path: inset(0 0 0 50%);
+  transition: clip-path 0.05s linear;
+}
+
+/* #26 Tantangan Berwaktu */
+#time-attack-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+
+/* #28 Word Search */
+#word-search-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  max-width: 320px;
+  margin: 12px auto;
+}
+
+.word-cell {
+  aspect-ratio: 1;
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: var(--bg-card-subtle);
+}
+
+.word-cell.is-selected {
+  background: var(--primary) !important;
+  color: var(--tx-inverse) !important;
+  border-color: var(--primary) !important;
+}
+
+.word-cell.is-found {
+  background: var(--success) !important;
+  color: #ffffff !important;
+  border-color: var(--success) !important;
+}
+
+/* #30 Zona Layak Huni */
+#zone-board {
+  position: relative;
+  height: 180px;
+  background: radial-gradient(circle at center, #18224d 0%, #070a18 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  touch-action: none;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.zone-sun {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 38px;
+  filter: drop-shadow(0 0 16px #ffcc00);
+  pointer-events: none;
+}
+
+.zone-earth {
+  position: absolute;
+  font-size: 28px;
+  transform: translate(-50%, -50%);
+  user-select: none;
+  cursor: grab;
+  transition: transform 0.05s ease;
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));
+}
+
+/* #31 TTS Crossword */
+#crossword-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+  max-width: 340px;
+  margin: 12px auto;
+}
+
+#crossword-grid i {
+  display: block;
+}
+
+.crossword-cell {
+  position: relative;
+  display: block;
+}
+
+.crossword-cell input {
+  width: 100%;
+  aspect-ratio: 1;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 0;
+  margin: 0;
+  border: 2px solid var(--border-light);
+  border-radius: 6px;
+  font-size: 1.05rem;
+  background: var(--bg-card);
+  color: var(--tx-main);
+  transition: all var(--transition-fast);
+}
+
+.crossword-cell input.is-highlighted {
+  background: var(--primary-light);
+  border-color: var(--primary-border);
+}
+
+.crossword-cell sup {
+  position: absolute;
+  left: 3px;
+  top: 1px;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--tx-muted);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.crossword-clues {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 10px 0;
+}
+
+.crossword-clue-btn {
+  text-align: left;
+  font-size: 0.8125rem;
+  padding: 6px 10px;
+}
+
+/* #32 Roda Acak */
+#canvas-wheel {
+  width: 100%;
+  max-width: 280px;
+  height: 280px;
+  display: block;
+  margin: 0 auto 12px;
+}
+
+/* #33 Whack-a-Mole */
+#mole-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 320px;
+  margin: 12px auto;
+}
+
+.mole-hole {
+  height: 74px;
+  margin: 0;
+  border-radius: 50%;
+  background: #4a2810;
+  border: 4px solid #2d1808;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  padding: 4px;
+  box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.6);
+  transition: all 0.15s ease;
+}
+
+.mole-hole.is-active {
+  background: var(--primary);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  transform: translateY(-4px);
+}
+
+/* #34 Seret Kata Kalimat */
+#drag-text-box {
+  line-height: 2.5;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.blank-slot {
+  min-width: 80px;
+  border: 2px dashed var(--tx-subtle);
+  margin: 0 4px;
+  padding: 3px 10px;
+  background: var(--bg-card-subtle);
+  border-radius: var(--radius-sm);
+  display: inline-block;
+  font-weight: 600;
+  color: var(--primary);
+  vertical-align: middle;
+}
+
+.blank-slot.is-filled {
+  border: 2px solid var(--primary);
+  background: var(--primary-light);
+}
+
+.word-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.word-pill {
+  cursor: grab;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  background: var(--bg-card-subtle);
+}
+
+.word-pill:active {
+  cursor: grabbing;
+}
+
+.word-pill.is-selected {
+  background: var(--primary);
+  color: var(--tx-inverse);
+  border-color: var(--primary);
+}
+
+/* #35 Hotspot Image Pin (hotspotimg) */
+.hotspot-img-wrapper {
+  position: relative;
+  max-width: 440px;
+  margin: 12px auto;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: radial-gradient(circle at center, #111a3b 0%, #060914 100%);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+  cursor: crosshair;
+  touch-action: none;
+  user-select: none;
+}
+
+.hotspot-img-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  pointer-events: none;
+}
+
+.hotspot-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  font-size: 32px;
+  line-height: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+  transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.15s ease;
+  z-index: 10;
+  display: none;
+}
+
+.hotspot-pin.is-active {
+  display: block;
+  animation: dropPin 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hotspot-pin.is-correct {
+  filter: drop-shadow(0 0 10px #10b981);
+}
+
+@keyframes dropPin {
+  0% {
+    transform: translate(-50%, -160%) scale(1.4);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -100%) scale(1);
+    opacity: 1;
+  }
+}
+
+.hotspot-target-zone {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 2px dashed rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 5;
+  display: none;
+}
+
+.hotspot-target-zone.is-revealed {
+  display: block;
+  background: rgba(16, 185, 129, 0.35);
+  border-color: #34d399;
+  animation: targetPulse 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes targetPulse {
+  0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.7; }
+  100% { transform: translate(-50%, -50%) scale(1.05); opacity: 1; }
+}
+
+.hotspot-mission-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.btn-hotspot-mission {
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  border-radius: var(--radius-md);
+}
+
+.btn-hotspot-mission.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--tx-inverse);
+}
+
+/* #36 Pairing Dua Kolom */
+.pairing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+@media (max-width: 580px) {
+  .pairing-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.pairing-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pair-card {
+  padding: 10px 14px;
+  background: var(--bg-card-subtle);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: grab;
+  user-select: none;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+}
+
+.pair-card:active {
+  cursor: grabbing;
+}
+
+.pair-card.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  transform: scale(1.02);
+}
+
+.pair-card.matched {
+  border-color: var(--success);
+  background: var(--success-bg);
+  color: var(--success);
+  opacity: 0.95;
+  cursor: default;
+}
+
+.pair-card.drag-over {
+  border-color: var(--accent);
+  background: var(--primary-light);
+}
+
+/* #37 True/False Chain */
+.tf-chain-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tf-combo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.tf-timer-wrap {
+  width: 100%;
+  height: 6px;
+  background: var(--border-light);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.tf-timer-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--danger));
+  transition: width 0.1s linear;
+}
+
+.tf-action-btns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.tf-action-btn {
+  padding: 12px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+}
+
+/* #38 Quiz Multi-Select */
+.multi-quiz-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.multi-quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-card-subtle);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.multi-quiz-option:hover {
+  border-color: var(--primary-border);
+}
+
+.multi-quiz-option.selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.multi-quiz-option input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primary);
+  pointer-events: none;
+}
+
+/* #39 Numeric Entry */
+.numeric-step-card {
+  margin: 12px 0;
+  padding: 16px;
+  background: var(--bg-card-subtle);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+}
+
+.numeric-input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 280px;
+  margin: 10px 0;
+}
+
+.numeric-input-group input {
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px;
+}
+
+.numeric-unit-tag {
+  font-weight: 700;
+  color: var(--tx-muted);
+  font-size: 0.9375rem;
+  white-space: nowrap;
+}
+
+/* #40 Toggle Lapisan Bumi & Atmosfer 3D */
+.layer-toolbar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.layer-view-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn-layer-view {
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--tx-main);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-layer-view:hover {
+  border-color: var(--primary-border);
+  background: var(--primary-light);
+}
+
+.btn-layer-view.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--tx-inverse);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.layer-presets-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.btn-layer-preset {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--tx-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-layer-preset:hover {
+  color: var(--tx-main);
+  border-color: var(--primary-border);
+}
+
+.btn-layer-preset.active {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.layers-visual-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) 1fr;
+  gap: 20px;
+  align-items: start;
+  margin: 14px 0;
+}
+
+@media (max-width: 768px) {
+  .layers-visual-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.layers-svg-wrap {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.layers-control-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.layer-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: var(--bg-card-subtle);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.layer-toggle-btn:hover {
+  border-color: var(--primary-border);
+  transform: translateY(-1px);
+}
+
+.layer-toggle-btn.is-inspected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.layer-toggle-switch {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.layer-toggle-switch.is-on {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.layer-toggle-switch.is-off {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+/* Interaktivitas Grup 3D SVG */
+.layer-3d-group {
+  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1), transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), filter 0.2s ease;
+  cursor: pointer;
+}
+
+.layer-3d-group:hover {
+  filter: brightness(1.25) drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+}
+
+.layer-3d-group.is-hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: scale(0.96);
+}
+
+.layer-3d-group.is-inspected {
+  filter: drop-shadow(0 0 10px #38bdf8) brightness(1.2);
+}
+
+.layer-label-tag {
+  cursor: pointer;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.layer-label-tag:hover {
+  transform: translateX(3px);
+  filter: brightness(1.3);
+}
+
+.layer-info-card {
+  padding: 16px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  margin-top: 14px;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  transition: all var(--transition-fast);
+}
+
+.layer-pill-meta {
+  display: inline-flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 6px 0 10px;
+}
+
+.layer-pill-meta span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  color: var(--tx-muted);
+}
+
+/* #41 Temukan Kesalahan Konsep (Spot the Bug) */
+.spot-bug-cases-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.btn-bug-case {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--tx-main);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-bug-case:hover {
+  border-color: var(--primary-border);
+}
+
+.btn-bug-case.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--tx-inverse);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.spot-bug-canvas-wrap {
+  width: 100%;
+  max-width: 460px;
+  margin: 12px auto;
+  background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bug-clickable-node {
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+  outline: none;
+}
+
+.bug-clickable-node:hover,
+.bug-clickable-node:focus-visible {
+  filter: brightness(1.3) drop-shadow(0 0 10px rgba(56, 189, 248, 0.8));
+  transform: scale(1.05);
+}
+
+.bug-clickable-node.is-found {
+  filter: drop-shadow(0 0 14px #22c55e) brightness(1.25);
+  animation: pulseBugFound 1.5s infinite alternate;
+}
+
+.bug-clickable-node.is-wrong-guess {
+  filter: drop-shadow(0 0 10px #f59e0b) brightness(1.15);
+  animation: shakeBugNode 0.35s ease;
+}
+
+@keyframes pulseBugFound {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.06); }
+}
+
+@keyframes shakeBugNode {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* Tombol Pilihan Jawaban di Bawah SVG */
+.spot-bug-options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.btn-bug-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  border: 2px solid var(--border-light);
+  color: var(--tx-main);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+  line-height: 1.35;
+}
+
+.btn-bug-option:hover {
+  border-color: var(--primary-border);
+  transform: translateY(-1px);
+}
+
+.btn-bug-option .opt-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: var(--bg-card-subtle);
+  border: 1.5px solid var(--border-light);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.btn-bug-option.is-found {
+  border-color: var(--success);
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.btn-bug-option.is-found .opt-badge {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+}
+
+.btn-bug-option.is-wrong {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+  color: var(--danger);
+  animation: shakeOpt 0.3s ease;
+}
+
+.btn-bug-option.is-wrong .opt-badge {
+  background: var(--danger);
+  color: #fff;
+  border-color: var(--danger);
+}
+
+/* Feedback Detektif Sains: Jelas Benar / Salah */
+.spot-bug-feedback {
+  margin-top: 14px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  transition: all var(--transition-fast);
+  animation: fadeIn 0.25s ease;
+}
+
+.spot-bug-feedback.is-success {
+  background: var(--success-bg);
+  border: 2px solid var(--success-border);
+  color: var(--tx-main);
+}
+
+.spot-bug-feedback.is-hint,
+.spot-bug-feedback.is-wrong {
+  background: var(--danger-bg);
+  border: 2px solid var(--danger-border);
+  color: var(--tx-main);
+}
+
+.feedback-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.feedback-badge-correct {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--success);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  letter-spacing: 0.5px;
+}
+
+.feedback-badge-wrong {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--danger);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  letter-spacing: 0.5px;
+}
+
+.feedback-title {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.feedback-choice-line {
+  margin: 6px 0 10px;
+  font-size: 0.9375rem;
+}
+
+.feedback-explanation {
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid currentColor;
+  margin-top: 8px;
+}
+
+[data-theme="dark"] .feedback-explanation {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.feedback-hint-text {
+  margin: 8px 0 0;
+  font-weight: 600;
+  color: var(--tx-muted);
+}
+
+/* #42 Bagan Alir Proses Antariksa (Flow Diagram) */
+.flow-diagram-container {
+  margin: 12px 0;
+}
+
+.flow-nodes-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 8px 4px 14px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.flow-node-card {
+  flex: 0 0 160px;
+  scroll-snap-align: start;
+  background: var(--bg-card-subtle);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition-fast);
+  user-select: none;
+  position: relative;
+}
+
+.flow-node-card:hover {
+  border-color: var(--primary-border);
+  transform: translateY(-2px);
+}
+
+.flow-node-card.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 1px var(--primary), var(--shadow-sm);
+}
+
+.flow-node-card .node-step-tag {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: var(--tx-muted);
+  letter-spacing: 0.5px;
+}
+
+.flow-node-card .node-icon {
+  font-size: 1.85rem;
+  margin: 6px 0;
+  display: block;
+}
+
+.flow-node-card .node-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.flow-detail-panel {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+.flow-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 8px;
+  margin: 10px 0 14px;
+}
+
+.flow-meta-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+}
+
+.flow-meta-pill b {
+  display: block;
+  color: var(--tx-muted);
+  font-size: 0.6875rem;
+}
+
+.flow-nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  gap: 8px;
+}
+
+/* #43 Pohon Taksonomi Benda Langit (Visual Tree) */
+.visual-tree-container {
+  margin: 12px 0;
+}
+
+.tree-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tree-search-input {
+  max-width: 200px;
+  padding: 6px 12px;
+  font-size: 0.8125rem;
+}
+
+.tree-nodes-wrapper {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.tree-node-item {
+  margin: 4px 0;
+  user-select: none;
+}
+
+.tree-node-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tree-node-header:hover {
+  background: var(--bg-card);
+}
+
+.tree-node-header.is-selected {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.tree-chevron {
+  font-size: 0.6875rem;
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.tree-chevron.expanded {
+  transform: rotate(90deg);
+}
+
+.tree-chevron.empty {
+  visibility: hidden;
+}
+
+.tree-badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  color: var(--tx-muted);
+  margin-left: auto;
+}
+
+.tree-children {
+  margin-left: 20px;
+  padding-left: 10px;
+  border-left: 2px dashed var(--border-light);
+  display: none;
+}
+
+.tree-children.is-open {
+  display: block;
+}
+
+.tree-leaf-info-box {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+/* #44 Penjelajahan Ketinggian Atmosfer Parallaks (Parallax Altitude) */
+.parallax-altitude-viewport {
+  width: 100%;
+  height: 440px;
+  position: relative;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin: 12px 0;
+  user-select: none;
+}
+
+.parallax-sky-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: background 0.4s ease;
+}
+
+.parallax-stars-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(1.5px 1.5px at 40px 60px, #ffffff, rgba(0,0,0,0)),
+                    radial-gradient(1px 1px at 120px 180px, #ffffff, rgba(0,0,0,0)),
+                    radial-gradient(1.5px 1.5px at 280px 40px, #ffffff, rgba(0,0,0,0)),
+                    radial-gradient(1px 1px at 340px 220px, #ffffff, rgba(0,0,0,0));
+  background-size: 380px 300px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.parallax-altitude-hud {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  z-index: 20;
+}
+
+.parallax-hud-item {
+  font-size: 0.75rem;
+}
+
+.parallax-hud-item b {
+  font-size: 0.9375rem;
+  color: #38bdf8;
+  display: block;
+}
+
+.parallax-quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.btn-altitude-jump {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.parallax-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.parallax-slider {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.parallax-objects-stage {
+  position: absolute;
+  top: 60px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+}
+
+.parallax-floating-obj {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s ease;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+
+.parallax-floating-obj:hover {
+  transform: scale(1.06) translateX(4px);
+  border-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+}
+
+.parallax-floating-obj .obj-icon {
+  font-size: 1.4rem;
+}
+
+/* #45 Kuis Kilat Berwaktu (Timer Challenge) */
+.timer-challenge-arena {
+  margin: 12px 0;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+.timer-hud-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.timer-gauge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-countdown-pill {
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  min-width: 60px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.timer-countdown-pill.is-danger {
+  border-color: var(--danger);
+  color: var(--danger);
+  animation: pulseTimer 0.6s infinite alternate;
+}
+
+.timer-countdown-pill.is-penalty {
+  border-color: var(--danger) !important;
+  background: var(--danger-bg) !important;
+  color: var(--danger) !important;
+  animation: shakeOpt 0.3s ease;
+}
+
+.timer-countdown-pill.is-bonus {
+  border-color: var(--success) !important;
+  background: var(--success-bg) !important;
+  color: var(--success) !important;
+}
+
+@keyframes pulseTimer {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+.timer-score-pill {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--tx-muted);
+}
+
+.timer-combo-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: #f59e0b;
+  color: #000;
+  animation: dropPin 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.speed-question-card {
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.speed-question-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.45;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.speed-options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 540px) {
+  .speed-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.btn-speed-option {
+  padding: 12px 14px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  background: var(--bg-card);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: left;
+}
+
+.btn-speed-option:hover {
+  border-color: var(--primary-border);
+  transform: translateY(-1px);
+}
+
+.btn-speed-option.is-correct {
+  border-color: var(--success);
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.btn-speed-option.is-wrong {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+  color: var(--danger);
+  animation: shakeOpt 0.3s ease;
+}
+
+@keyframes shakeOpt {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.timer-summary-screen {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.timer-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 16px 0;
+}
+
+@media (max-width: 480px) {
+  .timer-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.timer-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+.timer-stat-card .stat-val {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  display: block;
+}
+
+.timer-stat-card .stat-lbl {
+  font-size: 0.75rem;
+  color: var(--tx-muted);
+}
+
+
+
+

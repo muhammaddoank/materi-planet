@@ -1,0 +1,136 @@
+/* ==========================================================================
+   VARIABLES & DESIGN TOKENS
+   Jelajah Tata Surya: 34 Cara Belajar Interaktif
+   ========================================================================== */
+
+:root {
+  /* Palette Terang (Default) */
+  --bg-app: #f6f8fc;
+  --bg-card: #ffffff;
+  --bg-card-subtle: #f1f4fa;
+  --bg-elevated: #ffffff;
+  
+  --tx-main: #131728;
+  --tx-muted: #5e6682;
+  --tx-subtle: #8991ad;
+  --tx-inverse: #ffffff;
+  
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-light: #eef2ff;
+  --primary-border: #c7d2fe;
+  
+  --accent: #f59e0b;
+  --success: #10b981;
+  --success-bg: #ecfdf5;
+  --danger: #ef4444;
+  --danger-bg: #fef2f2;
+  
+  --border-light: #e3e8f3;
+  --border-focus: #4f46e5;
+  
+  --shadow-sm: 0 1px 3px rgba(19, 23, 40, 0.05);
+  --shadow-md: 0 4px 12px rgba(19, 23, 40, 0.06);
+  --shadow-lg: 0 10px 25px rgba(19, 23, 40, 0.08);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-full: 9999px;
+
+  --fs: 16px;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+/* Tema Gelap (Auto via prefers-color-scheme) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-app: #0c101d;
+    --bg-card: #141b2d;
+    --bg-card-subtle: #1c253d;
+    --bg-elevated: #1e2842;
+    
+    --tx-main: #f1f4fb;
+    --tx-muted: #9ba7c7;
+    --tx-subtle: #6b779a;
+    --tx-inverse: #0c101d;
+    
+    --primary: #818cf8;
+    --primary-hover: #9ca3af;
+    --primary-light: #252b48;
+    --primary-border: #3b4570;
+    
+    --border-light: #222c46;
+    --border-focus: #818cf8;
+    
+    --success-bg: #064e3b33;
+    --danger-bg: #7f1d1d33;
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Override Tema Gelap Manual */
+:root[data-theme="dark"] {
+  --bg-app: #0c101d;
+  --bg-card: #141b2d;
+  --bg-card-subtle: #1c253d;
+  --bg-elevated: #1e2842;
+  
+  --tx-main: #f1f4fb;
+  --tx-muted: #9ba7c7;
+  --tx-subtle: #6b779a;
+  --tx-inverse: #0c101d;
+  
+  --primary: #818cf8;
+  --primary-hover: #9ca3af;
+  --primary-light: #252b48;
+  --primary-border: #3b4570;
+  
+  --border-light: #222c46;
+  --border-focus: #818cf8;
+  
+  --success-bg: #064e3b33;
+  --danger-bg: #7f1d1d33;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Override Mode Kontras Tinggi (Aksesibilitas Ekstra) */
+:root.high-contrast,
+:root.high-contrast[data-theme] {
+  --bg-app: #000000;
+  --bg-card: #000000;
+  --bg-card-subtle: #111111;
+  --bg-elevated: #000000;
+  
+  --tx-main: #ffffff;
+  --tx-muted: #ffff88;
+  --tx-subtle: #ffffff;
+  --tx-inverse: #000000;
+  
+  --primary: #ffd400;
+  --primary-hover: #ffee55;
+  --primary-light: #222200;
+  --primary-border: #ffffff;
+  
+  --border-light: #ffffff;
+  --border-focus: #ffd400;
+  
+  --success: #39ff14;
+  --success-bg: #003300;
+  --danger: #ff4d4d;
+  --danger-bg: #330000;
+
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+}
