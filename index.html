@@ -197,7 +197,7 @@
         <div class="card-actions"></div>
       </div>
       <h2>Urutkan dari Terdekat ke Matahari</h2>
-      <p class="text-muted">Seret kartu dengan mouse/jari, atau ketuk dua kartu untuk saling menukar urutan.</p>
+      <p class="text-muted">Seret kartu ke posisi baru, atau ketuk dua kartu untuk saling menukar urutan.</p>
       <div id="order-list" class="order-list"></div>
       <button id="order-check-btn" class="btn-primary">Periksa Susunan</button>
       <div id="order-feedback" class="feedback"></div>
@@ -578,8 +578,8 @@
         </div>
         <div class="card-actions"></div>
       </div>
-      <h2>Kartu Pengulangan Berjarak (Spaced Repetition)</h2>
-      <p class="text-muted">Konsep yang kamu ingat akan muncul semakin jarang, sementara yang kamu lupakan akan dijadwalkan ulang lebih cepat untuk mematangkan memori jangka panjang.</p>
+      <h2>Kartu Pengulangan Berjarak: Sistem Leitner 4 Kotak</h2>
+      <p class="text-muted">Menggunakan sistem Leitner 4 kotak: konsep yang kamu ingat berpindah ke kotak berikutnya dengan jeda lebih panjang (1, 3, 7, atau 14 hari), sedangkan konsep yang lupa akan kembali ke Kotak 1 untuk diulang segera.</p>
       <div id="leitner-container"></div>
     </section>
 
@@ -722,7 +722,7 @@
         <div class="card-actions"></div>
       </div>
       <h2>Cocokkan Planet dengan Karakteristik Uniknya</h2>
-      <p class="text-muted">Seret kartu planet di kiri lalu jatuhkan pada ciri khasnya di kanan, atau ketuk satu kartu kiri lalu ketuk kartu kanan pasangannya.</p>
+      <p class="text-muted">Seret kartu planet di kiri lalu lepas pada ciri khasnya di kanan, atau ketuk satu kartu kiri lalu ketuk kartu kanan pasangannya.</p>
       <div class="pairing-grid">
         <div id="pairing-left-col" class="pairing-column"></div>
         <div id="pairing-right-col" class="pairing-column"></div>
@@ -925,8 +925,8 @@
       <!-- Slider Kontrol Ketinggian -->
       <div class="parallax-slider-container">
         <span style="font-size:0.8125rem; font-weight:700;">🌍 0 m</span>
-        <input type="range" id="parallax-alt-slider" class="parallax-slider" min="0" max="420" value="0" step="1" aria-label="Penggeser Ketinggian Atmosfer">
-        <span style="font-size:0.8125rem; font-weight:700;">🛰️ 420 km</span>
+        <input type="range" id="parallax-alt-slider" class="parallax-slider" min="0" max="500" value="0" step="1" aria-label="Penggeser Ketinggian Atmosfer">
+        <span style="font-size:0.8125rem; font-weight:700;">🛰️ 500 km</span>
       </div>
 
       <!-- Viewport Parallaks -->
@@ -947,6 +947,20 @@
           <div class="parallax-hud-item">
             <span>Suhu Rata-rata:</span>
             <b id="hud-temp-val">+15 °C</b>
+          </div>
+        </div>
+
+        <!-- Pengukur Ketinggian Vertikal (Ruler Mini) -->
+        <div class="parallax-altitude-ruler" id="parallax-ruler" aria-label="Pengukur Skala Ketinggian Atmosfer">
+          <div class="ruler-track">
+            <div class="ruler-seg seg-thermo" data-km="300" title="Termosfer (85 - 500 km)"><span class="ruler-lbl top">500 km</span><span class="ruler-lbl">100 km</span></div>
+            <div class="ruler-seg seg-meso" data-km="70" title="Mesosfer (50 - 85 km)"><span class="ruler-lbl">85 km</span></div>
+            <div class="ruler-seg seg-strato" data-km="30" title="Stratosfer (12 - 50 km)"><span class="ruler-lbl">50 km</span></div>
+            <div class="ruler-seg seg-tropo" data-km="0" title="Troposfer (0 - 12 km)"><span class="ruler-lbl">12 km</span><span class="ruler-lbl btm">0 m</span></div>
+          </div>
+          <div class="ruler-pointer" id="ruler-pointer" style="bottom: 0%;">
+            <span class="pointer-caret">◀</span>
+            <span class="pointer-value" id="pointer-alt-val">0 m</span>
           </div>
         </div>
 

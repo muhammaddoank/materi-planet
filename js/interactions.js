@@ -22,6 +22,155 @@ function showFeedback(element, isOk, message) {
   }
 }
 
+// Helper: Drag-and-drop universal via Pointer Events (desktop + layar sentuh)
+// Menggantikan HTML5 DnD (dragstart/drop) yang tidak berfungsi di iOS Safari & banyak Android.
+// Pola: pointerdown → pointermove → pointerup + setPointerCapture + touch-action: none.
+function makeDraggable(opts) {
+  const { container, itemSelector, dropZone, dropSelector, onDrop, ghostClass, dropOverClass } = opts;
+  const effectiveDropZone = dropZone || container;
+  const effectiveDropSelector = dropSelector || itemSelector;
+
+  let ghost = null;
+  let sourceEl = null;
+  let lastOverEl = null;
+  let isDragging = false;
+  let currentPointerId = null;
+  const DRAG_THRESHOLD = 6; // piksel minimum sebelum dianggap drag
+  let startX = 0, startY = 0;
+  let thresholdMet = false;
+  let justDragged = false;
+
+  function getItemAt(x, y, zone, selector) {
+    const els = $$(selector, zone);
+    for (const el of els) {
+      const r = el.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) {
+        return el;
+      }
+    }
+    return null;
+  }
+
+  function createGhost(el) {
+    const rect = el.getBoundingClientRect();
+    const g = el.cloneNode(true);
+    g.style.cssText = `position:fixed;z-index:9999;pointer-events:none;opacity:0.85;
+      width:${rect.width}px;height:${rect.height}px;margin:0;transition:none;
+      box-shadow:0 8px 24px rgba(0,0,0,0.25);border-radius:8px;`;
+    if (ghostClass) g.classList.add(ghostClass);
+    document.body.appendChild(g);
+    return g;
+  }
+
+  function moveGhost(g, x, y) {
+    const w = parseFloat(g.style.width);
+    const h = parseFloat(g.style.height);
+    g.style.left = `${x - w / 2}px`;
+    g.style.top = `${y - h / 2}px`;
+  }
+
+  function cleanup() {
+    if (ghost) { ghost.remove(); ghost = null; }
+    if (sourceEl) {
+      sourceEl.style.opacity = "";
+      try {
+        if (sourceEl.releasePointerCapture && currentPointerId != null) {
+          sourceEl.releasePointerCapture(currentPointerId);
+        }
+      } catch (_) {}
+      sourceEl = null;
+    }
+    if (lastOverEl && dropOverClass) {
+      lastOverEl.classList.remove(dropOverClass);
+      lastOverEl = null;
+    }
+    isDragging = false;
+    thresholdMet = false;
+    currentPointerId = null;
+  }
+
+  // Mencegah click palsu tertrigger pada item saat baru selesai drag
+  container.addEventListener(
+    "click",
+    (e) => {
+      if (justDragged) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    },
+    true
+  );
+
+  container.addEventListener("pointerdown", (e) => {
+    // Hanya tangani tombol kiri mouse atau sentuhan primer
+    if (e.button != null && e.button !== 0) return;
+
+    const item = e.target.closest(itemSelector);
+    if (!item || item.getAttribute("draggable") === "false") return;
+
+    startX = e.clientX;
+    startY = e.clientY;
+    thresholdMet = false;
+    sourceEl = item;
+    isDragging = true;
+    currentPointerId = e.pointerId;
+
+    try {
+      item.setPointerCapture(e.pointerId);
+    } catch (_) {}
+  });
+
+  container.addEventListener("pointermove", (e) => {
+    if (!isDragging || !sourceEl) return;
+
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+
+    if (!thresholdMet) {
+      if (Math.abs(dx) < DRAG_THRESHOLD && Math.abs(dy) < DRAG_THRESHOLD) return;
+      thresholdMet = true;
+      ghost = createGhost(sourceEl);
+      sourceEl.style.opacity = "0.35";
+    }
+
+    e.preventDefault();
+    moveGhost(ghost, e.clientX, e.clientY);
+
+    // Highlight target drop di bawah koordinat penunjuk
+    const overEl = getItemAt(e.clientX, e.clientY, effectiveDropZone, effectiveDropSelector);
+    if (lastOverEl && lastOverEl !== overEl && dropOverClass) {
+      lastOverEl.classList.remove(dropOverClass);
+    }
+    if (overEl && overEl !== sourceEl && dropOverClass) {
+      overEl.classList.add(dropOverClass);
+    }
+    lastOverEl = overEl;
+  });
+
+  container.addEventListener("pointerup", (e) => {
+    if (!isDragging || !sourceEl) return;
+
+    if (thresholdMet) {
+      justDragged = true;
+      setTimeout(() => { justDragged = false; }, 200);
+
+      const dropEl = getItemAt(e.clientX, e.clientY, effectiveDropZone, effectiveDropSelector);
+      const draggedSource = sourceEl;
+      cleanup();
+
+      if (dropEl && dropEl !== draggedSource && onDrop) {
+        onDrop(draggedSource, dropEl);
+      }
+    } else {
+      cleanup();
+    }
+  });
+
+  container.addEventListener("pointercancel", () => {
+    cleanup();
+  });
+}
+
 /* ==========================================================================
    INISIALISASI SEMUA INTERAKSI
    ========================================================================== */
@@ -104,6 +253,9 @@ function initOrbitCanvas() {
   canvas.height = logicalSize * dpr;
   ctx.scale(dpr, dpr);
 
+  let rafId = null;
+  let isIntersecting = true;
+
   function renderOrbit() {
     ctx.clearRect(0, 0, logicalSize, logicalSize);
 
@@ -125,7 +277,7 @@ function initOrbitCanvas() {
       ctx.arc(center, center, radius, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Hitung posisi sudut
+      // Hitung posisi sudut (hanya jika sedang berputar/tidak dijeda)
       if (!isPaused) {
         angles[i] += (0.028 * speed) / (i + 1);
       }
@@ -147,10 +299,54 @@ function initOrbitCanvas() {
         ctx.stroke();
       }
     });
-
-    requestAnimationFrame(renderOrbit);
   }
+
+  function loop() {
+    renderOrbit();
+    rafId = requestAnimationFrame(loop);
+  }
+
+  const start = () => {
+    if (!rafId && !isPaused && isIntersecting && !document.hidden) {
+      rafId = requestAnimationFrame(loop);
+    }
+  };
+
+  const stop = () => {
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  };
+
+  // IntersectionObserver: Berhenti saat canvas berada di luar layar pengguna
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isIntersecting = entry.isIntersecting;
+        if (isIntersecting) {
+          start();
+        } else {
+          stop();
+        }
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(canvas);
+  }
+
+  // VisibilityChange: Berhenti saat tab browser disembunyikan/minimize
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      stop();
+    } else {
+      start();
+    }
+  });
+
+  // Render awal & inisialisasi loop jika terlihat
   renderOrbit();
+  start();
 
   if (speedInput) {
     speedInput.addEventListener("input", (e) => {
@@ -163,6 +359,12 @@ function initOrbitCanvas() {
       isPaused = !isPaused;
       pauseBtn.textContent = isPaused ? "▶ Lanjut" : "⏸ Jeda";
       SoundFX.playClick();
+      if (isPaused) {
+        stop();
+        renderOrbit(); // Render sekali lalu berhenti total dari siklus frame
+      } else {
+        start();
+      }
     });
   }
 
@@ -189,6 +391,11 @@ function initOrbitCanvas() {
         infoEl.innerHTML = `🪐 <b>${p.name}</b>: Jarak ${p.distanceAU} AU · Suhu rata-rata ${p.avgTemp}°C · Diameter ${p.diameterKm.toLocaleString("id")} km.<br><span class="text-muted">${p.fact}</span>`;
       }
       AppState.complete("orb", 10);
+
+      // Jika sedang jeda atau di luar layar, render sekali agar highlight baru segera terlihat
+      if (isPaused || !rafId) {
+        renderOrbit();
+      }
     }
   });
 }
@@ -323,14 +530,16 @@ function initOrder() {
   const feedbackEl = $("#order-feedback");
   if (!container || !checkBtn) return;
 
+  // Nonaktifkan scroll bawaan saat drag di layar sentuh
+  container.style.touchAction = "none";
+
   const CORRECT_ORDER = ["Venus", "Bumi", "Mars", "Jupiter", "Neptunus"];
   let currentOrder = ["Jupiter", "Venus", "Neptunus", "Bumi", "Mars"];
   let selectedIdx = -1;
-  let draggedIdx = null;
 
   function renderList() {
     container.innerHTML = currentOrder.map((name, idx) => `
-      <div class="order-item ${idx === selectedIdx ? "selected" : ""}" draggable="true" data-index="${idx}" tabindex="0" role="button">
+      <div class="order-item ${idx === selectedIdx ? "selected" : ""}" data-index="${idx}" tabindex="0" role="button">
         <span class="text-subtle">${idx + 1}.</span> <span>${name}</span>
       </div>
     `).join("");
@@ -345,20 +554,19 @@ function initOrder() {
     SoundFX.playClick();
   }
 
-  container.addEventListener("dragstart", (e) => {
-    const item = e.target.closest(".order-item");
-    if (item) draggedIdx = parseInt(item.dataset.index, 10);
-  });
-
-  container.addEventListener("dragover", (e) => e.preventDefault());
-
-  container.addEventListener("drop", (e) => {
-    const targetItem = e.target.closest(".order-item");
-    if (targetItem && draggedIdx !== null) {
-      swap(draggedIdx, parseInt(targetItem.dataset.index, 10));
+  // Pointer Events drag (desktop + layar sentuh)
+  makeDraggable({
+    container,
+    itemSelector: ".order-item",
+    dropOverClass: "drag-over",
+    onDrop(dragEl, dropEl) {
+      const fromIdx = parseInt(dragEl.dataset.index, 10);
+      const toIdx = parseInt(dropEl.dataset.index, 10);
+      swap(fromIdx, toIdx);
     }
   });
 
+  // Fallback tap-tap: ketuk dua item untuk menukar
   container.addEventListener("click", (e) => {
     const item = e.target.closest(".order-item");
     if (!item) return;
@@ -1290,19 +1498,22 @@ function initWordSearch() {
   renderGrid();
 }
 
-// #29 Pengulangan Berjarak (Leitner System)
+// #29 Pengulangan Berjarak (Sistem Leitner 4 Kotak)
 function initLeitner() {
   const container = $("#leitner-container");
   if (!container) return;
 
-  const STORAGE_KEY = "tsi-sr";
-  let srData = {};
-  try {
-    srData = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-  } catch (_) {}
+  // Baca data terpusat dan berversi melalui AppState
+  const leitnerState = AppState.getLeitnerData();
+  const srCards = (leitnerState && leitnerState.cards) ? leitnerState.cards : {};
+
+  // Interval jeda waktu untuk Sistem Leitner 4 Kotak:
+  // Kotak 1 = 1 hari, Kotak 2 = 3 hari, Kotak 3 = 7 hari, Kotak 4 = 14 hari
+  const BOX_INTERVALS_DAYS = [1, 3, 7, 14];
+  const MAX_BOX = BOX_INTERVALS_DAYS.length - 1; // Indeks 3 (Kotak 4)
 
   let queue = LEITNER_CARDS_DATA.map((_, i) => i).filter(
-    (i) => !srData[i] || srData[i].nextDue <= Date.now()
+    (i) => !srCards[i] || srCards[i].nextDue <= Date.now()
   );
   let reviewedSessionCount = 0;
 
@@ -1310,9 +1521,12 @@ function initLeitner() {
     const cardIdx = queue[0];
     if (cardIdx === undefined) {
       container.innerHTML = `
-        <p class="text-bold">✅ Selesai untuk sesi ini! (${reviewedSessionCount} kartu diulas).</p>
-        <p class="text-muted">Kartu yang diingat akan dijadwalkan ulang secara otomatis (1, 3, 7, atau 14 hari ke depan).</p>
-        <button id="leitner-reset-all">Latihan Ulang Semua Kartu</button>
+        <p class="text-bold" style="font-size:1.05rem;">✅ Selesai untuk sesi ini! (${reviewedSessionCount} kartu diulas).</p>
+        <p class="text-muted" style="margin:8px 0 14px;">
+          Sistem Leitner 4 kotak menjadwalkan ulang kartu berdasarkan kotak penguasaanmu:
+          <b>Kotak 1</b>: 1 hari · <b>Kotak 2</b>: 3 hari · <b>Kotak 3</b>: 7 hari · <b>Kotak 4</b>: 14 hari.
+        </p>
+        <button id="leitner-reset-all" class="btn-primary">↺ Latihan Ulang Semua Kartu Sekarang</button>
       `;
 
       $("#leitner-reset-all", container).addEventListener("click", () => {
@@ -1327,9 +1541,15 @@ function initLeitner() {
     }
 
     const card = LEITNER_CARDS_DATA[cardIdx];
+    const cardInfo = srCards[cardIdx];
+    const currentBox = cardInfo && typeof cardInfo.box === "number" ? cardInfo.box : 0;
+
     container.innerHTML = `
-      <p class="text-subtle">Tersisa ${queue.length} kartu di antrean</p>
-      <p class="text-bold" style="font-size:1.05rem;">${card.q}</p>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+        <span class="text-subtle">Tersisa ${queue.length} kartu di antrean</span>
+        <span class="tag-badge">📦 Kotak ${currentBox + 1} dari 4 (Jeda ${BOX_INTERVALS_DAYS[currentBox]} hari)</span>
+      </div>
+      <p class="text-bold" style="font-size:1.05rem; margin:8px 0;">${card.q}</p>
       <button id="leitner-show-ans-btn">👁 Tampilkan Jawaban</button>
       <div id="leitner-answer-box" style="margin-top:12px;"></div>
     `;
@@ -1338,10 +1558,13 @@ function initLeitner() {
       SoundFX.playClick();
       const ansBox = $("#leitner-answer-box", container);
       ansBox.innerHTML = `
-        <p class="text-bold" style="color:var(--primary); font-size:1.1rem;">${card.a}</p>
-        <div style="margin-top:10px;">
-          <button id="leitner-remember-btn" class="btn-primary">✅ Ingat</button>
-          <button id="leitner-forgot-btn">❌ Lupa</button>
+        <p class="text-bold" style="color:var(--primary); font-size:1.1rem; margin-bottom:6px;">${card.a}</p>
+        <p class="text-subtle" style="font-size:0.8rem; margin:6px 0 12px;">
+          Sistem Leitner 4 Kotak: Jika ingat, kartu naik ke <b>Kotak ${Math.min(4, currentBox + 2)}</b> (jeda ${BOX_INTERVALS_DAYS[Math.min(MAX_BOX, currentBox + 1)]} hari). Jika lupa, kartu kembali ke <b>Kotak 1</b> (diulang sesi ini).
+        </p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="leitner-remember-btn" class="btn-primary">✅ Ingat (+1 Kotak)</button>
+          <button id="leitner-forgot-btn">❌ Lupa (Kembali ke Kotak 1)</button>
         </div>
       `;
 
@@ -1351,16 +1574,20 @@ function initLeitner() {
   }
 
   function gradeCard(idx, isRemembered) {
-    const box = isRemembered ? Math.min(3, (srData[idx] ? srData[idx].box : -1) + 1) : 0;
-    const intervalsInDays = [1, 3, 7, 14];
-    srData[idx] = {
-      box,
-      nextDue: Date.now() + (isRemembered ? intervalsInDays[box] * 86400000 : 0)
+    const prevCard = srCards[idx];
+    const prevBox = prevCard && typeof prevCard.box === "number" ? prevCard.box : 0;
+
+    // Algoritma Leitner 4 Kotak:
+    // Ingat: naik ke kotak berikutnya sampai maksimal Kotak 4 (indeks 3).
+    // Lupa: reset kembali ke Kotak 1 (indeks 0).
+    const newBox = isRemembered ? Math.min(MAX_BOX, prevBox + 1) : 0;
+    srCards[idx] = {
+      box: newBox,
+      nextDue: Date.now() + (isRemembered ? BOX_INTERVALS_DAYS[newBox] * 86400000 : 0)
     };
 
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(srData));
-    } catch (_) {}
+    // Simpan melalui AppState dengan skema berversi
+    AppState.saveLeitnerData(srCards);
 
     reviewedSessionCount++;
     queue.shift();
@@ -1866,9 +2093,11 @@ function initSentenceDrag() {
   const feedbackEl = $("#drag-feedback");
   if (!textBox || !wordBank || !checkBtn) return;
 
+  // Nonaktifkan scroll bawaan saat drag di layar sentuh
+  wordBank.style.touchAction = "none";
+
   let filledWords = [null, null, null, null];
   let selectedWord = null;
-  let draggedWord = null;
 
   function render() {
     textBox.innerHTML = CLOZE_PARAGRAPH_DATA.template.map((part) => {
@@ -1881,7 +2110,7 @@ function initSentenceDrag() {
 
     const remainingWords = CLOZE_PARAGRAPH_DATA.wordBank.filter((w) => !filledWords.includes(w));
     wordBank.innerHTML = remainingWords.map((w) => `
-      <button class="word-pill ${w === selectedWord ? "is-selected" : ""}" draggable="true" data-word="${w}">${w}</button>
+      <button class="word-pill ${w === selectedWord ? "is-selected" : ""}" data-word="${w}">${w}</button>
     `).join("");
   }
 
@@ -1892,6 +2121,7 @@ function initSentenceDrag() {
     render();
   }
 
+  // Fallback tap-tap: ketuk kata, lalu ketuk slot
   wordBank.addEventListener("click", (e) => {
     const pill = e.target.closest(".word-pill");
     if (!pill) return;
@@ -1915,18 +2145,19 @@ function initSentenceDrag() {
     }
   });
 
-  wordBank.addEventListener("dragstart", (e) => {
-    const pill = e.target.closest(".word-pill");
-    if (pill) draggedWord = pill.dataset.word;
-  });
-
-  textBox.addEventListener("dragover", (e) => e.preventDefault());
-
-  textBox.addEventListener("drop", (e) => {
-    const slot = e.target.closest(".blank-slot");
-    if (slot && draggedWord) {
-      placeWord(parseInt(slot.dataset.slot, 10), draggedWord);
-      draggedWord = null;
+  // Pointer Events drag: seret kata dari bank ke slot (desktop + layar sentuh)
+  makeDraggable({
+    container: wordBank,
+    itemSelector: ".word-pill",
+    dropZone: textBox,
+    dropSelector: ".blank-slot",
+    dropOverClass: "drag-over",
+    onDrop(dragEl, dropEl) {
+      const word = dragEl.dataset.word;
+      const slotIdx = parseInt(dropEl.dataset.slot, 10);
+      if (word && !isNaN(slotIdx)) {
+        placeWord(slotIdx, word);
+      }
     }
   });
 
@@ -2203,9 +2434,11 @@ function initPairing() {
 
   if (!leftCol || !rightCol) return;
 
+  // Nonaktifkan scroll bawaan saat drag di layar sentuh
+  leftCol.style.touchAction = "none";
+
   let selectedLeftId = null;
   let matches = {};
-  let draggedLeftId = null;
 
   const shuffledRight = [...PAIRING_DATA].sort(() => Math.random() - 0.5);
 
@@ -2215,7 +2448,7 @@ function initPairing() {
       const isMatched = !!matches[item.id];
       return `
         <div class="pair-card ${isSelected ? "selected" : ""} ${isMatched ? "matched" : ""}" 
-             draggable="${!isMatched}" 
+             ${isMatched ? 'draggable="false"' : ''} 
              data-left-id="${item.id}" 
              tabindex="0" role="button">
           <span>${item.left}</span>
@@ -2242,6 +2475,7 @@ function initPairing() {
     }).join("");
   }
 
+  // Fallback tap-tap: ketuk kiri lalu ketuk kanan untuk pasangkan
   leftCol.addEventListener("click", (e) => {
     const card = e.target.closest(".pair-card");
     if (!card) return;
@@ -2274,39 +2508,25 @@ function initPairing() {
     }
   });
 
-  leftCol.addEventListener("dragstart", (e) => {
-    const card = e.target.closest(".pair-card");
-    if (card) {
-      draggedLeftId = card.dataset.leftId;
-      card.classList.add("selected");
-    }
-  });
-
-  rightCol.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    const card = e.target.closest(".pair-card");
-    if (card) card.classList.add("drag-over");
-  });
-
-  rightCol.addEventListener("dragleave", (e) => {
-    const card = e.target.closest(".pair-card");
-    if (card) card.classList.remove("drag-over");
-  });
-
-  rightCol.addEventListener("drop", (e) => {
-    e.preventDefault();
-    const card = e.target.closest(".pair-card");
-    if (card && draggedLeftId) {
-      card.classList.remove("drag-over");
-      const rightId = card.dataset.rightId;
-      Object.keys(matches).forEach((k) => {
-        if (matches[k] === rightId) delete matches[k];
-      });
-      matches[draggedLeftId] = rightId;
-      draggedLeftId = null;
-      selectedLeftId = null;
-      SoundFX.playSuccess();
-      render();
+  // Pointer Events drag: seret kartu kiri ke kartu kanan (desktop + layar sentuh)
+  makeDraggable({
+    container: leftCol,
+    itemSelector: ".pair-card",
+    dropZone: rightCol,
+    dropSelector: ".pair-card",
+    dropOverClass: "drag-over",
+    onDrop(dragEl, dropEl) {
+      const leftId = dragEl.dataset.leftId;
+      const rightId = dropEl.dataset.rightId;
+      if (leftId && rightId) {
+        Object.keys(matches).forEach((k) => {
+          if (matches[k] === rightId) delete matches[k];
+        });
+        matches[leftId] = rightId;
+        selectedLeftId = null;
+        SoundFX.playSuccess();
+        render();
+      }
     }
   });
 
@@ -2517,7 +2737,7 @@ function initNumericEntry() {
   let currentIdx = 0;
   let correctCount = 0;
 
-  function render() {
+  function render(shouldFocus = false) {
     if (currentIdx >= NUMERIC_ENTRY_DATA.length) {
       promptEl.innerHTML = `<b>🎉 Selesai! Kamu menjawab benar ${correctCount}/${NUMERIC_ENTRY_DATA.length} pertanyaan angka presisi.</b>`;
       inputEl.style.display = "none";
@@ -2530,7 +2750,7 @@ function initNumericEntry() {
         unitEl.style.display = "";
         checkBtn.textContent = "Periksa Angka";
         checkBtn.onclick = handleCheck;
-        render();
+        render(true);
       };
       if (correctCount >= 3) {
         AppState.complete("numentry", 10);
@@ -2543,7 +2763,9 @@ function initNumericEntry() {
     promptEl.innerHTML = item.q;
     unitEl.textContent = item.unit;
     inputEl.value = "";
-    inputEl.focus();
+    if (shouldFocus) {
+      inputEl.focus({ preventScroll: true });
+    }
     feedbackEl.style.display = "none";
   }
 
@@ -2569,7 +2791,7 @@ function initNumericEntry() {
     );
 
     currentIdx++;
-    setTimeout(render, 2200);
+    setTimeout(() => render(true), 2200);
   }
 
   checkBtn.onclick = handleCheck;
@@ -2577,7 +2799,7 @@ function initNumericEntry() {
     if (e.key === "Enter") handleCheck();
   });
 
-  render();
+  render(false);
 }
 
 // #40 Toggle Lapisan Bumi & Atmosfer 3D (layer_toggle)
@@ -3674,28 +3896,33 @@ function initAltitudeParallax() {
   const stage = $("#parallax-objects-stage");
   const quickNav = $("#altitude-quick-nav");
   const infoBox = $("#altitude-object-info");
+  const rulerPointer = $("#ruler-pointer");
+  const pointerAltVal = $("#pointer-alt-val");
+  const rulerTrack = $(".ruler-track", viewport);
 
   if (!viewport || !slider || !stage) return;
 
   const data = PARALLAX_ALTITUDE_DATA;
   let currentAltKm = 0;
+  let selectedObjName = null;
   const visitedLayers = new Set();
 
   const QUICK_JUMPS = [
     { km: 0, label: "🌍 0 m (Bumi)" },
-    { km: 11, label: "✈️ 11 km (Pesawat)" },
+    { km: 11, label: "✈️ 11 km (Pesawat Jet)" },
     { km: 25, label: "🛡️ 25 km (Ozon)" },
     { km: 38, label: "🎈 38 km (Balon Cuaca)" },
     { km: 75, label: "☄️ 75 km (Meteor)" },
     { km: 100, label: "🌐 100 km (Kármán)" },
     { km: 140, label: "🌌 140 km (Aurora)" },
-    { km: 408, label: "🛰️ 408 km (ISS)" }
+    { km: 408, label: "🛰️ 408 km (ISS)" },
+    { km: 500, label: "🔭 500 km (Hubble)" }
   ];
 
   function renderQuickNav() {
     if (!quickNav) return;
     quickNav.innerHTML = QUICK_JUMPS.map((j) => `
-      <button class="btn-layer-preset btn-altitude-jump" data-km="${j.km}">${j.label}</button>
+      <button class="btn-altitude-jump" data-km="${j.km}">${j.label}</button>
     `).join("");
   }
 
@@ -3706,8 +3933,74 @@ function initAltitudeParallax() {
     return data.layers[3];
   }
 
+  // Pemetaan non-linear proporsional agar tiap lapisan memiliki ruang gerak seimbang
+  function getVirtualY(km) {
+    if (km <= 0) return 0;
+    if (km <= 12) {
+      return (km / 12) * 380;
+    }
+    if (km <= 50) {
+      return 380 + ((km - 12) / 38) * 360;
+    }
+    if (km <= 85) {
+      return 740 + ((km - 50) / 35) * 340;
+    }
+    if (km <= 100) {
+      return 1080 + ((km - 85) / 15) * 80;
+    }
+    if (km <= 140) {
+      return 1160 + ((km - 100) / 40) * 90;
+    }
+    return 1250 + (Math.min(km, 500) - 140) / (500 - 140) * 350;
+  }
+
+  function formatAltitude(meters) {
+    if (meters < 1000) return `${meters} Meter`;
+    const km = meters / 1000;
+    return `${km.toLocaleString("id-ID")} km (${meters.toLocaleString("id-ID")} m)`;
+  }
+
+  function getTemperature(km) {
+    if (km <= 12) return `${Math.round(15 - (km / 12) * 70)} °C`;
+    if (km <= 50) return `${Math.round(-55 + ((km - 12) / 38) * 55)} °C`;
+    if (km <= 85) return `${Math.round(0 - ((km - 50) / 35) * 90)} °C`;
+    return `+${Math.min(1500, Math.round(100 + ((km - 85) / 415) * 1400))} °C`;
+  }
+
+  function displayObjectInfo(obj) {
+    if (!infoBox || !obj) return;
+    const objKm = obj.alt / 1000;
+    const layer = getActiveLayer(objKm);
+
+    infoBox.hidden = false;
+    infoBox.className = "layer-info-card is-active-info";
+    infoBox.innerHTML = `
+      <div class="info-card-header">
+        <div class="info-card-title-group">
+          <span class="info-card-icon">${obj.icon}</span>
+          <div>
+            <h3 class="info-card-name">${obj.name}</h3>
+            <span class="info-card-sub">${obj.subtitle || `Ketinggian ${formatAltitude(obj.alt)}`}</span>
+          </div>
+        </div>
+        <div class="info-card-tags">
+          <span class="status-badge" style="background:var(--primary-light); color:var(--primary); font-weight:700;">
+            📏 ${formatAltitude(obj.alt)}
+          </span>
+          <span class="status-badge" style="background:var(--bg-card); border:1px solid var(--border-light);">
+            🏷️ Lapisan ${layer.name}
+          </span>
+          <span class="status-badge" style="background:var(--bg-card); border:1px solid var(--border-light);">
+            🌡️ Suhu: ${getTemperature(objKm)}
+          </span>
+        </div>
+      </div>
+      <p class="info-card-desc">${obj.desc}</p>
+    `;
+  }
+
   function updateAltitude(km) {
-    currentAltKm = Math.max(0, Math.min(420, km));
+    currentAltKm = Math.max(0, Math.min(500, km));
     slider.value = currentAltKm;
 
     const layer = getActiveLayer(currentAltKm);
@@ -3724,22 +4017,26 @@ function initAltitudeParallax() {
       }
     }
     if (hudLayer) hudLayer.textContent = layer.name;
-    if (hudTemp) {
-      let temp = "+15 °C";
-      if (currentAltKm <= 12) temp = `${Math.round(15 - (currentAltKm / 12) * 70)} °C`;
-      else if (currentAltKm <= 50) temp = `${Math.round(-55 + ((currentAltKm - 12) / 38) * 55)} °C`;
-      else if (currentAltKm <= 85) temp = `${Math.round(0 - ((currentAltKm - 50) / 35) * 90)} °C`;
-      else temp = `+${Math.min(1500, Math.round(100 + ((currentAltKm - 85) / 335) * 1400))} °C`;
-      hudTemp.textContent = temp;
-    }
+    if (hudTemp) hudTemp.textContent = getTemperature(currentAltKm);
 
     if (skyBg) {
       skyBg.style.background = layer.skyColor;
     }
 
     if (stars) {
-      const starOpacity = Math.min(1, Math.max(0.1, currentAltKm / 80));
+      const starOpacity = Math.min(1, Math.max(0.08, currentAltKm / 85));
       stars.style.opacity = starOpacity.toFixed(2);
+    }
+
+    // Perbarui penunjuk ruler ketinggian
+    if (rulerPointer) {
+      const maxVirtual = getVirtualY(500);
+      const currVirtual = getVirtualY(currentAltKm);
+      const pct = Math.max(0, Math.min(100, (currVirtual / maxVirtual) * 100));
+      rulerPointer.style.bottom = `${pct.toFixed(1)}%`;
+      if (pointerAltVal) {
+        pointerAltVal.textContent = currentAltKm < 1 ? `${Math.round(currentAltKm * 1000)}m` : `${Math.round(currentAltKm)}km`;
+      }
     }
 
     renderFloatingObjects();
@@ -3753,58 +4050,124 @@ function initAltitudeParallax() {
       });
     });
 
-    const viewportH = 340;
+    const camV = getVirtualY(currentAltKm);
+    const viewportH = 380;
+    // Transisi dinamis dari kamera darat (310px) ke kamera melayang bebas (190px)
+    const anchorY = 190 + (120 * Math.max(0, 1 - currentAltKm / 12));
+
+    // Cari objek terdekat dengan posisi kamera saat ini
+    let nearestObj = null;
+    let minDelta = Infinity;
+
+    allObjects.forEach((obj) => {
+      const objKm = obj.alt / 1000;
+      const vy = getVirtualY(objKm);
+      const delta = Math.abs(vy - camV);
+      if (delta < minDelta) {
+        minDelta = delta;
+        nearestObj = obj;
+      }
+    });
+
     stage.innerHTML = allObjects.map((obj) => {
       const objKm = obj.alt / 1000;
-      const deltaKm = objKm - currentAltKm;
-      const yPos = 170 - (deltaKm * 7);
+      const vy = getVirtualY(objKm);
+      const yPos = anchorY - (vy - camV);
 
-      if (yPos < -50 || yPos > viewportH + 50) return "";
+      // Sembunyikan objek yang jauh di luar layar
+      if (yPos < -60 || yPos > viewportH + 70) return "";
 
-      const opacity = Math.max(0.2, 1 - Math.abs(deltaKm) / 35);
-      const isCurrentTarget = Math.abs(deltaKm) < 5;
+      const deltaV = Math.abs(vy - camV);
+      const opacity = Math.max(0.35, 1 - (deltaV / 360));
+      const isTarget = (selectedObjName ? obj.name === selectedObjName : obj === nearestObj && deltaV < 75);
+
+      if (obj.isBanner) {
+        let bannerClass = "banner-ground";
+        let bannerIcon = obj.icon;
+        let bannerText = obj.name;
+        if (obj.alt === 25000) bannerClass = "banner-ozone";
+        else if (obj.alt === 100000) bannerClass = "banner-karman";
+        else if (obj.alt === 140000) bannerClass = "banner-aurora";
+
+        return `
+          <div class="parallax-boundary-banner ${bannerClass}" 
+               style="top:${yPos.toFixed(1)}px; opacity:${opacity.toFixed(2)};" 
+               data-obj-name="${obj.name}" role="button" tabindex="0">
+            <div class="boundary-pill">
+              <span>${bannerIcon}</span>
+              <span>${bannerText} (${formatAltitude(obj.alt)})</span>
+            </div>
+          </div>
+        `;
+      }
 
       return `
-        <div class="parallax-floating-obj" style="top:${yPos.toFixed(1)}px; left:50%; transform:translate(-50%, -50%); opacity:${opacity.toFixed(2)}; ${isCurrentTarget ? "border-color:#38bdf8; box-shadow:0 0 14px rgba(56,189,248,0.6);" : ""}" data-obj-name="${obj.name}" data-obj-desc="${obj.desc}" data-obj-alt="${obj.alt}">
-          <span class="obj-icon">${obj.icon}</span>
-          <div>
-            <b>${obj.name}</b>
-            <span style="font-size:0.75rem; color:#94a3b8; margin-left:6px;">(${obj.alt >= 1000 ? (obj.alt/1000) + " km" : obj.alt + " m"})</span>
+        <div class="parallax-obj-card track-${obj.track || 'left'} ${isTarget ? 'is-active-target' : ''}" 
+             style="top:${yPos.toFixed(1)}px; opacity:${opacity.toFixed(2)};" 
+             data-obj-name="${obj.name}" 
+             role="button" tabindex="0">
+          <span class="obj-avatar">${obj.icon}</span>
+          <div class="obj-body">
+            <span class="obj-title">${obj.name}</span>
+            <span class="obj-alt-badge">${formatAltitude(obj.alt)}</span>
           </div>
         </div>
       `;
     }).join("");
 
-    stage.querySelectorAll(".parallax-floating-obj").forEach((el) => {
-      el.addEventListener("click", () => {
-        const name = el.dataset.objName;
-        const desc = el.dataset.objDesc;
-        const alt = el.dataset.objAlt;
-        if (!infoBox) return;
+    // Perbarui info panel jika objek terdekat terdeteksi
+    if (nearestObj && (!selectedObjName || minDelta < 25)) {
+      displayObjectInfo(nearestObj);
+    }
 
+    // Pasang listener klik pada kartu objek dan banner
+    stage.querySelectorAll("[data-obj-name]").forEach((el) => {
+      const handleClick = () => {
+        const name = el.dataset.objName;
+        const target = allObjects.find((o) => o.name === name);
+        if (!target) return;
+
+        selectedObjName = name;
         SoundFX.playClick();
-        infoBox.hidden = false;
-        infoBox.innerHTML = `
-          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-            <b style="color:var(--primary); font-size:1.1rem;">${name}</b>
-            <span class="status-badge" style="background:var(--primary-light); color:var(--primary);">
-              Ketinggian: ${alt >= 1000 ? (alt/1000) + " km" : alt + " m"}
-            </span>
-          </div>
-          <p style="margin:8px 0 0;">${desc}</p>
-        `;
+        displayObjectInfo(target);
+        stage.querySelectorAll(".is-active-target").forEach((c) => c.classList.remove("is-active-target"));
+        el.classList.add("is-active-target");
+      };
+
+      el.addEventListener("click", handleClick);
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleClick();
+        }
       });
     });
   }
 
   slider.addEventListener("input", (e) => {
+    selectedObjName = null;
     updateAltitude(parseFloat(e.target.value));
   });
 
   viewport.addEventListener("wheel", (e) => {
+    // Gulir halus adaptif per lapisan
+    let step = 1;
+    if (currentAltKm <= 12) step = 0.8;
+    else if (currentAltKm <= 50) step = 2.5;
+    else if (currentAltKm <= 85) step = 4;
+    else step = 12;
+
+    const delta = e.deltaY > 0 ? step : -step;
+    const nextAlt = Math.max(0, Math.min(500, currentAltKm + delta));
+
+    // Jangan cegah scroll halaman bila sudah di batas ekstrem
+    if ((currentAltKm === 0 && e.deltaY < 0) || (currentAltKm === 500 && e.deltaY > 0)) {
+      return;
+    }
+
     e.preventDefault();
-    const delta = e.deltaY > 0 ? 5 : -5;
-    updateAltitude(currentAltKm + delta);
+    selectedObjName = null;
+    updateAltitude(nextAlt);
   }, { passive: false });
 
   if (quickNav) {
@@ -3812,6 +4175,18 @@ function initAltitudeParallax() {
       const btn = e.target.closest(".btn-altitude-jump");
       if (!btn) return;
       const km = parseFloat(btn.dataset.km);
+      selectedObjName = null;
+      SoundFX.playClick();
+      updateAltitude(km);
+    });
+  }
+
+  if (rulerTrack) {
+    rulerTrack.addEventListener("click", (e) => {
+      const seg = e.target.closest(".ruler-seg");
+      if (!seg) return;
+      const km = parseFloat(seg.dataset.km);
+      selectedObjName = null;
       SoundFX.playClick();
       updateAltitude(km);
     });

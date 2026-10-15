@@ -839,10 +839,10 @@ const PARALLAX_ALTITUDE_DATA = {
       skyColor: "linear-gradient(to top, #60a5fa 0%, #2563eb 60%, #1d4ed8 100%)",
       desc: "Lapisan terbawah tempat manusia hidup dan tempat 99% uap air berkumpul. Seluruh fenomena cuaca (hujan, petir, awan, angin) terjadi di sini.",
       objects: [
-        { alt: 0, name: "Permukaan Daratan & Samudra", icon: "🏞️", desc: "Ketinggian 0 meter: Habitat kehidupan biosfer Bumi." },
-        { alt: 2500, name: "Elang Melayang & Awan Kumulus", icon: "🦅", desc: "Ketinggian 2.500 m: Burung pemangsa memanfaatkan arus udara panas vertikal." },
-        { alt: 8849, name: "Puncak Gunung Everest", icon: "🏔️", desc: "Ketinggian 8.849 m: Titik daratan tertinggi di Bumi. Tekanan udara hanya 33% dari permukaan laut!" },
-        { alt: 11000, name: "Pesawat Jet Komersial (Arus Jet)", icon: "✈️", desc: "Ketinggian 11.000 m: Zona jelajah jelajah pesawat Boeing/Airbus untuk efisiensi bahan bakar dan menghindari turbulensi cuaca." }
+        { alt: 0, name: "Permukaan Daratan & Samudra", icon: "🏞️", track: "center", isBanner: true, subtitle: "Ketinggian 0 m (Permukaan Laut)", desc: "Habitat utama kehidupan manusia dan biosfer Bumi. Tekanan udara standar 1 atmosfer (1.013 mb) dengan 78% Nitrogen dan 21% Oksigen." },
+        { alt: 2500, name: "Elang Melayang & Awan Kumulus", icon: "🦅", track: "left", subtitle: "Ketinggian 2.500 m", desc: "Awan kumulus putih bergumpal terbentuk dari kondensasi uap air. Burung pemangsa memanfaatkan arus udara panas vertikal (termal) untuk melayang hemat energi." },
+        { alt: 8849, name: "Puncak Gunung Everest", icon: "🏔️", track: "right", subtitle: "Ketinggian 8.849 m", desc: "Titik daratan tertinggi di muka Bumi yang menembus Zona Kematian (Death Zone). Tekanan udara dan kadar molekul oksigen di sini hanya 33% dibanding permukaan laut!" },
+        { alt: 11000, name: "Pesawat Jet Komersial (Arus Jet)", icon: "✈️", track: "left", subtitle: "Ketinggian 11.000 m (11 km)", desc: "Zona jelajah jelajah pesawat Boeing/Airbus untuk efisiensi bahan bakar dan menghindari turbulensi cuaca. Terbang berdampingan dengan arus angin kencang Arus Jet (Jet Stream)." }
       ]
     },
     {
@@ -853,9 +853,9 @@ const PARALLAX_ALTITUDE_DATA = {
       skyColor: "linear-gradient(to top, #1d4ed8 0%, #1e3a8a 60%, #312e81 100%)",
       desc: "Lapisan tenang tanpa turbulensi awan. Suhu justru NAIK seiring bertambahnya ketinggian karena molekul ozon menyerap radiasi ultraviolet Matahari.",
       objects: [
-        { alt: 25000, name: "Lapisan Ozon Pelindung (O₃)", icon: "🛡️", desc: "Ketinggian 25.000 m: Perisai gas ozon yang menyerap 98% radiasi UV-B & UV-C berbahaya dari Matahari." },
-        { alt: 38000, name: "Balon Cuaca Ilmiah", icon: "🎈", desc: "Ketinggian 38.000 m: Balon stratosfer pembawa instrumen meteorologi dan rekor lompatan parasut supersonik." },
-        { alt: 45000, name: "Pesawat Pengintai Ketinggian Ekstrem (SR-71)", icon: "🚀", desc: "Ketinggian 45.000 m: Batas aerodinamika pesawat bermesin jet sebelum udara terlalu tipis untuk menghasilkan gaya angkat." }
+        { alt: 25000, name: "Lapisan Ozon Pelindung (O₃)", icon: "🛡️", track: "center", isBanner: true, subtitle: "Ketinggian 25 km (25.000 m)", desc: "Perisai gas molekul ozon alami yang menyerap lebih dari 98% radiasi ultraviolet berbahaya (UV-B & UV-C) dari Matahari demi melindungi DNA makhluk hidup di Bumi." },
+        { alt: 38000, name: "Balon Cuaca Ilmiah", icon: "🎈", track: "right", subtitle: "Ketinggian 38 km (38.000 m)", desc: "Balon stratosfer pembawa radiosonde untuk mengukur suhu dan angin stratosfer. Di tekanan rendah ini, balon mengembang hingga seukuran gedung sebelum pecah." },
+        { alt: 45000, name: "Pesawat Pengintai SR-71 Blackbird", icon: "🚀", track: "left", subtitle: "Ketinggian 45 km (45.000 m)", desc: "Pesawat supersonik Mach 3+ tercepat dalam sejarah. Terbang di tepian stratosfer di mana langit mulai tampak hitam pekat dan lengkungan horizon Bumi terlihat jelas." }
       ]
     },
     {
@@ -866,8 +866,8 @@ const PARALLAX_ALTITUDE_DATA = {
       skyColor: "linear-gradient(to top, #312e81 0%, #1e1b4b 60%, #0f172a 100%)",
       desc: "Lapisan paling dingin di seluruh atmosfer Bumi (-90 °C). Meskipun udaranya sangat tipis, kerapatannya cukup untuk membakar meteoroid yang melesat kencang.",
       objects: [
-        { alt: 75000, name: "Meteoroid Terbakar ('Bintang Jatuh')", icon: "☄️", desc: "Ketinggian 75.000 m: Debu dan batu luar angkasa berkecepatan puluhan km/detik terkompresi dan terbakar menjadi kilatan cahaya meteor." },
-        { alt: 82000, name: "Awan Noktilusen (Awan Kristal Es Perak)", icon: "✨", desc: "Ketinggian 82.000 m: Awan tertinggi di atmosfer Bumi, berpendar lembut di batas kegelapan malam hari." }
+        { alt: 75000, name: "Meteoroid Terbakar ('Bintang Jatuh')", icon: "☄️", track: "right", subtitle: "Ketinggian 75 km (75.000 m)", desc: "Batuan dan debu kosmik berkecepatan 11–72 km/detik mengalami gesekan kompresi udara mesosfer yang dahsyat hingga memijar terang menjadi kilatan meteor." },
+        { alt: 82000, name: "Awan Noktilusen (Awan Kristal Es)", icon: "✨", track: "left", subtitle: "Ketinggian 82 km (82.000 m)", desc: "Awan tertinggi di atmosfer Bumi, tersusun dari kristal es mikroskopis yang menyala perak lembut karena masih disinari matahari saat daratan di bawah sudah malam." }
       ]
     },
     {
@@ -876,12 +876,12 @@ const PARALLAX_ALTITUDE_DATA = {
       range: "85 – 600 km",
       tempRange: "-90 °C s/d +1.500 °C",
       skyColor: "linear-gradient(to top, #0f172a 0%, #020617 70%, #000000 100%)",
-      desc: "Molekul gas terpapar langsung sinar-X dan UV ekstrem Matahari sehingga suhunya mencapai 1.500 °C, namun karena kerapatannya nyaris hampa, kamu tidak akan merasakan panas!",
+      desc: "Molekul gas terpapar langsung sinar-X dan UV ekstrem Matahari sehingga suhunya mencapai 1.500 °C, namun karena kerapatannya nyaris hampa, tubuh tidak akan terbakar panas.",
       objects: [
-        { alt: 100000, name: "Garis Kármán (Batas Resmi Antariksa)", icon: "🌐", desc: "Ketinggian 100 km (100.000 m): Batas pemisah resmi internasional antara atmosfer Bumi dan Ruang Angkasa (Outer Space)." },
-        { alt: 140000, name: "Tirai Cahaya Aurora Borealis", icon: "🌌", desc: "Ketinggian 140 km: Partikel angin matahari bertubrukan dengan atom oksigen (bercahaya hijau) dan nitrogen (merah/ungu)." },
-        { alt: 408000, name: "Stasiun Luar Angkasa Internasional (ISS)", icon: "🛰️", desc: "Ketinggian 408 km: Laboratorium orbit berawak mengelilingi Bumi tiap 90 menit dengan kecepatan 27.600 km/jam!" },
-        { alt: 540000, name: "Teleskop Luar Angkasa Hubble", icon: "🔭", desc: "Ketinggian 540 km: Mengorbit di atas distorsi atmosfer untuk memotret galaksi-galaksi purba berjarak miliaran tahun cahaya." }
+        { alt: 100000, name: "Garis Kármán (Batas Resmi Antariksa)", icon: "🌐", track: "center", isBanner: true, subtitle: "Ketinggian 100 km (Batas Luar Angkasa)", desc: "Batas pemisah resmi internasional (FAI) antara atmosfer Bumi dan Ruang Angkasa (Outer Space). Di atas garis ini, pesawat butuh kecepatan orbit agar tidak jatuh." },
+        { alt: 140000, name: "Tirai Cahaya Aurora Borealis", icon: "🌌", track: "center", isBanner: true, subtitle: "Ketinggian 140 km", desc: "Tarian tirai cahaya kosmik spektakuler akibat partikel angin matahari bertubrukan dengan atom oksigen (berpendar hijau) dan nitrogen (merah/ungu)." },
+        { alt: 408000, name: "Stasiun Luar Angkasa Internasional (ISS)", icon: "🛰️", track: "right", subtitle: "Ketinggian 408 km (Orbit Rendah Bumi)", desc: "Laboratorium antariksa berawak berukuran sebesar lapangan sepak bola. Mengorbit Bumi dengan kecepatan 27.600 km/jam, mengitari Bumi tiap 90 menit (16 kali matahari terbit tiap hari!)." },
+        { alt: 500000, name: "Teleskop Luar Angkasa Hubble", icon: "🔭", track: "left", subtitle: "Ketinggian 500 km", desc: "Observatorium ruang angkasa legendaris yang mengorbit di luar distorsi atmosfer Bumi untuk memotret objek-objek terjauh di alam semesta." }
       ]
     }
   ]

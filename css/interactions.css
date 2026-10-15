@@ -178,6 +178,7 @@
   font-weight: 600;
   transition: all var(--transition-fast);
   user-select: none;
+  touch-action: none;
 }
 
 .order-item:active {
@@ -188,6 +189,12 @@
   border-color: var(--primary);
   background-color: var(--primary-light);
   color: var(--primary);
+}
+
+.order-item.drag-over {
+  border-color: var(--accent);
+  background-color: var(--primary-light);
+  transform: scale(1.02);
 }
 
 /* #9 Hotspot SVG */
@@ -620,11 +627,18 @@
   font-weight: 600;
   color: var(--primary);
   vertical-align: middle;
+  transition: all var(--transition-fast);
 }
 
 .blank-slot.is-filled {
   border: 2px solid var(--primary);
   background: var(--primary-light);
+}
+
+.blank-slot.drag-over {
+  border: 2px solid var(--accent);
+  background: var(--primary-light);
+  transform: scale(1.06);
 }
 
 .word-bank {
@@ -641,6 +655,9 @@
   border-radius: var(--radius-md);
   border: 1px solid var(--border-light);
   background: var(--bg-card-subtle);
+  user-select: none;
+  touch-action: none;
+  transition: all var(--transition-fast);
 }
 
 .word-pill:active {
@@ -778,6 +795,7 @@
   font-weight: 600;
   cursor: grab;
   user-select: none;
+  touch-action: none;
   transition: all var(--transition-fast);
   display: flex;
   align-items: center;
@@ -1567,9 +1585,10 @@
 }
 
 /* #44 Penjelajahan Ketinggian Atmosfer Parallaks (Parallax Altitude) */
+/* #44 Penjelajahan Ketinggian Atmosfer Parallaks (Parallax Altitude) */
 .parallax-altitude-viewport {
   width: 100%;
-  height: 440px;
+  height: 460px;
   position: relative;
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-light);
@@ -1608,19 +1627,20 @@
   top: 10px;
   left: 10px;
   right: 10px;
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(15, 23, 42, 0.88);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: var(--radius-md);
-  padding: 8px 12px;
+  padding: 8px 16px;
   color: #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px;
-  z-index: 20;
+  gap: 8px;
+  z-index: 30;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
 .parallax-hud-item {
@@ -1633,24 +1653,120 @@
   display: block;
 }
 
+/* Pengukur Ketinggian Vertikal (Ruler) */
+.parallax-altitude-ruler {
+  position: absolute;
+  left: 10px;
+  top: 68px;
+  bottom: 12px;
+  width: 52px;
+  z-index: 25;
+  display: flex;
+  user-select: none;
+}
+
+.ruler-track {
+  width: 8px;
+  height: 100%;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: visible;
+}
+
+.ruler-seg {
+  position: relative;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.ruler-seg:hover {
+  filter: brightness(1.3);
+}
+
+.ruler-seg.seg-thermo { flex: 1.4; background: #020617; border-top-left-radius: 4px; border-top-right-radius: 4px; }
+.ruler-seg.seg-meso   { flex: 1.0; background: #4338ca; }
+.ruler-seg.seg-strato { flex: 1.1; background: #2563eb; }
+.ruler-seg.seg-tropo  { flex: 1.2; background: #38bdf8; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; }
+
+.ruler-lbl {
+  position: absolute;
+  left: 14px;
+  top: -6px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.75);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.ruler-lbl.top { top: 0; }
+.ruler-lbl.btm { top: auto; bottom: 0; }
+
+.ruler-pointer {
+  position: absolute;
+  left: 2px;
+  transform: translateY(50%);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  z-index: 35;
+  transition: bottom 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+  pointer-events: none;
+}
+
+.pointer-caret {
+  font-size: 0.625rem;
+  color: #38bdf8;
+  filter: drop-shadow(0 0 3px #38bdf8);
+}
+
+.pointer-value {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  background: #0284c7;
+  color: #ffffff;
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Navigasi Cepat & Slider */
 .parallax-quick-nav {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 10px;
+  margin: 10px 0;
 }
 
 .btn-altitude-jump {
   font-size: 0.75rem;
-  padding: 4px 10px;
+  font-weight: 600;
+  padding: 5px 12px;
   border-radius: var(--radius-full);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  color: var(--tx-main);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-altitude-jump:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
 }
 
 .parallax-slider-container {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 10px 0;
+  margin: 10px 0 14px;
 }
 
 .parallax-slider {
@@ -1661,40 +1777,258 @@
   cursor: pointer;
 }
 
+/* Panggung Objek Parallaks (Stage) */
 .parallax-objects-stage {
   position: absolute;
-  top: 60px;
+  top: 65px;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: 65px;
+  right: 15px;
   overflow: hidden;
+  pointer-events: none;
 }
 
-.parallax-floating-obj {
+/* Kartu Objek Parallaks Melayang (Bebas Penumpukan) */
+.parallax-obj-card {
   position: absolute;
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-md);
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.2s ease, box-shadow 0.2s ease, opacity 0.25s ease;
+  user-select: none;
+  max-width: 250px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  z-index: 20;
+}
+
+.parallax-obj-card:hover {
+  border-color: #38bdf8;
+  transform: translate(-50%, -50%) scale(1.06);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.5);
+  z-index: 28;
+}
+
+.parallax-obj-card.track-left {
+  left: 28%;
+  transform: translate(-50%, -50%);
+}
+
+.parallax-obj-card.track-right {
+  left: 72%;
+  transform: translate(-50%, -50%);
+}
+
+.parallax-obj-card.track-center {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.parallax-obj-card.is-active-target {
+  border-color: #38bdf8;
+  background: rgba(14, 116, 144, 0.95);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.8), 0 0 0 2px #38bdf8;
+  transform: translate(-50%, -50%) scale(1.08);
+  z-index: 26;
+}
+
+.parallax-obj-card .obj-avatar {
+  font-size: 1.6rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.parallax-obj-card .obj-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.parallax-obj-card .obj-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.parallax-obj-card .obj-alt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.parallax-obj-card .obj-alt-badge::after {
+  content: "• Klik detail ℹ️";
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+/* Banner Fenomena Atmosfer Horisontal (Garis Kármán, Ozon, Aurora, Daratan) */
+.parallax-boundary-banner {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 520px;
+  pointer-events: all;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.parallax-boundary-banner:hover {
+  transform: translate(-50%, -50%) scale(1.03);
+}
+
+.boundary-pill {
+  padding: 6px 18px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-full);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+.banner-karman .boundary-pill {
+  background: rgba(14, 165, 233, 0.88);
+  border: 1.5px solid #38bdf8;
   color: #ffffff;
-  cursor: pointer;
-  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.2s ease;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.7);
+}
+
+.banner-ozone .boundary-pill {
+  background: rgba(99, 102, 241, 0.85);
+  border: 1.5px solid #818cf8;
+  color: #ffffff;
+}
+
+.banner-aurora .boundary-pill {
+  background: rgba(16, 185, 129, 0.85);
+  border: 1.5px solid #34d399;
+  color: #ffffff;
+  box-shadow: 0 0 18px rgba(52, 211, 153, 0.6);
+}
+
+.banner-ground .boundary-pill {
+  background: rgba(22, 101, 52, 0.9);
+  border: 1.5px solid #4ade80;
+  color: #ffffff;
+}
+
+/* Panel Informasi Objek Terpilih */
+.layer-info-card.is-active-info {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-top: 14px;
+  line-height: 1.6;
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.25s ease;
+}
+
+.info-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.info-card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-card-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.info-card-name {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--tx-main);
+}
+
+.info-card-sub {
   font-size: 0.8125rem;
-  white-space: nowrap;
+  color: var(--tx-muted);
+  font-weight: 600;
 }
 
-.parallax-floating-obj:hover {
-  transform: scale(1.06) translateX(4px);
-  border-color: #38bdf8;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+.info-card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.parallax-floating-obj .obj-icon {
-  font-size: 1.4rem;
+.info-card-desc {
+  font-size: 0.9375rem;
+  color: var(--tx-main);
+  margin: 8px 0 0;
+}
+
+@media (max-width: 600px) {
+  .parallax-objects-stage {
+    left: 48px;
+    right: 8px;
+  }
+  .parallax-obj-card {
+    max-width: 170px;
+    padding: 6px 10px;
+    gap: 6px;
+  }
+  .parallax-obj-card .obj-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 1.3rem;
+  }
+  .parallax-obj-card .obj-title {
+    font-size: 0.75rem;
+  }
+  .parallax-obj-card.track-left {
+    left: 30%;
+  }
+  .parallax-obj-card.track-right {
+    left: 70%;
+  }
 }
 
 /* #45 Kuis Kilat Berwaktu (Timer Challenge) */

@@ -5,6 +5,8 @@
 
 const AppState = (() => {
   const STORAGE_KEY = "tsi1";
+  const SR_STORAGE_KEY = "tsi-sr";
+  const SR_SCHEMA_VERSION = 1;
   const TOTAL_ACTIVITIES = 45;
 
   let completedTasks = new Set();
@@ -18,6 +20,44 @@ const AppState = (() => {
     if (xp < 70) return "Kadet";
     if (xp < 160) return "Astronot";
     return "Komandan";
+  }
+
+  // Muat data Spaced Repetition (Sistem Leitner 4 Kotak) dengan skema berversi & migrasi format lama
+  function loadLeitnerData() {
+    try {
+      const raw = localStorage.getItem(SR_STORAGE_KEY);
+      if (!raw) {
+        return { version: SR_SCHEMA_VERSION, cards: {} };
+      }
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === "object") {
+        if (parsed.version === SR_SCHEMA_VERSION && typeof parsed.cards === "object") {
+          return parsed;
+        }
+        // Migrasi dari format lama (objek langsung tanpa properti version)
+        return {
+          version: SR_SCHEMA_VERSION,
+          cards: parsed.cards || parsed
+        };
+      }
+    } catch (e) {
+      console.warn("Gagal membaca data Leitner:", e);
+    }
+    return { version: SR_SCHEMA_VERSION, cards: {} };
+  }
+
+  // Simpan data Spaced Repetition (Sistem Leitner 4 Kotak) dengan skema berversi
+  function saveLeitnerData(cardsMap) {
+    try {
+      const payload = {
+        version: SR_SCHEMA_VERSION,
+        cards: cardsMap,
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(SR_STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      console.warn("Gagal menyimpan data Leitner:", e);
+    }
   }
 
   // Simpan data progres ke localStorage
@@ -38,24 +78,48 @@ const AppState = (() => {
   function load() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return;
+      const todayStr = new Date().toDateString();
+
+      if (!raw) {
+        // Kunjungan pertama: simpan state awal agar streak tersimpan sejak hari pertama
+        save();
+        return;
+      }
 
       const data = JSON.parse(raw);
-      if (data && Array.isArray(data.d)) {
-        isRestored = true;
-        completedTasks = new Set(data.d);
+      if (data) {
+        isRestored = (Array.isArray(data.d) && data.d.length > 0) || (typeof data.xp === "number" && data.xp > 0);
+        if (Array.isArray(data.d)) {
+          completedTasks = new Set(data.d);
+        }
         xp = typeof data.xp === "number" ? data.xp : 0;
 
         if (data.s && data.s.lastDate) {
-          const today = new Date(new Date().toDateString());
+          const count = typeof data.s.count === "number" && data.s.count > 0 ? data.s.count : 1;
+          const today = new Date(todayStr);
           const last = new Date(data.s.lastDate);
           const diffDays = Math.round((today - last) / (1000 * 60 * 60 * 24));
 
-          streak = {
-            count: diffDays <= 0 ? data.s.count : diffDays <= 2 ? data.s.count + 1 : 1,
-            lastDate: new Date().toDateString()
-          };
+          if (isNaN(diffDays) || diffDays > 2 || diffDays < 0) {
+            // Absen lebih dari 1 hari (> 2 hari kalender) atau waktu sistem tidak valid: reset ke 1
+            streak = { count: 1, lastDate: todayStr };
+          } else if (diffDays === 2) {
+            // Absen tepat 1 hari: terlindungi fitur freeze (pertahankan tanpa naik)
+            streak = { count: count, lastDate: todayStr };
+          } else if (diffDays === 1) {
+            // Hari berturut-turut: naik 1
+            streak = { count: count + 1, lastDate: todayStr };
+          } else {
+            // Hari yang sama (diffDays === 0): tetap
+            streak = { count: count, lastDate: data.s.lastDate };
+          }
+        } else {
+          // Jika data.s tidak ada atau korup, inisialisasi streak baru
+          streak = { count: 1, lastDate: todayStr };
         }
+
+        // Simpan pembaruan streak dan tanggal kunjungan langsung ke localStorage
+        save();
       }
     } catch (e) {
       console.warn("Gagal membaca progres tersimpan:", e);
@@ -136,6 +200,15 @@ const AppState = (() => {
       return TOTAL_ACTIVITIES;
     },
 
+    // Manajemen data Spaced Repetition (Sistem Leitner 4 Kotak) tersentralisasi & berversi
+    getLeitnerData() {
+      return loadLeitnerData();
+    },
+
+    saveLeitnerData(cards) {
+      saveLeitnerData(cards);
+    },
+
     onProgress(fn) {
       if (typeof fn === "function") {
         progressListeners.push(fn);
@@ -154,7 +227,7 @@ const AppState = (() => {
     reset() {
       try {
         localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem("tsi-sr");
+        localStorage.removeItem(SR_STORAGE_KEY);
       } catch (_) {}
       location.reload();
     }

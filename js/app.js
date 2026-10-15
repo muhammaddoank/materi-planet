@@ -4,6 +4,12 @@
  */
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Pastikan browser selalu mulai dari posisi paling atas saat halaman dibuka atau dimuat ulang
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+  window.scrollTo(0, 0);
+
   // 1. Inisialisasi Elemen Header & Kontrol Utama
   const progressBar = $("#progress-bar");
   const statsBadge = $("#stats-badge");
@@ -206,7 +212,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Narasi suara diinject setelah kartu siap
     initTTS();
+
+    // Pastikan posisi scroll tetap di paling atas setelah seluruh modul interaktif selesai diinisialisasi
+    window.scrollTo(0, 0);
   } catch (err) {
     console.error("Kesalahan saat memuat interaksi:", err);
   }
+});
+
+// Penjamin tambahan saat semua aset eksternal/media selesai termuat
+window.addEventListener("load", () => {
+  window.scrollTo(0, 0);
 });
