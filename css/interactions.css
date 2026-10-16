@@ -45,7 +45,18 @@
   perspective: 800px;
   height: 120px;
   cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font: inherit;
+  width: 100%;
+  text-align: inherit;
   outline: none;
+}
+
+.flip-card:focus-visible .flip-inner {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 3px;
 }
 
 .flip-inner {
@@ -103,7 +114,8 @@
 #canvas-orbit {
   width: 100%;
   max-width: 340px;
-  height: 340px;
+  height: auto;
+  aspect-ratio: 1;
   display: block;
   margin: auto;
   background: radial-gradient(circle at center, #111a3d 0%, #060814 100%);
@@ -377,7 +389,8 @@
 #canvas-draw {
   width: 100%;
   max-width: 340px;
-  height: 220px;
+  height: auto;
+  aspect-ratio: 340 / 220;
   display: block;
   margin: 0 auto 10px;
   background: #ffffff;
@@ -450,6 +463,8 @@
   gap: 4px;
   max-width: 320px;
   margin: 12px auto;
+  touch-action: none;
+  user-select: none;
 }
 
 .word-cell {
@@ -461,18 +476,30 @@
   border-radius: var(--radius-sm);
   border: 1px solid var(--border-light);
   background: var(--bg-card-subtle);
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  transition: all var(--transition-fast);
 }
 
-.word-cell.is-selected {
-  background: var(--primary) !important;
-  color: var(--tx-inverse) !important;
-  border-color: var(--primary) !important;
+.word-cell:hover {
+  border-color: var(--primary);
 }
 
 .word-cell.is-found {
   background: var(--success) !important;
   color: #ffffff !important;
   border-color: var(--success) !important;
+}
+
+/* is-selected diletakkan setelah is-found agar sel irisan (shared letter) tetap terlihat jelas saat dipilih */
+.word-cell.is-selected {
+  background: var(--primary) !important;
+  color: var(--tx-inverse) !important;
+  border-color: var(--primary) !important;
+  transform: scale(1.08);
+  box-shadow: 0 0 0 2px var(--accent);
+  z-index: 2;
 }
 
 /* #30 Zona Layak Huni */
@@ -574,7 +601,8 @@
 #canvas-wheel {
   width: 100%;
   max-width: 280px;
-  height: 280px;
+  height: auto;
+  aspect-ratio: 1;
   display: block;
   margin: 0 auto 12px;
 }
@@ -2213,6 +2241,549 @@
   color: var(--tx-muted);
 }
 
+/* ==========================================================================
+   #46 Kuis Mode Bertahan (Survival Mode - Sudden Death)
+   ========================================================================== */
+.survival-arena {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
+.survival-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
 
+.survival-hud-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tx-main);
+}
 
+.survival-hud-val {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+.survival-heart {
+  color: #ef4444;
+  font-size: 1.25rem;
+  display: inline-block;
+  animation: heartPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.survival-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.survival-prompt-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.survival-q-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+  color: var(--tx-muted);
+}
+
+.survival-q-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--tx-main);
+  margin-bottom: 0;
+}
+
+.survival-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 540px) {
+  .survival-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.survival-opt-btn {
+  background: var(--bg-card);
+  color: var(--tx-main);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 48px;
+}
+
+.survival-opt-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.survival-opt-btn:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.survival-opt-btn.is-correct {
+  background: var(--success-bg) !important;
+  border-color: var(--success) !important;
+  color: #065f46 !important;
+  font-weight: 700;
+}
+
+.survival-opt-btn.is-wrong {
+  background: var(--danger-bg) !important;
+  border-color: var(--danger) !important;
+  color: #991b1b !important;
+  animation: shakeOpt 0.35s ease-in-out;
+}
+
+.survival-opt-btn:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.survival-feedback {
+  background: var(--bg-card);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--tx-main);
+}
+
+.survival-gameover-card {
+  text-align: center;
+  padding: 24px 16px;
+  background: var(--bg-card);
+  border: 2px dashed var(--danger);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.survival-gameover-icon {
+  font-size: 2.75rem;
+  line-height: 1;
+}
+
+.survival-gameover-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--danger);
+  margin: 0;
+}
+
+.survival-gameover-desc {
+  font-size: 0.9375rem;
+  color: var(--tx-muted);
+  max-width: 440px;
+  margin: 0;
+}
+
+.survival-gameover-stats {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin: 8px 0;
+}
+
+.survival-gameover-stat-item {
+  background: var(--bg-card-subtle);
+  border-radius: var(--radius-md);
+  padding: 8px 16px;
+  border: 1px solid var(--border-light);
+}
+
+.survival-gameover-stat-item span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--tx-muted);
+}
+
+.survival-gameover-stat-item b {
+  font-size: 1.25rem;
+  color: var(--tx-main);
+}
+
+/* ==========================================================================
+   #47 Puzzle Geser Planet Jupiter (Slide Puzzle)
+   ========================================================================== */
+.slide-puzzle-wrapper {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.slide-hud {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.slide-counter {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--tx-main);
+  background: var(--bg-card);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-light);
+}
+
+.slide-board {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1 / 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 4px;
+  background: #090d16;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  touch-action: manipulation;
+}
+
+.slide-tile {
+  background-color: #2a2233;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 800;
+  font-size: 1.125rem;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  transition: transform var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+  overflow: hidden;
+  padding: 0;
+  aspect-ratio: 1 / 1;
+}
+
+.slide-tile:hover:not(.slide-tile-empty) {
+  transform: scale(0.98);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+  border-color: var(--accent);
+}
+
+.slide-tile:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 1px;
+  z-index: 2;
+}
+
+.slide-tile-empty {
+  background: rgba(15, 23, 42, 0.45);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  cursor: default;
+}
+
+.slide-tile-canvas {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: block;
+}
+
+.slide-tile-num {
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.65);
+  color: #f8fafc;
+  padding: 1px 5px;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.slide-guide-toggle {
+  font-size: 0.8125rem;
+  color: var(--primary);
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.slide-preview-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 0.8125rem;
+  color: var(--tx-muted);
+  text-align: center;
+  max-width: 320px;
+}
+
+.slide-solved-banner {
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+  text-align: center;
+  color: #065f46;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  width: 100%;
+  max-width: 320px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ==========================================================================
+   #48 Puzzle Jigsaw Tata Surya (Jigsaw Puzzle)
+   ========================================================================== */
+.jigsaw-container {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.jigsaw-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.jigsaw-progress-pill {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.jigsaw-board-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--tx-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.jigsaw-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .jigsaw-board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.jigsaw-slot {
+  background: var(--bg-card);
+  border: 2px dashed var(--border-light);
+  border-radius: var(--radius-md);
+  min-height: 105px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.jigsaw-slot:hover,
+.jigsaw-slot.drag-over {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.jigsaw-slot.is-filled {
+  border-style: solid;
+  border-color: var(--success);
+  background: var(--bg-card);
+  cursor: default;
+}
+
+.jigsaw-slot-num {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--tx-subtle);
+}
+
+.jigsaw-slot-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--tx-muted);
+  margin-top: 4px;
+}
+
+.jigsaw-tray-section {
+  border-top: 1px solid var(--border-light);
+  padding-top: 14px;
+}
+
+.jigsaw-tray {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  min-height: 80px;
+}
+
+@media (max-width: 600px) {
+  .jigsaw-tray {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.jigsaw-piece {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  min-height: 95px;
+}
+
+.jigsaw-piece:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.jigsaw-piece:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.jigsaw-piece.is-selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.35);
+  background: var(--primary-light);
+}
+
+.jigsaw-piece.is-dragging {
+  opacity: 0.65;
+  cursor: grabbing;
+}
+
+.jigsaw-piece-icon {
+  font-size: 1.75rem;
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.jigsaw-piece-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--tx-main);
+  line-height: 1.25;
+}
+
+.jigsaw-piece-desc {
+  font-size: 0.6875rem;
+  color: var(--tx-muted);
+  margin-top: 2px;
+  line-height: 1.2;
+}
+
+.jigsaw-complete-card {
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+  color: #065f46;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  animation: fadeIn 0.3s ease-out;
+}

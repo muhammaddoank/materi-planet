@@ -20,6 +20,21 @@
   transition: background-color var(--transition-normal);
 }
 
+@media (max-width: 420px) {
+  #app-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+  }
+  .brand-title span:last-child {
+    display: none; /* sisakan emoji 🪐 di layar sempit */
+  }
+  .progress-container {
+    order: 3;
+    flex-basis: 100%;
+  }
+}
+
 .brand-title {
   display: flex;
   align-items: center;
@@ -66,7 +81,7 @@
 /* Category Filter Navigation */
 #category-nav {
   position: sticky;
-  top: calc(env(safe-area-inset-top, 0px) + 53px);
+  top: calc(env(safe-area-inset-top, 0px) + var(--header-h, 53px));
   z-index: 90;
   background-color: var(--bg-app);
   padding: 8px 16px;

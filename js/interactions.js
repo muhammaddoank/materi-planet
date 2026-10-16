@@ -187,13 +187,14 @@ function initTooltip() {
 }
 
 // #2 Kartu Balik 3D
+// #2 Kartu Balik 3D
 function initFlipCards() {
   const container = $("#flip-container");
   const infoText = $("#flip-info");
   if (!container) return;
 
   container.innerHTML = PLANETS_DATA.map((planet, idx) => `
-    <div class="flip-card" tabindex="0" role="button" aria-label="Kartu planet ${planet.name}">
+    <button type="button" class="flip-card" aria-pressed="false" data-name="${planet.name}" data-fact="${planet.fact}" aria-label="Planet ${planet.name}: ketuk untuk membaca fakta unik">
       <div class="flip-inner">
         <div class="flip-front" style="background:${planet.color}">
           <span>${planet.name}</span>
@@ -202,14 +203,22 @@ function initFlipCards() {
           <p>${planet.fact}</p>
         </div>
       </div>
-    </div>
+    </button>
   `).join("");
 
   container.addEventListener("click", (e) => {
     const card = e.target.closest(".flip-card");
     if (!card) return;
     SoundFX.playClick();
-    card.classList.toggle("is-flipped");
+    const isFlipped = card.classList.toggle("is-flipped");
+    card.setAttribute("aria-pressed", isFlipped ? "true" : "false");
+    const name = card.dataset.name;
+    const fact = card.dataset.fact;
+    if (isFlipped) {
+      card.setAttribute("aria-label", `Planet ${name}, terbuka: ${fact}. Ketuk untuk menutup.`);
+    } else {
+      card.setAttribute("aria-label", `Planet ${name}: ketuk untuk membaca fakta unik`);
+    }
 
     const flippedCount = $$(".flip-card.is-flipped", container).length;
     if (infoText) {
@@ -217,16 +226,6 @@ function initFlipCards() {
     }
     if (flippedCount === 8) {
       AppState.complete("flip", 10);
-    }
-  });
-
-  container.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
-      const card = e.target.closest(".flip-card");
-      if (card) {
-        e.preventDefault();
-        card.click();
-      }
     }
   });
 }
@@ -368,6 +367,37 @@ function initOrbitCanvas() {
     });
   }
 
+  // Alternatif Aksesibilitas Keyboard: Dropdown Pemilih Planet
+  const planetSelect = $("#orbit-planet-select");
+  if (planetSelect) {
+    planetSelect.innerHTML = `<option value="">-- Pilih planet untuk inspeksi data --</option>` +
+      PLANETS_DATA.map((p, idx) => `<option value="${idx}">${p.name} (Jarak ${p.distanceAU} AU)</option>`).join("");
+
+    planetSelect.addEventListener("change", (e) => {
+      const idx = parseInt(e.target.value, 10);
+      if (!isNaN(idx) && idx >= 0 && idx < PLANETS_DATA.length) {
+        selectPlanet(idx);
+      }
+    });
+  }
+
+  function selectPlanet(idx) {
+    selectedPlanetIdx = idx;
+    const p = PLANETS_DATA[idx];
+    if (infoEl) {
+      infoEl.innerHTML = `🪐 <b>${p.name}</b>: Jarak ${p.distanceAU} AU · Suhu rata-rata ${p.avgTemp}°C · Diameter ${p.diameterKm.toLocaleString("id")} km.<br><span class="text-muted">${p.fact}</span>`;
+    }
+    if (planetSelect && planetSelect.value !== String(idx)) {
+      planetSelect.value = String(idx);
+    }
+    AppState.complete("orb", 10);
+
+    // Jika sedang jeda atau di luar layar, render sekali agar highlight baru segera terlihat
+    if (isPaused || !rafId) {
+      renderOrbit();
+    }
+  }
+
   canvas.addEventListener("click", (e) => {
     const rect = canvas.getBoundingClientRect();
     const mouseX = (e.clientX - rect.left) * (logicalSize / rect.width);
@@ -385,17 +415,7 @@ function initOrbitCanvas() {
     });
 
     if (nearestIdx >= 0) {
-      selectedPlanetIdx = nearestIdx;
-      const p = PLANETS_DATA[nearestIdx];
-      if (infoEl) {
-        infoEl.innerHTML = `🪐 <b>${p.name}</b>: Jarak ${p.distanceAU} AU · Suhu rata-rata ${p.avgTemp}°C · Diameter ${p.diameterKm.toLocaleString("id")} km.<br><span class="text-muted">${p.fact}</span>`;
-      }
-      AppState.complete("orb", 10);
-
-      // Jika sedang jeda atau di luar layar, render sekali agar highlight baru segera terlihat
-      if (isPaused || !rafId) {
-        renderOrbit();
-      }
+      selectPlanet(nearestIdx);
     }
   });
 }
@@ -537,12 +557,20 @@ function initOrder() {
   let currentOrder = ["Jupiter", "Venus", "Neptunus", "Bumi", "Mars"];
   let selectedIdx = -1;
 
-  function renderList() {
+  function renderList(focusIdx = null) {
     container.innerHTML = currentOrder.map((name, idx) => `
-      <div class="order-item ${idx === selectedIdx ? "selected" : ""}" data-index="${idx}" tabindex="0" role="button">
+      <div class="order-item ${idx === selectedIdx ? "selected" : ""}" data-index="${idx}" tabindex="0" role="button" aria-pressed="${idx === selectedIdx ? "true" : "false"}" aria-label="Urutan ${idx + 1}: ${name}. ${idx === selectedIdx ? 'Terpilih untuk ditukar. Tekan Spasi atau Enter pada kartu lain untuk menukar.' : 'Tekan Spasi atau Enter untuk memilih.'}">
         <span class="text-subtle">${idx + 1}.</span> <span>${name}</span>
       </div>
     `).join("");
+
+    if (focusIdx !== null) {
+      const targetEl = container.querySelector(`.order-item[data-index="${focusIdx}"]`);
+      if (targetEl) targetEl.focus();
+    } else {
+      const selectedEl = container.querySelector(".order-item.selected");
+      if (selectedEl) selectedEl.focus();
+    }
   }
 
   function swap(idxA, idxB) {
@@ -550,7 +578,7 @@ function initOrder() {
     currentOrder[idxA] = currentOrder[idxB];
     currentOrder[idxB] = temp;
     selectedIdx = -1;
-    renderList();
+    renderList(idxB);
     SoundFX.playClick();
   }
 
@@ -566,7 +594,16 @@ function initOrder() {
     }
   });
 
-  // Fallback tap-tap: ketuk dua item untuk menukar
+  // Operasi keyboard: Enter / Spasi
+  container.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      const item = e.target.closest(".order-item");
+      if (item) item.click();
+    }
+  });
+
+  // Fallback tap-tap / keyboard click: ketuk dua item untuk menukar
   container.addEventListener("click", (e) => {
     const item = e.target.closest(".order-item");
     if (!item) return;
@@ -574,10 +611,10 @@ function initOrder() {
 
     if (selectedIdx < 0) {
       selectedIdx = clickedIdx;
-      renderList();
+      renderList(clickedIdx);
     } else if (selectedIdx === clickedIdx) {
       selectedIdx = -1;
-      renderList();
+      renderList(clickedIdx);
     } else {
       swap(selectedIdx, clickedIdx);
     }
@@ -782,7 +819,7 @@ function initMemoryGame() {
 
   function renderGrid() {
     container.innerHTML = cards.map((c, idx) => `
-      <button class="memory-card" data-index="${idx}" aria-label="Kartu ${idx + 1}">❓</button>
+      <button class="memory-card" data-index="${idx}" aria-label="Kartu ${idx + 1}, tertutup">❓</button>
     `).join("");
   }
 
@@ -794,6 +831,7 @@ function initMemoryGame() {
     const clickedIdx = parseInt(btn.dataset.index, 10);
     btn.textContent = cards[clickedIdx].text;
     btn.classList.add("is-open");
+    btn.setAttribute("aria-label", `Kartu ${clickedIdx + 1}: ${cards[clickedIdx].text}`);
     openedCardIndices.push(clickedIdx);
 
     if (openedCardIndices.length === 2) {
@@ -805,9 +843,13 @@ function initMemoryGame() {
       if (cardA.pairIdx === cardB.pairIdx) {
         matchCount++;
         SoundFX.playSuccess();
-        $$(`.memory-card[data-index="${idxA}"], .memory-card[data-index="${idxB}"]`, container).forEach((el) => {
-          el.classList.remove("is-open");
-          el.classList.add("is-matched");
+        [idxA, idxB].forEach((i) => {
+          const el = container.querySelector(`.memory-card[data-index="${i}"]`);
+          if (el) {
+            el.classList.remove("is-open");
+            el.classList.add("is-matched");
+            el.setAttribute("aria-label", `Kartu ${i + 1}: ${cards[i].text} (Sudah cocok)`);
+          }
         });
         openedCardIndices = [];
 
@@ -817,9 +859,13 @@ function initMemoryGame() {
       } else {
         SoundFX.playError();
         setTimeout(() => {
-          $$(`.memory-card[data-index="${idxA}"], .memory-card[data-index="${idxB}"]`, container).forEach((el) => {
-            el.textContent = "❓";
-            el.classList.remove("is-open");
+          [idxA, idxB].forEach((i) => {
+            const el = container.querySelector(`.memory-card[data-index="${i}"]`);
+            if (el) {
+              el.textContent = "❓";
+              el.classList.remove("is-open");
+              el.setAttribute("aria-label", `Kartu ${i + 1}, tertutup`);
+            }
           });
           openedCardIndices = [];
         }, 900);
@@ -1141,6 +1187,37 @@ function initCanvasDraw() {
       SoundFX.playClick();
     });
   }
+
+  // Alternatif Aksesibilitas Keyboard: Gambar Otomatis
+  const autoDrawBtn = $("#canvas-auto-draw-btn");
+  if (autoDrawBtn) {
+    autoDrawBtn.addEventListener("click", () => {
+      ctx.clearRect(0, 0, width, height);
+
+      // Gambar Matahari di pusat
+      ctx.fillStyle = "#ffcc00";
+      ctx.beginPath();
+      ctx.arc(width / 2, height / 2, 18, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Gambar lintasan orbit Bumi
+      ctx.strokeStyle = "#4f46e5";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(width / 2, height / 2, 70, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Gambar Planet Bumi
+      ctx.fillStyle = "#22c55e";
+      ctx.beginPath();
+      ctx.arc(width / 2 + 70, height / 2, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      strokeCount = 40;
+      SoundFX.playSuccess();
+      AppState.complete("draw", 10);
+    });
+  }
 }
 
 // #22 Klasifikasi ke Keranjang
@@ -1430,6 +1507,9 @@ function initWordSearch() {
   const foundWords = new Set();
   const foundCellIndices = new Set();
   let selectedCells = [];
+  let isPointerDragging = false;
+  let dragStartIdx = null;
+  let lastHoverIdx = null;
 
   function renderGrid() {
     gridContainer.innerHTML = WORD_SEARCH_DATA.grid.map((row, r) =>
@@ -1438,7 +1518,7 @@ function initWordSearch() {
         const isSelected = selectedCells.includes(cellIdx);
         const isFound = foundCellIndices.has(cellIdx);
         return `
-          <button class="word-cell ${isSelected ? "is-selected" : ""} ${isFound ? "is-found" : ""}" data-index="${cellIdx}">
+          <button type="button" class="word-cell ${isFound ? "is-found" : ""} ${isSelected ? "is-selected" : ""}" data-index="${cellIdx}" aria-label="Huruf ${char}, baris ${r + 1} kolom ${c + 1}">
             ${char}
           </button>
         `;
@@ -1450,18 +1530,42 @@ function initWordSearch() {
     ).join(" · ");
   }
 
-  gridContainer.addEventListener("click", (e) => {
-    const btn = e.target.closest(".word-cell");
-    if (!btn) return;
-    SoundFX.playClick();
+  // Menghasilkan daftar indeks sel dalam satu garis lurus (horizontal, vertikal, diagonal)
+  function getLineCells(startIdx, endIdx) {
+    if (startIdx === endIdx) return [startIdx];
 
-    const idx = parseInt(btn.dataset.index, 10);
-    selectedCells = selectedCells.includes(idx)
-      ? selectedCells.filter((i) => i !== idx)
-      : [...selectedCells, idx];
+    const r1 = Math.floor(startIdx / 7);
+    const c1 = startIdx % 7;
+    const r2 = Math.floor(endIdx / 7);
+    const c2 = endIdx % 7;
 
-    // Cek kata yang dibentuk
-    const formedString = selectedCells.map((i) => {
+    const dr = r2 - r1;
+    const dc = c2 - c1;
+
+    const stepR = dr === 0 ? 0 : dr > 0 ? 1 : -1;
+    const stepC = dc === 0 ? 0 : dc > 0 ? 1 : -1;
+
+    const lenR = Math.abs(dr);
+    const lenC = Math.abs(dc);
+
+    // Harus segaris lurus: horizontal, vertikal, atau diagonal
+    if (lenR !== 0 && lenC !== 0 && lenR !== lenC) {
+      return null;
+    }
+
+    const length = Math.max(lenR, lenC) + 1;
+    const cells = [];
+    for (let i = 0; i < length; i++) {
+      cells.push((r1 + i * stepR) * 7 + (c1 + i * stepC));
+    }
+    return cells;
+  }
+
+  // Cek apakah deretan sel membentuk kata target yang valid
+  function checkMatch(cells) {
+    if (!cells || cells.length < 2) return false;
+
+    const formedString = cells.map((i) => {
       const r = Math.floor(i / 7);
       const c = i % 7;
       return WORD_SEARCH_DATA.grid[r][c];
@@ -1475,21 +1579,132 @@ function initWordSearch() {
 
     if (matchedWord) {
       foundWords.add(matchedWord);
-      selectedCells.forEach((i) => foundCellIndices.add(i));
+      cells.forEach((i) => foundCellIndices.add(i));
       selectedCells = [];
+      dragStartIdx = null;
       SoundFX.playSuccess();
 
       if (foundWords.size === WORD_SEARCH_DATA.words.length) {
         AppState.complete("ws", 10);
       }
+      renderGrid();
+      return true;
+    }
+    return false;
+  }
+
+  function getCellIdxFromEvent(e) {
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const cell = el ? el.closest(".word-cell") : null;
+    if (cell && gridContainer.contains(cell)) {
+      return parseInt(cell.dataset.index, 10);
+    }
+    return null;
+  }
+
+  // 1. Interaksi Drag / Geser Sentuh (Pointer Events untuk HP & Desktop)
+  gridContainer.addEventListener("pointerdown", (e) => {
+    const cell = e.target.closest(".word-cell");
+    if (!cell) return;
+
+    const idx = parseInt(cell.dataset.index, 10);
+    isPointerDragging = true;
+    dragStartIdx = idx;
+    lastHoverIdx = idx;
+    selectedCells = [idx];
+    renderGrid();
+
+    try {
+      gridContainer.setPointerCapture(e.pointerId);
+    } catch (_) {}
+  });
+
+  gridContainer.addEventListener("pointermove", (e) => {
+    if (!isPointerDragging || dragStartIdx === null) return;
+
+    const currentIdx = getCellIdxFromEvent(e);
+    if (currentIdx !== null && currentIdx !== lastHoverIdx) {
+      lastHoverIdx = currentIdx;
+      const line = getLineCells(dragStartIdx, currentIdx);
+      if (line) {
+        selectedCells = line;
+        renderGrid();
+      }
+    }
+  });
+
+  gridContainer.addEventListener("pointerup", (e) => {
+    if (!isPointerDragging) return;
+    isPointerDragging = false;
+
+    // Jika telah menyeret lebih dari 1 sel, periksa kecocokan kata langsung
+    if (selectedCells.length > 1) {
+      const matched = checkMatch(selectedCells);
+      if (!matched) {
+        selectedCells = [];
+        SoundFX.playClick();
+        renderGrid();
+      }
+      dragStartIdx = null;
+      return;
     }
 
+    // Jika hanya satu ketukan (tap/click mode dua langkah: klik awal lalu klik akhir)
+    dragStartIdx = selectedCells.length === 1 ? selectedCells[0] : null;
+  });
+
+  gridContainer.addEventListener("pointercancel", () => {
+    isPointerDragging = false;
+    selectedCells = [];
+    dragStartIdx = null;
     renderGrid();
+  });
+
+  // 2. Interaksi Ketuk Dua Titik / Keyboard Click (Awal -> Akhir atau Ketuk Huruf)
+  gridContainer.addEventListener("click", (e) => {
+    // Abaikan jika baru saja selesai aksi drag geser panjang
+    if (selectedCells.length > 1) return;
+
+    const cell = e.target.closest(".word-cell");
+    if (!cell) return;
+
+    const idx = parseInt(cell.dataset.index, 10);
+    SoundFX.playClick();
+
+    // Jika belum ada sel terpilih, atau mengetuk sel yang sama untuk batalkan
+    if (selectedCells.length === 0) {
+      selectedCells = [idx];
+      renderGrid();
+      return;
+    }
+
+    if (selectedCells.length === 1 && selectedCells[0] === idx) {
+      selectedCells = [];
+      renderGrid();
+      return;
+    }
+
+    // Mencoba membuat garis lurus dari sel pertama ke sel yang baru diklik
+    const line = getLineCells(selectedCells[0], idx);
+    if (line) {
+      selectedCells = line;
+      const matched = checkMatch(line);
+      if (!matched) {
+        // Jika garis tersebut bukan kata yang cocok, pindahkan titik awal ke sel yang baru
+        selectedCells = [idx];
+        renderGrid();
+      }
+    } else {
+      // Tidak segaris lurus, mulai seleksi baru di sel yang baru diklik
+      selectedCells = [idx];
+      renderGrid();
+    }
   });
 
   if (clearBtn) {
     clearBtn.addEventListener("click", () => {
       selectedCells = [];
+      dragStartIdx = null;
       renderGrid();
       SoundFX.playClick();
     });
@@ -4389,6 +4604,585 @@ function initTimerChallenge() {
     SoundFX.playClick();
     startGame();
   });
+}
+
+// ==========================================================================
+// #46 KUIS MODE BERTAHAN (SURVIVAL MODE - SUDDEN DEATH)
+// ==========================================================================
+function initSurvivalMode() {
+  const arena = $("#survival-arena");
+  if (!arena) return;
+
+  const livesEl = $("#survival-lives", arena);
+  const streakEl = $("#survival-streak", arena);
+  const bestEl = $("#survival-best", arena);
+  const playArea = $("#survival-play-area", arena);
+  const qCategory = $("#survival-q-category", arena);
+  const qCounter = $("#survival-q-counter", arena);
+  const qText = $("#survival-question-text", arena);
+  const optionsGrid = $("#survival-options", arena);
+  const feedbackEl = $("#survival-fact-feedback", arena);
+  const gameoverCard = $("#survival-gameover-card", arena);
+  const gameoverMsg = $("#survival-gameover-msg", arena);
+  const finalStreakEl = $("#survival-final-streak", arena);
+  const finalBestEl = $("#survival-final-best", arena);
+  const btnRestart = $("#btn-survival-restart", arena);
+
+  let currentStreak = 0;
+  let bestStreak = 0;
+  let qDeck = [];
+  let currentDeckIdx = 0;
+  let hasCompletedTask = false;
+
+  function shuffleDeck() {
+    qDeck = [...SURVIVAL_MODE_DATA].sort(() => Math.random() - 0.5);
+    currentDeckIdx = 0;
+  }
+
+  function displayQuestion() {
+    if (currentDeckIdx >= qDeck.length) {
+      shuffleDeck();
+    }
+    const q = qDeck[currentDeckIdx];
+    if (!q) return;
+
+    if (qCategory) qCategory.textContent = `Kategori: ${q.category || "Fakta Kosmik"}`;
+    if (qCounter) qCounter.textContent = `Pertanyaan #${currentStreak + 1}`;
+    if (qText) qText.textContent = q.question;
+    if (feedbackEl) {
+      feedbackEl.hidden = true;
+      feedbackEl.textContent = "";
+    }
+
+    if (optionsGrid) {
+      optionsGrid.innerHTML = q.options.map((opt, idx) => `
+        <button type="button" class="survival-opt-btn" data-idx="${idx}" aria-label="Pilihan ${idx + 1}: ${opt}">
+          <span>${opt}</span>
+          <span aria-hidden="true">→</span>
+        </button>
+      `).join("");
+    }
+  }
+
+  if (optionsGrid) {
+    optionsGrid.addEventListener("click", (e) => {
+      const btn = e.target.closest(".survival-opt-btn");
+      if (!btn || btn.disabled) return;
+
+      const chosenIdx = parseInt(btn.dataset.idx, 10);
+      const q = qDeck[currentDeckIdx];
+      if (!q) return;
+
+      // Kunci semua tombol agar tidak bisa spam klik
+      $$(".survival-opt-btn", optionsGrid).forEach((b) => (b.disabled = true));
+
+      if (chosenIdx === q.correct) {
+        SoundFX.playSuccess();
+        btn.classList.add("is-correct");
+        currentStreak++;
+        if (currentStreak > bestStreak) {
+          bestStreak = currentStreak;
+        }
+
+        if (streakEl) streakEl.textContent = currentStreak;
+        if (bestEl) bestEl.textContent = `${bestStreak} 🔥`;
+
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `<b>✓ Benar!</b> ${q.fact}`;
+          feedbackEl.hidden = false;
+        }
+
+        // Selesaikan misi jika mencapai minimal 5 streak
+        if (currentStreak >= 5 && !hasCompletedTask) {
+          hasCompletedTask = true;
+          AppState.complete("surv", 15);
+        }
+
+        setTimeout(() => {
+          currentDeckIdx++;
+          displayQuestion();
+        }, 900);
+      } else {
+        SoundFX.playLaser();
+        btn.classList.add("is-wrong");
+        const correctBtn = $(`[data-idx="${q.correct}"]`, optionsGrid);
+        if (correctBtn) correctBtn.classList.add("is-correct");
+
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `<b>✕ Salah!</b> ${q.fact}`;
+          feedbackEl.hidden = false;
+        }
+
+        setTimeout(() => {
+          if (playArea) playArea.hidden = true;
+          if (gameoverCard) gameoverCard.hidden = false;
+          if (finalStreakEl) finalStreakEl.textContent = currentStreak;
+          if (finalBestEl) finalBestEl.textContent = bestStreak;
+
+          let note = "Navigasi roketmu meleset. Evaluasi kembali data penerbangan kosmikmu!";
+          if (currentStreak >= 5) {
+            note = `Luar biasa! Rekor bertahannmu mencapai ${currentStreak} pertanyaan berturut-turut!`;
+          } else if (currentStreak >= 1) {
+            note = `Kamu berhasil bertahan melewati ${currentStreak} rintangan kosmik berturut-turut. Ayo coba capai 5!`;
+          }
+          if (gameoverMsg) gameoverMsg.textContent = note;
+        }, 1100);
+      }
+    });
+  }
+
+  if (btnRestart) {
+    btnRestart.addEventListener("click", () => {
+      SoundFX.playClick();
+      currentStreak = 0;
+      if (streakEl) streakEl.textContent = "0";
+      if (livesEl) livesEl.textContent = "1 Nyawa";
+      if (gameoverCard) gameoverCard.hidden = true;
+      if (playArea) playArea.hidden = false;
+      shuffleDeck();
+      displayQuestion();
+    });
+  }
+
+  // Mulai game awal
+  shuffleDeck();
+  displayQuestion();
+}
+
+// ==========================================================================
+// #47 PUZZLE GESER PLANET JUPITER (SLIDE PUZZLE 3x3)
+// ==========================================================================
+function initPuzzleSlide() {
+  const boardEl = $("#slide-puzzle-board");
+  if (!boardEl) return;
+
+  const moveCountEl = $("#slide-move-count");
+  const btnShuffle = $("#btn-slide-shuffle");
+  const btnGuide = $("#btn-slide-guide");
+  const previewBox = $("#slide-preview-box");
+  const solvedMsg = $("#slide-solved-msg");
+
+  let boardState = [1, 2, 3, 4, 5, 6, 7, 8, 0]; // 0 adalah slot kosong
+  let moveCount = 0;
+  let isWon = false;
+  let masterJupiterCanvas = null;
+
+  // Render master gambar Jupiter ke canvas offscreen (288x288)
+  function getMasterJupiterCanvas() {
+    if (masterJupiterCanvas) return masterJupiterCanvas;
+    const size = 288;
+    const c = document.createElement("canvas");
+    c.width = size;
+    c.height = size;
+    const ctx = c.getContext("2d");
+    const cx = size / 2;
+    const cy = size / 2;
+    const r = (size / 2) - 10;
+
+    // Latar angkasa pekat
+    ctx.fillStyle = "#090d16";
+    ctx.fillRect(0, 0, size, size);
+
+    // Bintang latar
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.beginPath();
+    ctx.arc(24, 30, 1.2, 0, Math.PI * 2);
+    ctx.arc(264, 45, 1, 0, Math.PI * 2);
+    ctx.arc(240, 260, 1.2, 0, Math.PI * 2);
+    ctx.arc(36, 248, 1.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Kliping bulatan Jupiter
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.clip();
+
+    // Dasar atmosfer oranye keemasan
+    ctx.fillStyle = "#d97706";
+    ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+    // Sabuk & zona atmosfer (belts & zones)
+    const bands = [
+      { y: 0.10, h: 0.08, c: "#fef3c7" },
+      { y: 0.18, h: 0.11, c: "#b45309" },
+      { y: 0.29, h: 0.07, c: "#fed7aa" },
+      { y: 0.36, h: 0.13, c: "#92400e" },
+      { y: 0.49, h: 0.08, c: "#fde68a" },
+      { y: 0.57, h: 0.14, c: "#78350f" },
+      { y: 0.71, h: 0.08, c: "#fed7aa" },
+      { y: 0.79, h: 0.12, c: "#9a3412" }
+    ];
+    bands.forEach((b) => {
+      ctx.fillStyle = b.c;
+      ctx.fillRect(cx - r, (cy - r) + (r * 2 * b.y), r * 2, r * 2 * b.h);
+    });
+
+    // Bintik Merah Besar (Great Red Spot) ikonik di belahan selatan
+    const grsX = cx + (r * 0.34);
+    const grsY = cy + (r * 0.30);
+    ctx.fillStyle = "#dc2626";
+    ctx.beginPath();
+    ctx.ellipse(grsX, grsY, r * 0.22, r * 0.14, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#b91c1c";
+    ctx.beginPath();
+    ctx.ellipse(grsX, grsY, r * 0.15, r * 0.09, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#f87171";
+    ctx.beginPath();
+    ctx.ellipse(grsX - 3, grsY - 2, r * 0.07, r * 0.04, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Gradien bayangan sferis 3D
+    const grad = ctx.createRadialGradient(cx - (r * 0.35), cy - (r * 0.35), r * 0.1, cx, cy, r);
+    grad.addColorStop(0, "rgba(255, 255, 255, 0.22)");
+    grad.addColorStop(0.7, "rgba(0, 0, 0, 0)");
+    grad.addColorStop(1, "rgba(0, 0, 0, 0.75)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
+
+    ctx.restore();
+
+    // Cincin pendar halus luar
+    ctx.strokeStyle = "rgba(254, 240, 138, 0.35)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    masterJupiterCanvas = c;
+    return masterJupiterCanvas;
+  }
+
+  function renderBoard() {
+    boardEl.innerHTML = "";
+    const masterCanvas = getMasterJupiterCanvas();
+    const tileSize = 96;
+
+    boardState.forEach((tileId, pos) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.dataset.pos = pos;
+
+      if (tileId === 0) {
+        btn.className = "slide-tile slide-tile-empty";
+        btn.setAttribute("aria-label", "Slot Kosong");
+        btn.setAttribute("tabindex", "0");
+      } else {
+        btn.className = "slide-tile";
+        btn.setAttribute("aria-label", `Ubin #${tileId} di posisi ${pos + 1}`);
+
+        // Badge Angka
+        const numSpan = document.createElement("span");
+        numSpan.className = "slide-tile-num";
+        numSpan.textContent = tileId;
+        btn.appendChild(numSpan);
+
+        // Potongan kanvas Jupiter asli untuk ubin ini
+        const tileCanvas = document.createElement("canvas");
+        tileCanvas.width = tileSize;
+        tileCanvas.height = tileSize;
+        tileCanvas.className = "slide-tile-canvas";
+        const tCtx = tileCanvas.getContext("2d");
+        if (tCtx) {
+          const targetIdx = tileId - 1;
+          const srcX = (targetIdx % 3) * tileSize;
+          const srcY = Math.floor(targetIdx / 3) * tileSize;
+          tCtx.drawImage(masterCanvas, srcX, srcY, tileSize, tileSize, 0, 0, tileSize, tileSize);
+        }
+        btn.appendChild(tileCanvas);
+      }
+
+      boardEl.appendChild(btn);
+    });
+  }
+
+  function getValidNeighbors(emptyPos) {
+    const row = Math.floor(emptyPos / 3);
+    const col = emptyPos % 3;
+    const neighbors = [];
+    if (col > 0) neighbors.push(emptyPos - 1); // kiri
+    if (col < 2) neighbors.push(emptyPos + 1); // kanan
+    if (row > 0) neighbors.push(emptyPos - 3); // atas
+    if (row < 2) neighbors.push(emptyPos + 3); // bawah
+    return neighbors;
+  }
+
+  function tryMove(pos) {
+    if (isWon) return false;
+    const emptyPos = boardState.indexOf(0);
+    const neighbors = getValidNeighbors(emptyPos);
+
+    if (neighbors.includes(pos)) {
+      // Tukar posisi
+      boardState[emptyPos] = boardState[pos];
+      boardState[pos] = 0;
+      moveCount++;
+      if (moveCountEl) moveCountEl.textContent = moveCount;
+      SoundFX.playClick();
+      renderBoard();
+      checkWin();
+      return true;
+    }
+    return false;
+  }
+
+  function checkWin() {
+    const isSolved = boardState.slice(0, 8).every((val, idx) => val === idx + 1);
+    if (isSolved && !isWon) {
+      isWon = true;
+      if (solvedMsg) solvedMsg.hidden = false;
+      SoundFX.playFanfare();
+      AppState.complete("pslide", 15);
+    }
+  }
+
+  function shuffleSolvable() {
+    boardState = [1, 2, 3, 4, 5, 6, 7, 8, 0];
+    let prevPos = -1;
+    // Lakukan 40 langkah acak dari kondisi terpecahkan untuk menjamin 100% selalu dapat diselesaikan
+    for (let step = 0; step < 40; step++) {
+      const emptyPos = boardState.indexOf(0);
+      let neighbors = getValidNeighbors(emptyPos);
+      if (prevPos !== -1 && neighbors.length > 1) {
+        neighbors = neighbors.filter((p) => p !== prevPos);
+      }
+      const chosenPos = neighbors[Math.floor(Math.random() * neighbors.length)];
+      boardState[emptyPos] = boardState[chosenPos];
+      boardState[chosenPos] = 0;
+      prevPos = emptyPos;
+    }
+
+    moveCount = 0;
+    isWon = false;
+    if (moveCountEl) moveCountEl.textContent = "0";
+    if (solvedMsg) solvedMsg.hidden = true;
+    renderBoard();
+  }
+
+  // Interaksi Klik Ubin
+  boardEl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".slide-tile");
+    if (!btn || btn.classList.contains("slide-tile-empty")) return;
+    const pos = parseInt(btn.dataset.pos, 10);
+    tryMove(pos);
+  });
+
+  // Navigasi Keyboard (Tombol Panah & Enter)
+  boardEl.addEventListener("keydown", (e) => {
+    const emptyPos = boardState.indexOf(0);
+    let targetPos = -1;
+
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      targetPos = emptyPos + 3; // Ubin di bawah slot bergeser ke atas
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      targetPos = emptyPos - 3; // Ubin di atas slot bergeser ke bawah
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      if (emptyPos % 3 < 2) targetPos = emptyPos + 1; // Ubin di kanan bergeser ke kiri
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      if (emptyPos % 3 > 0) targetPos = emptyPos - 1; // Ubin di kiri bergeser ke kanan
+    } else if (e.key === "Enter" || e.key === " ") {
+      const btn = e.target.closest(".slide-tile");
+      if (btn && !btn.classList.contains("slide-tile-empty")) {
+        e.preventDefault();
+        tryMove(parseInt(btn.dataset.pos, 10));
+        return;
+      }
+    }
+
+    if (targetPos >= 0 && targetPos < 9) {
+      if (tryMove(targetPos)) {
+        // Pindahkan fokus ke ubin yang baru saja digeser
+        const newBtn = $(`[data-pos="${emptyPos}"]`, boardEl);
+        if (newBtn) newBtn.focus();
+      }
+    }
+  });
+
+  if (btnShuffle) {
+    btnShuffle.addEventListener("click", () => {
+      SoundFX.playClick();
+      shuffleSolvable();
+    });
+  }
+
+  if (btnGuide && previewBox) {
+    btnGuide.addEventListener("click", () => {
+      const isHidden = previewBox.hidden;
+      previewBox.hidden = !isHidden;
+      btnGuide.setAttribute("aria-expanded", String(isHidden));
+      SoundFX.playClick();
+    });
+  }
+
+  // Shuffle awal
+  shuffleSolvable();
+}
+
+// ==========================================================================
+// #48 PUZZLE JIGSAW TATA SURYA (JIGSAW PUZZLE)
+// ==========================================================================
+function initPuzzleJigsaw() {
+  const container = $("#jigsaw-container");
+  if (!container) return;
+
+  const boardEl = $("#jigsaw-board", container);
+  const trayEl = $("#jigsaw-tray", container);
+  const progressEl = $("#jigsaw-progress", container);
+  const btnReset = $("#btn-jigsaw-reset", container);
+  const solvedMsg = $("#jigsaw-solved-msg", container);
+
+  let selectedPiece = null;
+
+  function renderPuzzle() {
+    if (!boardEl || !trayEl) return;
+    boardEl.innerHTML = "";
+    trayEl.innerHTML = "";
+    selectedPiece = null;
+    if (solvedMsg) solvedMsg.hidden = true;
+    if (progressEl) progressEl.textContent = "Tersusun: 0 / 6";
+
+    // Buat 6 slot target di papan (urut 1..6)
+    PUZZLE_JIGSAW_DATA.forEach((item) => {
+      const slot = document.createElement("div");
+      slot.className = "jigsaw-slot";
+      slot.dataset.slotId = item.id;
+      slot.dataset.slotOrder = item.order;
+      slot.setAttribute("role", "button");
+      slot.setAttribute("tabindex", "0");
+      slot.setAttribute("aria-label", `Slot ${item.order}: ${item.title}`);
+      slot.innerHTML = `
+        <span class="jigsaw-slot-num">Zona #${item.order}</span>
+        <span class="jigsaw-slot-title">${item.title}</span>
+        <span class="text-subtle">${item.name}</span>
+      `;
+      boardEl.appendChild(slot);
+    });
+
+    // Acak kepingan untuk ditempatkan di tray
+    const shuffledPieces = [...PUZZLE_JIGSAW_DATA].sort(() => Math.random() - 0.5);
+    shuffledPieces.forEach((item) => {
+      const piece = document.createElement("div");
+      piece.className = "jigsaw-piece";
+      piece.dataset.pieceId = item.id;
+      piece.setAttribute("role", "button");
+      piece.setAttribute("tabindex", "0");
+      piece.setAttribute("aria-label", `Kepingan ${item.title}: ${item.desc}`);
+      piece.innerHTML = `
+        <span class="jigsaw-piece-icon" aria-hidden="true">${item.icon}</span>
+        <span class="jigsaw-piece-title">${item.title}</span>
+        <span class="jigsaw-piece-desc">${item.desc}</span>
+      `;
+      trayEl.appendChild(piece);
+    });
+  }
+
+  function handlePlacement(pieceEl, slotEl) {
+    if (!pieceEl || !slotEl || slotEl.classList.contains("is-filled")) return;
+    const pieceId = pieceEl.dataset.pieceId;
+    const slotId = slotEl.dataset.slotId;
+
+    if (pieceId === slotId) {
+      // Cocok! Pasang kepingan ke dalam slot
+      pieceEl.classList.remove("is-selected");
+      pieceEl.classList.add("is-placed");
+      pieceEl.removeAttribute("tabindex");
+
+      slotEl.classList.add("is-filled");
+      slotEl.innerHTML = "";
+      slotEl.appendChild(pieceEl);
+
+      SoundFX.playSuccess();
+      selectedPiece = null;
+
+      // Update hitungan kepingan terpasang
+      const filledCount = $$(".jigsaw-slot.is-filled", boardEl).length;
+      if (progressEl) progressEl.textContent = `Tersusun: ${filledCount} / 6`;
+
+      if (filledCount === PUZZLE_JIGSAW_DATA.length) {
+        if (solvedMsg) solvedMsg.hidden = false;
+        SoundFX.playFanfare();
+        AppState.complete("pjigsaw", 15);
+      }
+    } else {
+      // Salah slot
+      SoundFX.playError();
+      slotEl.classList.add("is-wrong");
+      setTimeout(() => slotEl.classList.remove("is-wrong"), 500);
+    }
+  }
+
+  // 1. Dukungan Drag-and-Drop Pointer Events via makeDraggable helper
+  makeDraggable({
+    container: container,
+    itemSelector: ".jigsaw-piece:not(.is-placed)",
+    dropZone: boardEl,
+    dropSelector: ".jigsaw-slot:not(.is-filled)",
+    dropOverClass: "drag-over",
+    onDrop: (draggedPiece, targetSlot) => {
+      handlePlacement(draggedPiece, targetSlot);
+    }
+  });
+
+  // 2. Dukungan Tap-to-Place (Klik kepingan lalu klik slot)
+  trayEl.addEventListener("click", (e) => {
+    const piece = e.target.closest(".jigsaw-piece:not(.is-placed)");
+    if (!piece) return;
+
+    if (selectedPiece === piece) {
+      piece.classList.remove("is-selected");
+      selectedPiece = null;
+    } else {
+      $$(".jigsaw-piece", trayEl).forEach((p) => p.classList.remove("is-selected"));
+      piece.classList.add("is-selected");
+      selectedPiece = piece;
+      SoundFX.playClick();
+    }
+  });
+
+  boardEl.addEventListener("click", (e) => {
+    const slot = e.target.closest(".jigsaw-slot:not(.is-filled)");
+    if (!slot) return;
+
+    if (selectedPiece) {
+      handlePlacement(selectedPiece, slot);
+    }
+  });
+
+  // 3. Dukungan Aksesibilitas Keyboard (Enter / Space)
+  container.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+
+    const piece = e.target.closest(".jigsaw-piece:not(.is-placed)");
+    if (piece) {
+      e.preventDefault();
+      piece.click();
+      return;
+    }
+
+    const slot = e.target.closest(".jigsaw-slot:not(.is-filled)");
+    if (slot) {
+      e.preventDefault();
+      slot.click();
+    }
+  });
+
+  if (btnReset) {
+    btnReset.addEventListener("click", () => {
+      SoundFX.playClick();
+      renderPuzzle();
+    });
+  }
+
+  // Inisialisasi awal
+  renderPuzzle();
 }
 
 

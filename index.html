@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Modul pembelajaran interaktif Jelajah Tata Surya dengan 45 ragam pola aktivitas edukasi.">
-  <title>Jelajah Tata Surya: 45 Cara Belajar Interaktif</title>
+  <meta name="description" content="Modul pembelajaran interaktif Jelajah Tata Surya dengan 48 ragam pola aktivitas edukasi.">
+  <title>Jelajah Tata Surya: 48 Cara Belajar Interaktif</title>
   
   <!-- CSS Terstruktur & Modular -->
   <link rel="stylesheet" href="css/variables.css">
@@ -24,7 +24,7 @@
       <span id="progress-bar"></span>
     </div>
     
-    <span id="stats-badge" class="stats-badge">Kadet · 0 XP · 0/45</span>
+    <span id="stats-badge" class="stats-badge">Kadet · 0 XP · 0/48</span>
     
     <div class="header-actions">
       <button id="btn-toggle-sound" class="btn-icon" title="Matikan/Nyalakan Suara" aria-label="Pengaturan Suara">🔊</button>
@@ -39,7 +39,7 @@
     <!-- Kartu Pengantar & Pengaturan Aksesibilitas -->
     <section class="card" id="intro-card">
       <h1 style="margin: 0 0 8px;">Jelajah Tata Surya 🚀</h1>
-      <p>Modul interaktif ini menyajikan <b>45 variasi pola pembelajaran</b> dalam satu kesatuan materi. Selesaikan tiap tantangan untuk mengumpulkan XP dan raih pangkat tertinggi: <b>Kadet → Astronot → Komandan!</b></p>
+      <p>Modul interaktif ini menyajikan <b>48 variasi pola pembelajaran</b> dalam satu kesatuan materi. Selesaikan tiap tantangan untuk mengumpulkan XP dan raih pangkat tertinggi: <b>Kadet → Astronot → Komandan!</b></p>
       
       <div class="accessibility-panel">
         <b style="font-size:0.875rem;">♿ Pengaturan Aksesibilitas:</b>
@@ -97,7 +97,7 @@
       </div>
       <h2>Simulasi Orbit Planet</h2>
       <div class="orbit-canvas-wrapper">
-        <canvas id="canvas-orbit" width="340" height="340" aria-label="Simulasi orbit planet mengelilingi matahari"></canvas>
+        <canvas id="canvas-orbit" width="340" height="340" role="img" aria-label="Simulasi orbit planet mengelilingi matahari"></canvas>
       </div>
       <div style="display:flex; align-items:center; gap:12px; margin-top:12px; flex-wrap:wrap;">
         <label class="text-muted" style="flex:1; min-width:180px;">
@@ -106,7 +106,15 @@
         </label>
         <button id="orbit-pause">⏸ Jeda</button>
       </div>
-      <p id="orbit-info" class="text-muted" style="margin-top:8px;">Ketuk salah satu planet pada simulasi untuk menginspeksi datanya. (Skala kecepatan diilustrasikan proporsional).</p>
+      <div style="margin-top:10px;">
+        <label for="orbit-planet-select" class="text-subtle" style="display:block; margin-bottom:4px; font-weight:600;">
+          🔍 Pilih Planet (Alternatif Keyboard / Pembaca Layar):
+        </label>
+        <select id="orbit-planet-select" style="width:100%; max-width:340px; padding:6px 10px; border-radius:var(--radius-md); border:1px solid var(--border-light); background:var(--bg-card); color:var(--tx-main); font-weight:600;">
+          <option value="">-- Pilih planet untuk inspeksi data --</option>
+        </select>
+      </div>
+      <p id="orbit-info" class="text-muted" style="margin-top:8px;">Ketuk salah satu planet pada simulasi atau pilih dari menu di atas untuk menginspeksi datanya. (Skala kecepatan diilustrasikan proporsional).</p>
     </section>
 
     <!-- #4 Tab Kategori Benda Langit -->
@@ -419,10 +427,16 @@
         <div class="card-actions"></div>
       </div>
       <h2>Gambarkan Orbit Revolusi Bumi</h2>
-      <canvas id="canvas-draw" aria-label="Kanvas menggambar lintasan bumi mengelilingi matahari"></canvas>
-      <div style="display:flex; justify-content:space-between; align-items:center;">
+      <p class="text-subtle" style="font-size:0.8125rem; margin-bottom:8px;">
+        ♿ <b>Catatan Aksesibilitas:</b> Aktivitas menggambar bebas ini memerlukan perangkat penunjuk (mouse, stylus, atau layar sentuh). Pengguna keyboard dapat menggunakan tombol <i>Gambar Otomatis</i> untuk berpartisipasi.
+      </p>
+      <canvas id="canvas-draw" role="img" aria-label="Kanvas menggambar lintasan bumi mengelilingi matahari"></canvas>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
         <span class="text-muted">Gambarkan Matahari di tengah dan lintasan melingkar Bumi.</span>
-        <button id="canvas-clear-btn">🧹 Bersihkan</button>
+        <div style="display:flex; gap:6px;">
+          <button id="canvas-auto-draw-btn">✏️ Gambar Otomatis</button>
+          <button id="canvas-clear-btn">🧹 Bersihkan</button>
+        </div>
       </div>
     </section>
 
@@ -561,7 +575,7 @@
         <div class="card-actions"></div>
       </div>
       <h2>Teka-Teki Matriks Kata Antariksa</h2>
-      <p class="text-muted">Ketuk huruf berurutan sampai merangkai nama target (dapat dibaca maju maupun mundur). <span id="word-search-list"></span></p>
+      <p class="text-muted">Seret jari/kursor atau ketuk huruf awal lalu huruf akhir kata untuk memilih (mendatar atau menurun): <span id="word-search-list"></span></p>
       <div id="word-search-grid"></div>
       <div style="text-align:center;">
         <button id="word-search-clear">Hapus Pilihan Huruf</button>
@@ -1011,10 +1025,138 @@
       </div>
     </section>
 
+    <!-- #46 Kuis Mode Bertahan (survival_mode) -->
+    <section class="card" data-category="quiz" data-task-id="surv">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#46 Mode Bertahan (survival_mode)</span>
+          <span class="category-tag">Kuis & Uji Konsep</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Kosmik Sudden Death: Uji Ketahanan Antariksa</h2>
+      <p class="text-muted">Jawab setiap pertanyaan astronomi dengan tepat untuk terus bertahan! Satu kesalahan berarti perjalanan antariksamu berakhir (Game Over). Capai minimal 5 jawaban beruntun untuk menyelesaikan misi ini!</p>
+
+      <div class="survival-arena" id="survival-arena">
+        <div class="survival-hud">
+          <div class="survival-hud-stat">
+            <span class="survival-heart" aria-hidden="true">❤️</span>
+            <span>Nyawa:</span>
+            <span class="survival-hud-val" id="survival-lives">1 Nyawa</span>
+          </div>
+          <div class="survival-hud-stat">
+            <span>Streak Saat Ini:</span>
+            <span class="survival-hud-val" id="survival-streak">0</span>
+          </div>
+          <div class="survival-hud-stat">
+            <span>Rekor Terbaik:</span>
+            <span class="survival-badge" id="survival-best">0 🔥</span>
+          </div>
+        </div>
+
+        <div id="survival-play-area">
+          <div class="survival-prompt-box">
+            <div class="survival-q-meta">
+              <span id="survival-q-category">Kategori: Fakta Kosmik</span>
+              <span id="survival-q-counter">Pertanyaan #1</span>
+            </div>
+            <h3 class="survival-q-text" id="survival-question-text">Memuat pertanyaan...</h3>
+          </div>
+
+          <div class="survival-options-grid" id="survival-options" role="group" aria-label="Pilihan Jawaban Kuis Mode Bertahan"></div>
+
+          <div id="survival-fact-feedback" class="survival-feedback" hidden></div>
+        </div>
+
+        <div id="survival-gameover-card" class="survival-gameover-card" hidden>
+          <div class="survival-gameover-icon" aria-hidden="true">💥</div>
+          <h3 class="survival-gameover-title">Misi Berakhir!</h3>
+          <p class="survival-gameover-desc" id="survival-gameover-msg">Pesawatmu kehabisan bahan bakar akibat kesalahan navigasi.</p>
+          <div class="survival-gameover-stats">
+            <div class="survival-gameover-stat-item">
+              <span>Rangkaian Benar</span>
+              <b id="survival-final-streak">0</b>
+            </div>
+            <div class="survival-gameover-stat-item">
+              <span>Rekor Terbaik</span>
+              <b id="survival-final-best">0</b>
+            </div>
+          </div>
+          <button id="btn-survival-restart" class="btn-primary" type="button">Mulai Ulang Misi 🚀</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- #47 Puzzle Geser Planet Jupiter (puzzle_slide) -->
+    <section class="card" data-category="game" data-task-id="pslide">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#47 Puzzle Geser Planet (puzzle_slide)</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Puzzle Geser 3x3: Rekonstruksi Atmosfer Jupiter</h2>
+      <p class="text-muted">Susun kembali 8 kepingan citra Planet Jupiter ke posisi aslinya (1 sampai 8) dengan menggeser ubin yang bersebelahan ke slot kosong. Kamu bisa mengklik atau menekan tombol arah panah pada keyboard!</p>
+
+      <div class="slide-puzzle-wrapper">
+        <div class="slide-hud">
+          <div class="slide-counter">Langkah: <b id="slide-move-count">0</b></div>
+          <button id="btn-slide-shuffle" class="btn-secondary" type="button">Acak Ulang</button>
+          <button id="btn-slide-guide" class="slide-guide-toggle" type="button" aria-expanded="false" aria-controls="slide-preview-box">Bantuan Urutan</button>
+        </div>
+
+        <div id="slide-preview-box" class="slide-preview-box" hidden>
+          Target susunan ubin: baris pertama <b>1, 2, 3</b>; baris kedua <b>4, 5, 6</b>; baris ketiga <b>7, 8</b>, dan slot kosong di pojok kanan bawah.
+        </div>
+
+        <div class="slide-board" id="slide-puzzle-board" role="grid" aria-label="Papan Puzzle Geser Jupiter 3x3"></div>
+
+        <div id="slide-solved-msg" class="slide-solved-banner" hidden>
+          🎉 Luar biasa! Kamu berhasil menyusun rekonstruksi atmosfer Jupiter dengan sempurna!
+        </div>
+      </div>
+    </section>
+
+    <!-- #48 Puzzle Jigsaw Tata Surya (puzzle_jigsaw) -->
+    <section class="card" data-category="game" data-task-id="pjigsaw">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#48 Puzzle Jigsaw Tata Surya (puzzle_jigsaw)</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Jigsaw Kosmik: Susun Zona Tata Surya</h2>
+      <p class="text-muted">Susun formasi zona tata surya dari pusat hingga tepian terluar. Seret kepingan ke slot tujuan yang cocok, atau ketuk kepingan lalu ketuk slot untuk menempatkannya!</p>
+
+      <div class="jigsaw-container" id="jigsaw-container">
+        <div class="jigsaw-hud">
+          <span class="jigsaw-board-label">Papan Susunan Zona Tata Surya</span>
+          <div class="jigsaw-progress-pill" id="jigsaw-progress">Tersusun: 0 / 6</div>
+          <button id="btn-jigsaw-reset" class="btn-secondary" type="button">Reset Kepingan</button>
+        </div>
+
+        <div class="jigsaw-board" id="jigsaw-board" role="region" aria-label="Slot Formasi Zona Tata Surya"></div>
+
+        <div class="jigsaw-tray-section">
+          <span class="jigsaw-board-label">Kotak Kepingan Zona Kosmik</span>
+          <div class="jigsaw-tray" id="jigsaw-tray" role="group" aria-label="Kepingan Puzzle yang Belum Ditempatkan"></div>
+        </div>
+
+        <div id="jigsaw-solved-msg" class="jigsaw-complete-card" hidden>
+          🌌 Sempurna! Seluruh zona dari Matahari hingga Awan Oort telah tersusun sesuai urutan arsitektur Tata Surya kita!
+        </div>
+      </div>
+    </section>
+
     <!-- Kartu Kemenangan / Trophy Komandan -->
     <section class="card" id="final-trophy-card" hidden style="background:linear-gradient(135deg, var(--bg-card), var(--primary-light)); border:2px solid var(--accent); text-align:center; padding:32px 20px;">
       <h2 style="font-size:1.75rem; margin-bottom:8px;">🏆 Selamat, Komandan Tata Surya!</h2>
-      <p style="font-size:1.05rem; font-weight:600;">Kamu telah berhasil menuntaskan seluruh 45 ragam pola interaksi pembelajaran secara lengkap!</p>
+      <p style="font-size:1.05rem; font-weight:600;">Kamu telah berhasil menuntaskan seluruh 48 ragam pola interaksi pembelajaran secara lengkap!</p>
       <p class="text-muted" style="max-width:540px; margin:12px auto;">
         Setiap variasi aktivitas yang kamu jalankan dirancang dengan peran pedagogis tersendiri: memicu rasa ingin tahu, menguji pemahaman fakta, melatih daya ingat jangka panjang, hingga merangsang analisis kritis.
       </p>

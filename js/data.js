@@ -1011,12 +1011,176 @@ const TIMER_CHALLENGE_DATA = [
   }
 ];
 
-// Kategori Interaksi untuk Filter Bar (Total: 45)
+// #46 Mode Bertahan Hidup Kosmik (survival_mode)
+const SURVIVAL_MODE_DATA = [
+  {
+    q: "Benda langit apa yang memiliki medan gravitasi sangat ekstrem hingga cahaya pun tidak dapat melewatinya?",
+    options: ["Bintang Neutron", "Lubang Hitam (Black Hole)", "Pulsar", "Bintang Katai Putih"],
+    correct: 1,
+    fact: "Lubang hitam memiliki horizon peristiwa di mana kecepatan lepas melampaui kecepatan cahaya."
+  },
+  {
+    q: "Planet manakah di Tata Surya yang memiliki jumlah satelit alami (bulan) terkonfirmasi paling banyak?",
+    options: ["Jupiter", "Saturnus", "Uranus", "Neptunus"],
+    correct: 1,
+    fact: "Saturnus memiliki lebih dari 145 satelit alami yang telah diakui oleh IAU."
+  },
+  {
+    q: "Kumpulan benda-benda es kerdil di luar orbit planet Neptunus dinamakan...",
+    options: ["Sabuk Asteroid", "Sabuk Van Allen", "Sabuk Kuiper", "Awan Oort"],
+    correct: 2,
+    fact: "Sabuk Kuiper membentang dari 30 hingga 55 AU dari Matahari dan memuat planet katai seperti Pluto."
+  },
+  {
+    q: "Unsur kimia apakah yang mendominasi lebih dari 70% komposisi massa Matahari?",
+    options: ["Helium", "Oksigen", "Hidrogen", "Nitrogen"],
+    correct: 2,
+    fact: "Matahari tersusun atas ±73% gas Hidrogen yang menjadi bahan bakar utama reaksi fusi termonuklir."
+  },
+  {
+    q: "Berapa perkiraan umur terbentuknya Tata Surya kita dari awan nebula purba?",
+    options: ["±4,6 Miliar Tahun", "±13,8 Miliar Tahun", "±1 Miliar Tahun", "±500 Juta Tahun"],
+    correct: 0,
+    fact: "Penanggalan radiometrik meteorit membuktikan Tata Surya terbentuk sekitar 4,57 miliar tahun silam."
+  },
+  {
+    q: "Planet apakah yang memiliki pantulan cahaya awan paling cemerlang dan tampak seperti bintang fajar?",
+    options: ["Merkurius", "Venus", "Mars", "Jupiter"],
+    correct: 1,
+    fact: "Venus diselimuti awan tebal asam sulfat dengan albedo 75% yang memantulkan sinar matahari dengan kuat."
+  },
+  {
+    q: "Wahana antariksa pertama buatan umat manusia yang berhasil melintasi heliopause ke ruang antarbintang adalah...",
+    options: ["Apollo 11", "Voyager 1", "New Horizons", "Curiosity"],
+    correct: 1,
+    fact: "Voyager 1 diluncurkan pada 1977 dan menembus ruang antarbintang pada Agustus 2012."
+  },
+  {
+    q: "Dua satelit alami berukuran kecil dan berbentuk tidak bulat milik Mars bernama...",
+    options: ["Io dan Europa", "Titan dan Enceladus", "Phobos dan Deimos", "Triton dan Nereid"],
+    correct: 2,
+    fact: "Phobos dan Deimos berbentuk tidak beraturan seperti kentang dan diduga asteroid yang tertangkap gravitasi Mars."
+  },
+  {
+    q: "Aliran partikel berenergi tinggi yang terus-menerus disemburkan oleh korona Matahari ke ruang angkasa disebut...",
+    options: ["Angin Matahari (Solar Wind)", "Gelombang Gravitasi", "Sinar Kosmik", "Radiasi Cherenkov"],
+    correct: 0,
+    fact: "Angin matahari berinteraksi dengan magnetosfer Bumi memicu kilauan aurora indah di daerah kutub."
+  },
+  {
+    q: "Planet manakah yang sumbu rotasinya miring ekstrem hampir 98° sehingga berputar menggelinding?",
+    options: ["Neptunus", "Saturnus", "Uranus", "Merkurius"],
+    correct: 2,
+    fact: "Kemiringan sumbu Uranus mencapai 97,77° yang memicu musim ekstrem berlangsung selama 21 tahun per sisi."
+  },
+  {
+    q: "Bulan terbesar di Tata Surya yang ukurannya melampaui ukuran planet Merkurius adalah...",
+    options: ["Titan", "Ganymede", "Kalisto", "Bulan"],
+    correct: 1,
+    fact: "Ganymede (satelit Jupiter) berdiameter 5.268 km, menjadikannya bulan terbesar di Tata Surya."
+  },
+  {
+    q: "Ekor gas dan debu komet selalu mengarah menjauhi Matahari karena dorongan...",
+    options: ["Gravitasi Bumi", "Tekanan Radiasi & Angin Matahari", "Medan Magnet Jupiter", "Gaya Sentrifugal"],
+    correct: 1,
+    fact: "Foton cahaya dan angin partikel matahari meniup partikel komet selalu berlawanan arah dari Matahari."
+  },
+  {
+    q: "Titik dalam lintasan orbit saat sebuah planet berada pada jarak paling dekat ke Matahari disebut...",
+    options: ["Aphelion", "Perihelion", "Perigee", "Apogee"],
+    correct: 1,
+    fact: "Perihelion adalah titik terdekat planet ke Matahari (kebalikannya disebut Aphelion)."
+  },
+  {
+    q: "Planet dengan rentang suhu siang (+430°C) dan malam (-180°C) paling ekstrem akibat tiadanya atmosfer adalah...",
+    options: ["Mars", "Merkurius", "Bumi", "Venus"],
+    correct: 1,
+    fact: "Merkurius tidak memiliki atmosfer tebal untuk menahan panas, sehingga suhu drop drastis di malam hari."
+  },
+  {
+    q: "Bintik Merah Raksasa (Great Red Spot) pada planet Jupiter merupakan sistem...",
+    options: ["Kawah Meteorit Purba", "Gunung Berapi Aktif", "Badai Antisiklon Raksasa", "Lautan Metana"],
+    correct: 2,
+    fact: "Great Red Spot adalah badai antisiklon raksasa berdiameter lebih besar dari Bumi yang berputar ratusan tahun."
+  }
+];
+
+// #47 Geser Potongan Gambar Planet (puzzle_slide)
+const PUZZLE_SLIDE_DATA = {
+  title: "Rekonstruksi Jupiter: Sang Penguasa Gas",
+  gridSize: 3, // 3x3
+  tiles: [
+    { id: 0, label: "Pojok Kiri Atas", row: 0, col: 0, bgX: "0%", bgY: "0%" },
+    { id: 1, label: "Tengah Atas", row: 0, col: 1, bgX: "50%", bgY: "0%" },
+    { id: 2, label: "Pojok Kanan Atas", row: 0, col: 2, bgX: "100%", bgY: "0%" },
+    { id: 3, label: "Kiri Tengah", row: 1, col: 0, bgX: "0%", bgY: "50%" },
+    { id: 4, label: "Pusat Badai Merah", row: 1, col: 1, bgX: "50%", bgY: "50%" },
+    { id: 5, label: "Kanan Tengah", row: 1, col: 2, bgX: "100%", bgY: "50%" },
+    { id: 6, label: "Pojok Kiri Bawah", row: 2, col: 0, bgX: "0%", bgY: "100%" },
+    { id: 7, label: "Tengah Bawah", row: 2, col: 1, bgX: "50%", bgY: "100%" },
+    { id: 8, label: "Slot Kosong", row: 2, col: 2, isEmpty: true }
+  ],
+  funFact: "Luar biasa! Kamu berhasil menyusun kembali Jupiter! Planet ini memiliki massa 2,5 kali lipat dari gabungan seluruh planet lainnya di Tata Surya. Gravitasi raksasanya melindungi Bumi dengan menangkap atau membelokkan lintasan komet berbahaya."
+};
+
+// #48 Susun Potongan Gambar Tata Surya (puzzle_jigsaw)
+const PUZZLE_JIGSAW_DATA = [
+  {
+    id: 1,
+    title: "1. Matahari & Merkurius",
+    desc: "Sang bintang induk bertenaga fusi nuklir dan planet terdekat berpermukaan kawah.",
+    icon: "☀️☿️",
+    badge: "Zona Dekat",
+    color: "#eab308"
+  },
+  {
+    id: 2,
+    title: "2. Venus & Bumi",
+    desc: "Dunia awan asam belerang dan planet biru penopang jutaan kehidupan semesta.",
+    icon: "♀️🌍",
+    badge: "Zona Layak Huni",
+    color: "#3b82f6"
+  },
+  {
+    id: 3,
+    title: "3. Mars & Sabuk Asteroid",
+    desc: "Planet merah berdebu besi oksida dan cincin jutaan puing batuan sisa pembentukan planet.",
+    icon: "♂️🪐",
+    badge: "Batas Kebumian",
+    color: "#ef4444"
+  },
+  {
+    id: 4,
+    title: "4. Jupiter & Badai Raksasa",
+    desc: "Raksasa gas terbesar dengan Bintik Merah dan sistem satelit alami yang memukau.",
+    icon: "♃🌕",
+    badge: "Raksasa Gas",
+    color: "#f97316"
+  },
+  {
+    id: 5,
+    title: "5. Saturnus & Cincin Megah",
+    desc: "Permata bercincin partikel es murni dengan kerapatan lebih ringan daripada air.",
+    icon: "♄🪐",
+    badge: "Sistem Cincin",
+    color: "#eab308"
+  },
+  {
+    id: 6,
+    title: "6. Raksasa Es & Tepi Semesta",
+    desc: "Uranus miring, Neptunus berangin supersonik, serta Sabuk Kuiper beku abadi.",
+    icon: "♅♆",
+    badge: "Zona Terluar",
+    color: "#06b6d4"
+  }
+];
+
+// Kategori Interaksi untuk Filter Bar (Total: 48)
 const ACTIVITY_CATEGORIES = [
   { id: "all", label: "Semua", icon: "✨" },
   { id: "explore", label: "Eksplorasi", icon: "🪐", count: 10 },
   { id: "sim", label: "Simulasi", icon: "⚙️", count: 5 },
-  { id: "quiz", label: "Kuis & Cek", icon: "📝", count: 12 },
-  { id: "game", label: "Game Edukatif", icon: "🎮", count: 13 },
+  { id: "quiz", label: "Kuis & Cek", icon: "📝", count: 13 },
+  { id: "game", label: "Game Edukatif", icon: "🎮", count: 15 },
   { id: "reflect", label: "Refleksi", icon: "🧠", count: 5 }
 ];

@@ -11,6 +11,19 @@ document.addEventListener("DOMContentLoaded", () => {
   window.scrollTo(0, 0);
 
   // 1. Inisialisasi Elemen Header & Kontrol Utama
+  const appHeader = $("#app-header");
+  if (appHeader) {
+    const updateHeaderH = () => {
+      document.documentElement.style.setProperty("--header-h", `${appHeader.offsetHeight}px`);
+    };
+    updateHeaderH();
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(updateHeaderH).observe(appHeader);
+    } else {
+      window.addEventListener("resize", updateHeaderH);
+    }
+  }
+
   const progressBar = $("#progress-bar");
   const statsBadge = $("#stats-badge");
   const soundToggleBtn = $("#btn-toggle-sound");
@@ -209,6 +222,9 @@ document.addEventListener("DOMContentLoaded", () => {
     initVisualTree();
     initAltitudeParallax();
     initTimerChallenge();
+    initSurvivalMode();
+    initPuzzleSlide();
+    initPuzzleJigsaw();
 
     // Narasi suara diinject setelah kartu siap
     initTTS();
