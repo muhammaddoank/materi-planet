@@ -2787,3 +2787,1212 @@
   font-weight: 600;
   animation: fadeIn 0.3s ease-out;
 }
+
+/* ==========================================================================
+   #49 Reaksi Cepat Tombol (key_reaction)
+   ========================================================================== */
+.key-reaction-arena {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.key-reaction-start-card {
+  text-align: center;
+  padding: 24px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.key-reaction-start-icon {
+  font-size: 2.75rem;
+  line-height: 1;
+}
+
+.key-reaction-start-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--tx-main);
+  margin: 0;
+}
+
+.key-reaction-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: var(--bg-card);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.key-reaction-hud-stat {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--tx-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.key-reaction-time-badge {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.key-reaction-prompt-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 18px 16px;
+  text-align: center;
+}
+
+.key-reaction-round-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--tx-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.key-reaction-question {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--tx-main);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.key-reaction-controls {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .key-reaction-controls {
+    grid-template-columns: 1fr;
+  }
+}
+
+.key-btn {
+  background: var(--bg-card);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px 14px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--tx-main);
+  min-height: 58px;
+}
+
+.key-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.key-btn:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.key-btn.is-correct {
+  background: var(--success-bg) !important;
+  border-color: var(--success) !important;
+  color: #065f46 !important;
+}
+
+.key-btn.is-wrong {
+  background: var(--danger-bg) !important;
+  border-color: var(--danger) !important;
+  color: #991b1b !important;
+  animation: shakeOpt 0.35s ease-in-out;
+}
+
+.key-btn:disabled {
+  opacity: 0.85;
+  cursor: default;
+}
+
+.key-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 2px 8px;
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 0.875rem;
+  color: var(--primary);
+  box-shadow: 0 2px 0 var(--border-light);
+}
+
+.key-reaction-feedback {
+  background: var(--bg-card);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--tx-main);
+}
+
+.key-reaction-summary {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 20px 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.key-reaction-summary-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin: 0;
+}
+
+.key-reaction-stat-grid {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 8px 0;
+  flex-wrap: wrap;
+}
+
+.key-reaction-stat-item {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 18px;
+  text-align: center;
+}
+
+.key-reaction-stat-item span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--tx-muted);
+}
+
+.key-reaction-stat-item b {
+  font-size: 1.25rem;
+  color: var(--tx-main);
+}
+
+/* ==========================================================================
+   #50 Pengelompokan Kartu (card_sort)
+   ========================================================================== */
+.card-sort-container {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card-sort-hud {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-sort-progress-pill {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.card-sort-deck-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  padding: 12px;
+}
+
+.sort-active-card {
+  background: var(--bg-card);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.sort-active-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.sort-active-card.is-dragging {
+  opacity: 0.75;
+  cursor: grabbing;
+}
+
+.sort-card-icon {
+  font-size: 2.25rem;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.sort-card-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--tx-main);
+  margin-bottom: 4px;
+}
+
+.sort-card-hint {
+  font-size: 0.8125rem;
+  color: var(--tx-muted);
+  line-height: 1.4;
+}
+
+.card-sort-targets {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 600px) {
+  .card-sort-targets {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sort-target-bin {
+  background: var(--bg-card);
+  border: 2px dashed var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 120px;
+}
+
+.sort-target-bin:hover,
+.sort-target-bin.drag-over {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: scale(1.02);
+}
+
+.sort-target-bin:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.sort-bin-icon {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.sort-bin-title {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--tx-main);
+}
+
+.sort-bin-desc {
+  font-size: 0.6875rem;
+  color: var(--tx-muted);
+  line-height: 1.25;
+  margin-top: 2px;
+}
+
+.sort-bin-badge {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--bg-card-subtle);
+  color: var(--primary);
+  border: 1px solid var(--border-light);
+}
+
+.sort-bin-items {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: center;
+}
+
+.sort-item-pill {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  background: var(--success-bg);
+  color: #065f46;
+  border: 1px solid var(--success);
+  animation: fadeIn 0.25s ease-out;
+}
+
+.card-sort-feedback {
+  background: var(--bg-card);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--tx-main);
+}
+
+.card-sort-solved {
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+  color: #065f46;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ==========================================================================
+   #51 Mesin Slot Kosmik (slot_machine)
+   ========================================================================== */
+.slot-arena {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.slot-reels-frame {
+  width: 100%;
+  max-width: 520px;
+  background: #0b1120;
+  border: 3px solid #1e293b;
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  box-shadow: inset 0 4px 16px rgba(0, 0, 0, 0.6), var(--shadow-md);
+}
+
+.slot-reel-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.slot-reel-header {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.slot-reel-window {
+  width: 100%;
+  height: 94px;
+  background: #0f172a;
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.6);
+}
+
+.slot-reel-strip {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 1.2s cubic-bezier(0.15, 0.85, 0.35, 1);
+}
+
+.slot-reel-item {
+  height: 94px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px;
+  user-select: none;
+}
+
+.slot-item-icon {
+  font-size: 1.85rem;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.slot-item-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.2;
+}
+
+.slot-controls-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 520px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-spin-slot {
+  font-size: 1rem;
+  padding: 12px 24px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slot-challenge-card {
+  width: 100%;
+  max-width: 520px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.35s ease-out;
+}
+
+.slot-combo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.slot-q-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--tx-main);
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+
+.slot-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 500px) {
+  .slot-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.slot-opt-btn {
+  background: var(--bg-card);
+  color: var(--tx-main);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.slot-opt-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.slot-opt-btn:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.slot-opt-btn.is-correct {
+  background: var(--success-bg) !important;
+  border-color: var(--success) !important;
+  color: #065f46 !important;
+  font-weight: 700;
+}
+
+.slot-opt-btn.is-wrong {
+  background: var(--danger-bg) !important;
+  border-color: var(--danger) !important;
+  color: #991b1b !important;
+}
+
+.slot-feedback {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--bg-card-subtle);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.slot-complete-banner {
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+  color: #065f46;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  width: 100%;
+  max-width: 520px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ==========================================================================
+   #52 Pecahkan Balon (balloon_pop)
+   ========================================================================== */
+.balloon-arena {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.balloon-start-card {
+  text-align: center;
+  padding: 24px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.balloon-start-icon {
+  font-size: 2.75rem;
+  line-height: 1;
+}
+
+.balloon-start-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--tx-main);
+  margin: 0;
+}
+
+.balloon-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: var(--bg-card);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.balloon-question-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+}
+
+.balloon-q-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--tx-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.balloon-q-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--tx-main);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.balloon-stage {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  min-height: 190px;
+  align-items: end;
+  padding: 12px 6px 20px;
+}
+
+@media (max-width: 600px) {
+  .balloon-stage {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+.balloon-item {
+  background: linear-gradient(135deg, #ec4899, #be185d);
+  color: #ffffff;
+  border: none;
+  border-radius: 50% 50% 50% 50% / 45% 45% 55% 55%;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px 10px;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15), inset -4px -6px 12px rgba(0, 0, 0, 0.25);
+  animation: floatBalloon 3s ease-in-out infinite alternate;
+  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.balloon-item:nth-child(1) {
+  background: linear-gradient(135deg, #f43f5e, #be123c);
+  animation-delay: 0s;
+}
+
+.balloon-item:nth-child(2) {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  animation-delay: 0.6s;
+}
+
+.balloon-item:nth-child(3) {
+  background: linear-gradient(135deg, #10b981, #047857);
+  animation-delay: 1.2s;
+}
+
+.balloon-item:nth-child(4) {
+  background: linear-gradient(135deg, #f59e0b, #b45309);
+  animation-delay: 1.8s;
+}
+
+.balloon-item::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 20px;
+  width: 14px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  transform: rotate(-35deg);
+  pointer-events: none;
+}
+
+.balloon-item::before {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 8px;
+  background: inherit;
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+@keyframes floatBalloon {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-12px); }
+}
+
+.balloon-item:hover {
+  transform: translateY(-8px) scale(1.05);
+}
+
+.balloon-item:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 4px;
+}
+
+.balloon-item.is-popped {
+  animation: popExplosion 0.35s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes popExplosion {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.8; filter: blur(2px); }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+.balloon-item.is-wrong {
+  animation: shakeOpt 0.35s ease-in-out;
+}
+
+.balloon-feedback {
+  background: var(--bg-card);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--tx-main);
+}
+
+.balloon-complete-banner {
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  color: #065f46;
+  font-size: 1rem;
+  font-weight: 700;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ==========================================================================
+   #53 Balapan Pesawat Antariksa (airplane_race)
+   ========================================================================== */
+.airace-arena {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.airace-start-card {
+  text-align: center;
+  padding: 24px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.airace-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: var(--bg-card);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.airace-mission-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+}
+
+.airace-track {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  background: #090d16;
+  border: 2px solid #1e293b;
+  border-radius: var(--radius-lg);
+  padding: 16px 12px 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 4px 16px rgba(0, 0, 0, 0.7);
+}
+
+.airace-gates-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 50px;
+}
+
+.airace-gate-btn {
+  background: #0f172a;
+  border: 2px dashed #38bdf8;
+  border-radius: var(--radius-md);
+  color: #f8fafc;
+  padding: 14px 8px;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+}
+
+.airace-gate-btn:hover {
+  background: #1e293b;
+  border-color: #7dd3fc;
+  transform: translateY(-2px);
+}
+
+.airace-gate-btn:focus-visible {
+  outline: 3px solid #38bdf8;
+  outline-offset: 2px;
+}
+
+.airace-gate-btn.is-correct {
+  background: #064e3b !important;
+  border-color: #34d399 !important;
+  border-style: solid !important;
+  box-shadow: 0 0 16px rgba(52, 211, 153, 0.5) !important;
+}
+
+.airace-gate-btn.is-wrong {
+  background: #7f1d1d !important;
+  border-color: #f87171 !important;
+  border-style: solid !important;
+}
+
+.airace-ship-stage {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  position: relative;
+}
+
+.airace-ship {
+  grid-column: 2;
+  font-size: 2.5rem;
+  line-height: 1;
+  text-align: center;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.3, 1);
+  filter: drop-shadow(0 4px 10px rgba(245, 158, 11, 0.6));
+  user-select: none;
+}
+
+.airace-ship[data-lane="0"] {
+  transform: translateX(-100%);
+}
+
+.airace-ship[data-lane="1"] {
+  transform: translateX(0%);
+}
+
+.airace-ship[data-lane="2"] {
+  transform: translateX(100%);
+}
+
+.airace-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.airace-ctrl-btn {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--tx-main);
+  transition: all var(--transition-fast);
+}
+
+.airace-ctrl-btn:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+}
+
+.airace-feedback {
+  background: var(--bg-card);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--tx-main);
+}
+
+.airace-complete-banner {
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  color: #065f46;
+  font-size: 1rem;
+  font-weight: 700;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* ==========================================================================
+   #54 Buka Kotak Misteri Kosmik (open_the_box)
+   ========================================================================== */
+.openbox-container {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin: 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.openbox-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.openbox-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 580px) {
+  .openbox-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.openbox-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 18px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+}
+
+.openbox-card:hover:not(.is-opened) {
+  border-color: var(--primary);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.openbox-card:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.openbox-card.is-opened {
+  border-color: var(--success);
+  background: var(--success-bg);
+  cursor: default;
+}
+
+.openbox-card-num {
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: var(--bg-card-subtle);
+  color: var(--primary);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.openbox-card-icon {
+  font-size: 2.25rem;
+  line-height: 1;
+  margin: 4px 0;
+}
+
+.openbox-card-label {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--tx-main);
+  line-height: 1.25;
+}
+
+.openbox-modal-view {
+  background: var(--bg-card);
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.openbox-modal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: 8px;
+}
+
+.openbox-modal-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--tx-main);
+  margin: 0 0 10px;
+}
+
+.openbox-modal-q {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--tx-main);
+  margin-bottom: 12px;
+}
+
+.openbox-options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 500px) {
+  .openbox-options-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.openbox-opt-btn {
+  background: var(--bg-card-subtle);
+  color: var(--tx-main);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.openbox-opt-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.openbox-opt-btn.is-correct {
+  background: var(--success-bg) !important;
+  border-color: var(--success) !important;
+  color: #065f46 !important;
+  font-weight: 700;
+}
+
+.openbox-opt-btn.is-wrong {
+  background: var(--danger-bg) !important;
+  border-color: var(--danger) !important;
+  color: #991b1b !important;
+}
+
+.openbox-feedback {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--bg-card-subtle);
+  border-left: 3px solid var(--primary);
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.openbox-solved-banner {
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  color: #065f46;
+  font-size: 1rem;
+  font-weight: 700;
+  animation: fadeIn 0.3s ease-out;
+}
+

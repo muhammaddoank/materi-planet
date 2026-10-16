@@ -225,6 +225,12 @@ document.addEventListener("DOMContentLoaded", () => {
     initSurvivalMode();
     initPuzzleSlide();
     initPuzzleJigsaw();
+    initKeyReaction();
+    initCardSort();
+    initSlotMachine();
+    initBalloonPop();
+    initAirplaneRace();
+    initOpenTheBox();
 
     // Narasi suara diinject setelah kartu siap
     initTTS();

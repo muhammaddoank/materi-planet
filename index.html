@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="Modul pembelajaran interaktif Jelajah Tata Surya dengan 48 ragam pola aktivitas edukasi.">
-  <title>Jelajah Tata Surya: 48 Cara Belajar Interaktif</title>
+  <meta name="description" content="Modul pembelajaran interaktif Jelajah Tata Surya dengan 54 ragam pola aktivitas edukasi.">
+  <title>Jelajah Tata Surya: 54 Cara Belajar Interaktif</title>
   
   <!-- CSS Terstruktur & Modular -->
   <link rel="stylesheet" href="css/variables.css">
@@ -24,7 +24,7 @@
       <span id="progress-bar"></span>
     </div>
     
-    <span id="stats-badge" class="stats-badge">Kadet · 0 XP · 0/48</span>
+    <span id="stats-badge" class="stats-badge">Kadet · 0 XP · 0/54</span>
     
     <div class="header-actions">
       <button id="btn-toggle-sound" class="btn-icon" title="Matikan/Nyalakan Suara" aria-label="Pengaturan Suara">🔊</button>
@@ -38,11 +38,11 @@
 
     <!-- Kartu Pengantar & Pengaturan Aksesibilitas -->
     <section class="card" id="intro-card">
-      <h1 style="margin: 0 0 8px;">Jelajah Tata Surya 🚀</h1>
-      <p>Modul interaktif ini menyajikan <b>48 variasi pola pembelajaran</b> dalam satu kesatuan materi. Selesaikan tiap tantangan untuk mengumpulkan XP dan raih pangkat tertinggi: <b>Kadet → Astronot → Komandan!</b></p>
+      <h1>Jelajah Tata Surya 🚀</h1>
+      <p>Modul interaktif ini menyajikan <b>54 variasi pola pembelajaran</b> dalam satu kesatuan materi. Selesaikan tiap tantangan untuk mengumpulkan XP dan raih pangkat tertinggi: <b>Kadet → Astronot → Komandan!</b></p>
       
       <div class="accessibility-panel">
-        <b style="font-size:0.875rem;">♿ Pengaturan Aksesibilitas:</b>
+        <b class="access-label">♿ Pengaturan Aksesibilitas:</b>
         <div class="btn-group">
           <button id="btn-font-dec" aria-label="Perkecil Ukuran Huruf">A−</button>
           <button id="btn-font-inc" aria-label="Perbesar Ukuran Huruf">A+</button>
@@ -50,7 +50,7 @@
           <button id="btn-print">🖨 Cetak Halaman</button>
           <button id="btn-reset-progress">↺ Reset Progres</button>
         </div>
-        <p id="streak-text" class="text-muted" style="margin-top: 10px;"></p>
+        <p id="streak-text" class="text-muted"></p>
         <p class="text-subtle">Setiap kartu dilengkapi tombol pembaca suara <b>🔈 Baca (#27)</b> · Animasi menghormati mode kurangi gerakan · Progres tersimpan otomatis di perangkat ini.</p>
       </div>
     </section>
@@ -1153,11 +1153,341 @@
       </div>
     </section>
 
+    <!-- #49 Reaksi Cepat Tombol (key_reaction) -->
+    <section class="card" data-category="quiz" data-task-id="kreact">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#49 Uji Reaksi Keyboard (key_reaction)</span>
+          <span class="category-tag">Kuis & Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Refleks Kosmik: Uji Reaksi Cepat Antariksa</h2>
+      <p class="text-muted">Latih kecepatan respon insting astronomimu! Saat pertanyaan muncul, tekan tombol keyboard yang tepat secepat mungkin. Kamu juga dapat mengklik tombol langsung di layar.</p>
+
+      <div class="key-reaction-arena" id="key-reaction-arena">
+        <div id="key-reaction-start-screen" class="key-reaction-start-card">
+          <div class="key-reaction-start-icon" aria-hidden="true">⚡🎯</div>
+          <h3 class="key-reaction-start-title">Siap Uji Ketangkasan Refleks Kosmik?</h3>
+          <p class="text-muted">Akan muncul 5 pertanyaan secara bergantian. Tekan tombol <kbd class="key-badge">A</kbd> atau <kbd class="key-badge">B</kbd> pada keyboard (atau ketuk tombol di layar) secepat mungkin!</p>
+          <button type="button" id="btn-key-start" class="btn-primary">Mulai Uji Refleks 🚀</button>
+        </div>
+
+        <div id="key-reaction-game-screen" hidden>
+          <div class="key-reaction-hud">
+            <div class="key-reaction-hud-stat">
+              <span>Ronde:</span>
+              <span class="key-reaction-round-badge" id="key-reaction-round">1 / 5</span>
+            </div>
+            <div class="key-reaction-hud-stat">
+              <span>Waktu Reaksi:</span>
+              <span class="key-reaction-time-badge" id="key-reaction-timer">0 ms</span>
+            </div>
+            <div class="key-reaction-hud-stat">
+              <span>Rata-rata:</span>
+              <span class="key-badge" id="key-reaction-avg">-- ms</span>
+            </div>
+          </div>
+
+          <div id="key-reaction-play-area">
+            <div class="key-reaction-prompt-box">
+              <div class="key-reaction-round-pill" id="key-reaction-sub">Uji Refleks Kilat</div>
+              <h3 class="key-reaction-question" id="key-reaction-q">Bersiaplah...</h3>
+            </div>
+
+            <div class="key-reaction-controls" role="group" aria-label="Pilihan Respon Cepat Tombol">
+              <button type="button" class="key-btn" id="key-btn-left" data-key="A" aria-label="Pilihan A">
+                <span class="key-badge">A</span>
+                <span id="key-label-left">Pilihan A</span>
+              </button>
+              <button type="button" class="key-btn" id="key-btn-right" data-key="B" aria-label="Pilihan B">
+                <span id="key-label-right">Pilihan B</span>
+                <span class="key-badge">B</span>
+              </button>
+            </div>
+
+            <div id="key-reaction-feedback" class="key-reaction-feedback" hidden></div>
+          </div>
+        </div>
+
+        <div id="key-reaction-summary" class="key-reaction-summary" hidden>
+          <div class="key-reaction-summary-title">⚡ Evaluasi Refleks Kosmik</div>
+          <p id="key-reaction-eval-msg" class="text-muted">Hasil uji ketepatan dan kecepatan reaksimu.</p>
+          <div class="key-reaction-stat-grid">
+            <div class="key-reaction-stat-item">
+              <span>Rata-rata Respon</span>
+              <b id="key-final-avg">0 ms</b>
+            </div>
+            <div class="key-reaction-stat-item">
+              <span>Refleks Tercepat</span>
+              <b id="key-final-best">0 ms</b>
+            </div>
+            <div class="key-reaction-stat-item">
+              <span>Ketepatan Jawaban</span>
+              <b id="key-final-acc">0/5</b>
+            </div>
+          </div>
+          <button type="button" id="btn-key-restart" class="btn-primary">Uji Ulang Refleks ↺</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- #50 Sortir Kartu Taksonomi Antariksa (card_sort) -->
+    <section class="card" data-category="game" data-task-id="csort">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#50 Klasifikasi Kartu (card_sort)</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Sortir Kosmik: Klasifikasi Objek Semesta</h2>
+      <p class="text-muted">Kelompokkan setiap kartu benda antariksa ke wadah yang sesuai (Bintang, Planet, atau Satelit Alami). Seret kartu dengan jari/mouse, ketuk wadah tujuan, atau tekan tombol angka 1, 2, 3 pada keyboard!</p>
+
+      <div class="card-sort-container" id="card-sort-container">
+        <div class="card-sort-hud">
+          <div class="card-sort-progress-pill" id="card-sort-progress">Tersortir: 0 / 8</div>
+          <button type="button" id="btn-card-sort-reset" class="btn-secondary">Reset Tumpukan</button>
+        </div>
+
+        <div class="card-sort-deck-area" id="card-sort-deck" role="region" aria-label="Area Kartu Aktif">
+          <div class="sort-active-card" id="sort-current-card" role="button" tabindex="0" aria-label="Kartu yang sedang aktif">
+            <div class="sort-card-icon" id="sort-card-icon" aria-hidden="true">🪐</div>
+            <div class="sort-card-title" id="sort-card-title">Memuat kartu...</div>
+            <div class="sort-card-hint" id="sort-card-hint">Petunjuk...</div>
+          </div>
+        </div>
+
+        <div class="card-sort-targets" id="card-sort-targets" role="group" aria-label="Wadah Kategori Sortir">
+          <div class="sort-target-bin" data-cat="bintang" role="button" tabindex="0" aria-label="Kategori Bintang: Tekan 1">
+            <span class="sort-bin-icon" aria-hidden="true">⭐</span>
+            <span class="sort-bin-title">Bintang</span>
+            <span class="sort-bin-desc">Plasma mandiri bercahaya</span>
+            <span class="sort-bin-badge">Tombol [1]</span>
+            <div class="sort-bin-items" id="bin-items-bintang"></div>
+          </div>
+          <div class="sort-target-bin" data-cat="planet" role="button" tabindex="0" aria-label="Kategori Planet: Tekan 2">
+            <span class="sort-bin-icon" aria-hidden="true">🪐</span>
+            <span class="sort-bin-title">Planet</span>
+            <span class="sort-bin-desc">Benda bulat pengorbit bintang</span>
+            <span class="sort-bin-badge">Tombol [2]</span>
+            <div class="sort-bin-items" id="bin-items-planet"></div>
+          </div>
+          <div class="sort-target-bin" data-cat="satelit" role="button" tabindex="0" aria-label="Kategori Satelit Alami: Tekan 3">
+            <span class="sort-bin-icon" aria-hidden="true">🌕</span>
+            <span class="sort-bin-title">Satelit Alami</span>
+            <span class="sort-bin-desc">Pengiring orbit planet</span>
+            <span class="sort-bin-badge">Tombol [3]</span>
+            <div class="sort-bin-items" id="bin-items-satelit"></div>
+          </div>
+        </div>
+
+        <div id="card-sort-feedback" class="card-sort-feedback" hidden></div>
+
+        <div id="card-sort-solved" class="card-sort-solved" hidden>
+          🎉 Sempurna! Seluruh 8 objek kosmik berhasil kamu klasifikasikan ke taksonomi astronomi yang tepat!
+        </div>
+      </div>
+    </section>
+
+    <!-- #51 Mesin Slot Kosmik (slot_machine) -->
+    <section class="card" data-category="game" data-task-id="slotmach">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#51 Mesin Slot Kosmik (slot_machine)</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Generator Misi Antariksa</h2>
+      <p class="text-muted">Putar 3 gulungan acak untuk menciptakan kombinasi misteri antariksa (Objek + Aspek + Tantangan). Selesaikan 3 tantangan unik hasil kombinasi gulungan untuk menuntaskan misi ini!</p>
+
+      <div class="slot-arena" id="slot-arena">
+        <div class="slot-reels-frame" role="region" aria-label="Gulungan Mesin Slot Kosmik">
+          <div class="slot-reel-col">
+            <div class="slot-reel-header">1. Objek Antariksa</div>
+            <div class="slot-reel-window" id="slot-window-1">
+              <div class="slot-reel-strip" id="slot-strip-1"></div>
+            </div>
+          </div>
+          <div class="slot-reel-col">
+            <div class="slot-reel-header">2. Aspek Penyelidikan</div>
+            <div class="slot-reel-window" id="slot-window-2">
+              <div class="slot-reel-strip" id="slot-strip-2"></div>
+            </div>
+          </div>
+          <div class="slot-reel-col">
+            <div class="slot-reel-header">3. Jenis Tantangan</div>
+            <div class="slot-reel-window" id="slot-window-3">
+              <div class="slot-reel-strip" id="slot-strip-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slot-controls-bar">
+          <button type="button" id="btn-spin-slot" class="btn-primary btn-spin-slot">
+            <span aria-hidden="true">🎰</span> Putar Gulungan Kosmik!
+          </button>
+          <div class="card-sort-progress-pill" id="slot-completed-pill">Tantangan Terpecahkan: 0 / 3</div>
+        </div>
+
+        <div id="slot-challenge-card" class="slot-challenge-card" hidden>
+          <div class="slot-combo-badge" id="slot-combo-badge">Misi Siap!</div>
+          <div class="slot-q-text" id="slot-q-text">Pertanyaan tantangan...</div>
+          <div class="slot-options-grid" id="slot-options-grid" role="group" aria-label="Pilihan Tantangan Mesin Slot"></div>
+          <div id="slot-feedback" class="slot-feedback" hidden></div>
+        </div>
+
+        <div id="slot-complete-banner" class="slot-complete-banner" hidden>
+          🚀 Spektakuler! Kamu berhasil menaklukkan 3 tantangan kombinasi mesin slot kosmik dengan wawasan astronomi yang tajam!
+        </div>
+      </div>
+    </section>
+
+    <!-- #52 Pecahkan Balon (balloon_pop) -->
+    <section class="card" data-category="game" data-task-id="bpop">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#52 Pecahkan Balon (balloon_pop)</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Pecahkan Balon Jawaban Benar</h2>
+      <p class="text-muted">Amati pertanyaan dengan seksama dan pecahkan balon yang memuat jawaban yang tepat! Balon mengapung dengan daya angkat kosmik.</p>
+
+      <div class="balloon-arena" id="balloon-arena">
+        <div class="balloon-start-card" id="balloon-start-card">
+          <span class="balloon-start-icon" aria-hidden="true">🎈</span>
+          <h3 class="balloon-start-title">Uji Refleks Pecah Balon Kosmik</h3>
+          <p class="text-muted">Siapkan konsentrasi! Tekan tombol di bawah untuk meluncurkan balon-balon jawaban.</p>
+          <button type="button" id="btn-start-balloon" class="btn-primary">
+            <span aria-hidden="true">🚀</span> Mulai Aktivitas Balon
+          </button>
+        </div>
+
+        <div id="balloon-active-area" hidden>
+          <div class="balloon-hud">
+            <span class="card-sort-progress-pill" id="balloon-progress-pill">Ronde 1 dari 4</span>
+            <span class="card-sort-progress-pill" id="balloon-score-pill">Skor: 0</span>
+          </div>
+
+          <div class="balloon-question-box">
+            <div class="balloon-q-pill" id="balloon-q-pill">Tantangan Balon</div>
+            <h3 class="balloon-q-text" id="balloon-q-text">Pertanyaan balon...</h3>
+          </div>
+
+          <div class="balloon-stage" id="balloon-stage" role="group" aria-label="Pilihan Balon Kosmik"></div>
+
+          <div id="balloon-feedback" class="balloon-feedback" hidden></div>
+        </div>
+
+        <div id="balloon-complete-banner" class="balloon-complete-banner" hidden>
+          🎉 Luar biasa! Seluruh balon jawaban benar berhasil kamu pecahkan dengan ketepatan tinggi!
+        </div>
+      </div>
+    </section>
+
+    <!-- #53 Balapan Pesawat Antariksa (airplane_race) -->
+    <section class="card" data-category="game" data-task-id="airace">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#53 Balapan Pesawat Antariksa (airplane_race)</span>
+          <span class="category-tag">Game Edukatif</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Balapan Pesawat Antariksa</h2>
+      <p class="text-muted">Kendalikan arah pesawat penjelajah ruang angkasa menuju lintasan gerbang yang berisi fakta astronomi yang benar, dan hindari rute yang keliru! Gunakan tombol kendali atau tombol panah keyboard.</p>
+
+      <div class="airace-arena" id="airace-arena">
+        <div class="airace-start-card" id="airace-start-card">
+          <span class="balloon-start-icon" aria-hidden="true">🛸</span>
+          <h3 class="balloon-start-title">Simulator Navigasi Pesawat Antariksa</h3>
+          <p class="text-muted">Arahkan kapal melintasi 3 jalur antariksa: Kiri, Tengah, atau Kanan. Tekan tombol di bawah untuk meluncur!</p>
+          <button type="button" id="btn-start-airace" class="btn-primary">
+            <span aria-hidden="true">🚀</span> Luncurkan Pesawat
+          </button>
+        </div>
+
+        <div id="airace-active-area" hidden>
+          <div class="airace-hud">
+            <span class="card-sort-progress-pill" id="airace-progress-pill">Etape 1 dari 4</span>
+            <span class="card-sort-progress-pill" id="airace-status-pill">Status: Navigasi Aktif</span>
+          </div>
+
+          <div class="airace-mission-box">
+            <h3 class="balloon-q-text" id="airace-mission-text">Misi Balapan...</h3>
+          </div>
+
+          <div class="airace-track" id="airace-track" role="region" aria-label="Lintasan Balap Antariksa">
+            <div class="airace-gates-grid" id="airace-gates-grid" role="group" aria-label="Gerbang Gerak Navigasi"></div>
+            
+            <div class="airace-ship-stage">
+              <div class="airace-ship" id="airace-ship" aria-hidden="true">🚀</div>
+            </div>
+          </div>
+
+          <div class="airace-controls" role="group" aria-label="Kendali Kemudi Pesawat">
+            <button type="button" id="btn-airace-left" class="airace-ctrl-btn" aria-label="Arahkan ke Jalur Kiri">◀ Kiri [A]</button>
+            <button type="button" id="btn-airace-center" class="airace-ctrl-btn" aria-label="Arahkan ke Jalur Tengah">▲ Tengah [W / S]</button>
+            <button type="button" id="btn-airace-right" class="airace-ctrl-btn" aria-label="Arahkan ke Jalur Kanan">▶ Kanan [D]</button>
+          </div>
+
+          <div id="airace-feedback" class="airace-feedback" hidden></div>
+        </div>
+
+        <div id="airace-complete-banner" class="airace-complete-banner" hidden>
+          🚀 Spektakuler! Navigasi pesawat antariksamu sukses menembus seluruh etape rute kosmik tanpa cela!
+        </div>
+      </div>
+    </section>
+
+    <!-- #54 Buka Kotak Misteri Kosmik (open_the_box) -->
+    <section class="card" data-category="quiz" data-task-id="openbox">
+      <div class="card-header">
+        <div class="card-meta">
+          <span class="tag-badge">#54 Buka Kotak Misteri Kosmik (open_the_box)</span>
+          <span class="category-tag">Kuis &amp; Cek</span>
+          <span class="status-badge">○ Belum</span>
+        </div>
+        <div class="card-actions"></div>
+      </div>
+      <h2>Buka Kotak Misteri Kargo Antariksa</h2>
+      <p class="text-muted">Buka 6 peti kargo penjelajah antariksa satu per satu. Tiap kargo memuat artefak astronomi berharga dan pertanyaan misteri yang harus kamu pecahkan!</p>
+
+      <div class="openbox-container" id="openbox-container">
+        <div class="openbox-hud">
+          <span class="card-sort-progress-pill" id="openbox-progress-pill">Kargo Terbuka: 0 / 6</span>
+          <span class="text-muted">Pilih kotak atau tekan tombol angka 1–6</span>
+        </div>
+
+        <div class="openbox-grid" id="openbox-grid" role="group" aria-label="Daftar Kotak Kargo Misteri"></div>
+
+        <div class="openbox-modal-view" id="openbox-modal-view" hidden>
+          <span class="openbox-modal-badge" id="openbox-modal-badge">Kargo Misteri</span>
+          <h3 class="openbox-modal-title" id="openbox-modal-title">Nama Kargo</h3>
+          <p class="openbox-modal-q" id="openbox-modal-q">Pertanyaan kargo...</p>
+          <div class="openbox-options-grid" id="openbox-options-grid" role="group" aria-label="Pilihan Jawaban Kargo"></div>
+          <div class="openbox-feedback" id="openbox-feedback" hidden></div>
+        </div>
+
+        <div id="openbox-solved-banner" class="openbox-solved-banner" hidden>
+          📦 Luar biasa! Seluruh 6 kargo misteri kosmik telah kamu buka dan berhasil dituntaskan dengan sempurna!
+        </div>
+      </div>
+    </section>
+
     <!-- Kartu Kemenangan / Trophy Komandan -->
-    <section class="card" id="final-trophy-card" hidden style="background:linear-gradient(135deg, var(--bg-card), var(--primary-light)); border:2px solid var(--accent); text-align:center; padding:32px 20px;">
-      <h2 style="font-size:1.75rem; margin-bottom:8px;">🏆 Selamat, Komandan Tata Surya!</h2>
-      <p style="font-size:1.05rem; font-weight:600;">Kamu telah berhasil menuntaskan seluruh 48 ragam pola interaksi pembelajaran secara lengkap!</p>
-      <p class="text-muted" style="max-width:540px; margin:12px auto;">
+    <section class="card" id="final-trophy-card" hidden>
+      <h2>🏆 Selamat, Komandan Tata Surya!</h2>
+      <p class="trophy-lead-text">Kamu telah berhasil menuntaskan seluruh 54 ragam pola interaksi pembelajaran secara lengkap!</p>
+      <p class="text-muted trophy-desc-text">
         Setiap variasi aktivitas yang kamu jalankan dirancang dengan peran pedagogis tersendiri: memicu rasa ingin tahu, menguji pemahaman fakta, melatih daya ingat jangka panjang, hingga merangsang analisis kritis.
       </p>
     </section>

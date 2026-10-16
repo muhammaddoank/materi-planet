@@ -7,7 +7,7 @@ const AppState = (() => {
   const STORAGE_KEY = "tsi1";
   const SR_STORAGE_KEY = "tsi-sr";
   const SR_SCHEMA_VERSION = 1;
-  const TOTAL_ACTIVITIES = 48;
+  const TOTAL_ACTIVITIES = 54;
 
   let completedTasks = new Set();
   let xp = 0;

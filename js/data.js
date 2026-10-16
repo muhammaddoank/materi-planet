@@ -1175,12 +1175,321 @@ const PUZZLE_JIGSAW_DATA = [
   }
 ];
 
-// Kategori Interaksi untuk Filter Bar (Total: 48)
+// #49 Reaksi Cepat Tombol (key_reaction)
+const KEY_REACTION_DATA = [
+  {
+    prompt: "Pusat tata surya yang memancarkan cahaya mandiri:",
+    leftOpt: "Matahari",
+    rightOpt: "Jupiter",
+    correctKey: "A",
+    explanation: "Matahari adalah bintang induk penghasil energi fusi nuklir mandiri."
+  },
+  {
+    prompt: "Planet terpanas di seluruh Tata Surya kita:",
+    leftOpt: "Merkurius",
+    rightOpt: "Venus",
+    correctKey: "B",
+    explanation: "Venus bersuhu ±464°C akibat efek rumah kaca atmosfer CO2 super padat."
+  },
+  {
+    prompt: "Bintik Merah Raksasa (Great Red Spot) berputar di planet:",
+    leftOpt: "Jupiter",
+    rightOpt: "Mars",
+    correctKey: "A",
+    explanation: "Bintik Merah Besar adalah badai antisiklon raksasa di belahan selatan Jupiter."
+  },
+  {
+    prompt: "Benda langit berbahan es & debu dengan ekor bercahaya:",
+    leftOpt: "Asteroid",
+    rightOpt: "Komet",
+    correctKey: "B",
+    explanation: "Komet tersusun dari es volatil yang menyublim dan terdorong angin matahari membentuk ekor."
+  },
+  {
+    prompt: "Planet dengan sistem cincin paling luas dan megah:",
+    leftOpt: "Saturnus",
+    rightOpt: "Uranus",
+    correctKey: "A",
+    explanation: "Saturnus memiliki cincin es selebar ribuan kilometer dengan ketebalan hanya puluhan meter."
+  },
+  {
+    prompt: "Planet yang berputar miring ekstrem 98° seperti menggelinding:",
+    leftOpt: "Neptunus",
+    rightOpt: "Uranus",
+    correctKey: "B",
+    explanation: "Uranus berotasi rebah 97,77° diduga akibat benturan benda raksasa di masa purba."
+  },
+  {
+    prompt: "Gunung berapi perisai tertinggi se-Tata Surya (Olympus Mons) ada di:",
+    leftOpt: "Mars",
+    rightOpt: "Venus",
+    correctKey: "A",
+    explanation: "Olympus Mons di Mars menjulang setinggi 22 km, hampir 3 kali tinggi Gunung Everest."
+  },
+  {
+    prompt: "Satelit alami terbesar di Tata Surya yang melebihi ukuran Merkurius:",
+    leftOpt: "Bulan",
+    rightOpt: "Ganymede",
+    correctKey: "B",
+    explanation: "Ganymede (satelit Jupiter) berdiameter 5.268 km, lebih besar dari planet Merkurius."
+  }
+];
+
+// #50 Pengelompokan Kartu (card_sort)
+const CARD_SORT_DATA = {
+  categories: [
+    { id: "bintang", title: "Bintang", icon: "⭐", desc: "Bola plasma panas penghasil energi cahaya sendiri." },
+    { id: "planet", title: "Planet", icon: "🪐", desc: "Benda bulat besar yang mengorbit bintang dan orbitnya bersih." },
+    { id: "satelit", title: "Satelit Alami", icon: "🌕", desc: "Benda langit yang mengorbit planet induknya." }
+  ],
+  cards: [
+    { id: "matahari", name: "Matahari", cat: "bintang", icon: "☀️", hint: "Bintang induk pusat gravitasi Tata Surya." },
+    { id: "bumi", name: "Bumi", cat: "planet", icon: "🌍", hint: "Planet kebumian tempat kita tinggal." },
+    { id: "bulan", name: "Bulan", cat: "satelit", icon: "🌙", hint: "Pengiring alami Bumi penentu pasang surut air laut." },
+    { id: "proxima", name: "Proxima Centauri", cat: "bintang", icon: "✨", hint: "Bintang terdekat kedua setelah Matahari (4,2 tahun cahaya)." },
+    { id: "jupiter", name: "Jupiter", cat: "planet", icon: "🪐", hint: "Planet terbesar penguasa orbit gas." },
+    { id: "titan", name: "Titan", cat: "satelit", icon: "🪐", hint: "Satelit Saturnus berdanau metana cair dan beratmosfer tebal." },
+    { id: "mars", name: "Mars", cat: "planet", icon: "🔴", hint: "Planet merah berdebu besi oksida." },
+    { id: "europa", name: "Europa", cat: "satelit", icon: "❄️", hint: "Satelit Jupiter dengan samudra air cair di bawah kerak es tebal." }
+  ]
+};
+
+// #51 Mesin Slot Kosmik (slot_machine)
+const SLOT_MACHINE_DATA = {
+  reels: {
+    objects: [
+      { id: "matahari", label: "Matahari", icon: "☀️" },
+      { id: "jupiter", label: "Jupiter", icon: "🪐" },
+      { id: "mars", label: "Mars", icon: "🔴" },
+      { id: "neptunus", label: "Neptunus", icon: "🧊" },
+      { id: "saturnus", label: "Saturnus", icon: "💍" }
+    ],
+    aspects: [
+      { id: "atmosfer", label: "Atmosfer & Cuaca", icon: "🌪️" },
+      { id: "suhu", label: "Suhu & Energi", icon: "🔥" },
+      { id: "gravitasi", label: "Gravitasi & Massa", icon: "⚖️" },
+      { id: "penjelajahan", label: "Misi Eksplorasi", icon: "🚀" }
+    ],
+    challenges: [
+      { id: "fakta", label: "Fakta Utama", icon: "🎯" },
+      { id: "mitos", label: "Uji Mitos", icon: "🔍" },
+      { id: "rekor", label: "Angka Rekor", icon: "📊" }
+    ]
+  },
+  challengePool: [
+    {
+      objId: "matahari", aspId: "suhu", chalId: "rekor",
+      q: "Berapa estimasi suhu terdahsyat pada bagian Inti Matahari tempat berlangsungnya fusi nuklir?",
+      options: ["±15 Juta °C", "±5.500 °C", "±100.000 °C", "±1 Miliar °C"],
+      correct: 0,
+      fact: "Inti Matahari mencapai suhu 15 juta °C dan tekanan 250 miliar atmosfer untuk memicu fusi hidrogen."
+    },
+    {
+      objId: "jupiter", aspId: "atmosfer", chalId: "fakta",
+      q: "Bintik Merah Besar di atmosfer Jupiter adalah fenomena badai yang berputar secara...",
+      options: ["Antisiklon (Berlawanan jarum jam di selatan)", "Tornado sempit sesaat", "Pusaran air hangat", "Awan es diam"],
+      correct: 0,
+      fact: "Bintik Merah Besar adalah antisiklon bertekanan tinggi yang telah diamati selama lebih dari 300 tahun."
+    },
+    {
+      objId: "mars", aspId: "penjelajahan", chalId: "fakta",
+      q: "Wahana penjelajah robotik NASA yang mendarat di Kawah Jezero pada 2021 untuk mencari fosil mikroba adalah...",
+      options: ["Perseverance", "Apollo 11", "Voyager 2", "Cassini"],
+      correct: 0,
+      fact: "Rover Perseverance membawa helikopter Ingenuity dan mengeksplorasi sedimen delta danau purba di Jezero."
+    },
+    {
+      objId: "neptunus", aspId: "atmosfer", chalId: "rekor",
+      q: "Atmosfer bagian atas Neptunus terkenal sebagai pemegang rekor angin tercepat di Tata Surya, yaitu mencapai...",
+      options: ["±2.100 km/jam", "±120 km/jam", "±500 km/jam", "±10.000 km/jam"],
+      correct: 0,
+      fact: "Angin badai di Neptunus bertiup supersonik melampaui kecepatan suara, dipicu oleh panas internal planet."
+    },
+    {
+      objId: "saturnus", aspId: "gravitasi", chalId: "fakta",
+      q: "Meskipun ukurannya sangat raksasa, Saturnus memiliki keunikan densitas (kerapatan) massa yaitu...",
+      options: ["Kurang dari 1 g/cm³ (dapat mengapung di air)", "Terpadat di Tata Surya", "Sama dengan batu granit", "Mendekati lubang hitam"],
+      correct: 0,
+      fact: "Saturnus berdensitas rata-rata 0,687 g/cm³. Jika ada bak air raksasa yang cukup besar, Saturnus akan mengapung!"
+    },
+    {
+      objId: "matahari", aspId: "penjelajahan", chalId: "mitos",
+      q: "Benarkah wahana antariksa Parker Solar Probe mampu 'menyentuh' atmosfer Matahari tanpa meleleh?",
+      options: ["Benar, berkat perisai panas karbon canggih", "Salah, wahana langsung musnah saat mendekat", "Salah, belum ada wahana yang mendekati", "Benar, karena Matahari dingin di malam hari"],
+      correct: 0,
+      fact: "Parker Solar Probe dilindungi perisai komposit karbon setebal 11,4 cm yang tahan suhu hingga 1.370°C."
+    },
+    {
+      objId: "mars", aspId: "suhu", chalId: "rekor",
+      q: "Mengapa suhu rata-rata permukaan Mars sangat dingin (rata-rata -65°C) padahal berada dekat Bumi?",
+      options: ["Atmosfernya sangat tipis (1% Bumi) sehingga panas cepat hilang", "Mars terbuat dari es metana", "Matahari tidak menyinari Mars", "Mars memiliki cincin raksasa penghalang panas"],
+      correct: 0,
+      fact: "Atmosfer Mars yang tipis tidak mampu menahan panas inframerah, sehingga malam hari suhunya anjlok drastis."
+    },
+    {
+      objId: "jupiter", aspId: "gravitasi", chalId: "rekor",
+      q: "Jika berat badanmu di Bumi adalah 50 kg, berapa perkiraan beratmu di permukaan awan Jupiter (gravitasi 2,53G)?",
+      options: ["±126,5 kg", "±50 kg", "±20 kg", "±500 kg"],
+      correct: 0,
+      fact: "Gravitasi Jupiter 2,53 kali lipat Bumi. Berat badan 50 kg di Bumi akan terasa seberat 126,5 kg di Jupiter!"
+    }
+  ]
+};
+
+// #52 Pecahkan Balon (balloon_pop)
+const BALLOON_POP_DATA = [
+  {
+    q: "Pecahkan balon yang memuat planet pemegang julukan 'Planet Merah'!",
+    options: [
+      { text: "Venus", isCorrect: false },
+      { text: "Mars", isCorrect: true },
+      { text: "Jupiter", isCorrect: false },
+      { text: "Merkurius", isCorrect: false }
+    ],
+    explanation: "Mars tampak merah kejinggaan akibat karat debu besi oksida yang menyelimuti seluruh permukaannya."
+  },
+  {
+    q: "Pecahkan balon berisi nama planet dengan sistem cincin es paling megah!",
+    options: [
+      { text: "Uranus", isCorrect: false },
+      { text: "Bumi", isCorrect: false },
+      { text: "Saturnus", isCorrect: true },
+      { text: "Neptunus", isCorrect: false }
+    ],
+    explanation: "Cincin Saturnus membentang hingga 282.000 km, sebagian besar tersusun atas miliaran partikel es air murni."
+  },
+  {
+    q: "Pecahkan balon yang menunjukkan bintang terdekat ke Bumi!",
+    options: [
+      { text: "Matahari", isCorrect: true },
+      { text: "Sirius", isCorrect: false },
+      { text: "Polaris", isCorrect: false },
+      { text: "Betelgeuse", isCorrect: false }
+    ],
+    explanation: "Matahari adalah bintang katai kuning terdekat berjarak hanya 1 AU (±149,6 juta km) dari Bumi."
+  },
+  {
+    q: "Pecahkan balon yang memuat nama planet pemutar terbalik (Matahari terbit dari barat)!",
+    options: [
+      { text: "Mars", isCorrect: false },
+      { text: "Venus", isCorrect: true },
+      { text: "Merkurius", isCorrect: false },
+      { text: "Neptunus", isCorrect: false }
+    ],
+    explanation: "Venus berotasi secara retrogad (searah jarum jam) sehingga Matahari di sana terbit di barat dan terbenam di timur."
+  }
+];
+
+// #53 Balapan Pesawat Antariksa (airplane_race)
+const AIRPLANE_RACE_DATA = [
+  {
+    mission: "Etape 1: Menuju Planet dengan Rotasi Tercepat (Hari hanya 10 Jam)",
+    lanes: [
+      { id: "left", label: "Venus", isCorrect: false },
+      { id: "center", label: "Jupiter", isCorrect: true },
+      { id: "right", label: "Bumi", isCorrect: false }
+    ],
+    fact: "Meskipun ukurannya kolosal, Jupiter berputar luar biasa cepat dan menuntaskan 1 hari penuh hanya dalam 9 jam 55 menit!"
+  },
+  {
+    mission: "Etape 2: Arahkan Pesawat ke Planet Terpanas (Suhu ±464 °C)",
+    lanes: [
+      { id: "left", label: "Merkurius", isCorrect: false },
+      { id: "center", label: "Mars", isCorrect: false },
+      { id: "right", label: "Venus", isCorrect: true }
+    ],
+    fact: "Meskipun Merkurius lebih dekat ke Matahari, atmosfer CO2 tebal di Venus memerangkap panas ekstrem."
+  },
+  {
+    mission: "Etape 3: Terobos Gerbang Planet Raksasa Es Terluar",
+    lanes: [
+      { id: "left", label: "Neptunus", isCorrect: true },
+      { id: "center", label: "Saturnus", isCorrect: false },
+      { id: "right", label: "Jupiter", isCorrect: false }
+    ],
+    fact: "Neptunus adalah planet ke-8 terjauh, berjarak 30 AU (4,5 miliar km) dengan atmosfer kaya metana biru."
+  },
+  {
+    mission: "Etape 4: Menuju Planet yang Memiliki Samudra Air Cair & Kehidupan",
+    lanes: [
+      { id: "left", label: "Mars", isCorrect: false },
+      { id: "center", label: "Bumi", isCorrect: true },
+      { id: "right", label: "Titan", isCorrect: false }
+    ],
+    fact: "Bumi berada di zona layak huni dengan 71% permukaan tertutup air cair yang menopang kehidupan."
+  }
+];
+
+// #54 Buka Kotak Misteri Kosmik (open_the_box)
+const OPEN_THE_BOX_DATA = [
+  {
+    id: 1,
+    title: "Kargo #1: Sampel Batuan Mars",
+    icon: "🪨",
+    badge: "Geologi Mars",
+    question: "Mineral apakah yang memberi warna kemerahan khas pada tanah permukaan Mars?",
+    options: ["Besi Oksida (Karat)", "Tembaga Karbonat", "Belerang Murni", "Silika Emas"],
+    correct: 0,
+    fact: "Besi oksida (FeO) teroksidasi oleh sedikit oksigen purba dan angin membentuk lapisan debu karat merah di Mars."
+  },
+  {
+    id: 2,
+    title: "Kargo #2: Rekaman Audio Luar Angkasa",
+    icon: "📡",
+    badge: "Gelombang Radio",
+    question: "Mengapa suara ledakan tidak dapat terdengar merambat di ruang angkasa terbuka?",
+    options: ["Ruang angkasa adalah ruang hampa (tanpa medium partikel)", "Suhu antariksa terlalu beku untuk suara", "Gravitasi Matahari menelan gelombang suara", "Suara bergerak melebihi kecepatan cahaya"],
+    correct: 0,
+    fact: "Gelombang suara memerlukan medium partikel (gas, cair, padat) untuk merambat; ruang angkasa adalah hampa udara (vakum)."
+  },
+  {
+    id: 3,
+    title: "Kargo #3: Mikroskop Es Komet",
+    icon: "❄️",
+    badge: "Benda Purba",
+    question: "Mengapa komet sering disebut astronom sebagai 'kapsul waktu' pembentukan Tata Surya?",
+    options: ["Tersimpan beku di tepi terluar sejak 4,6 miliar tahun lalu", "Komet dibuat oleh peradaban kuno", "Komet tidak pernah mendekati Matahari", "Terbuat dari serbuk berlian purba"],
+    correct: 0,
+    fact: "Es komet di Sabuk Kuiper dan Awan Oort membeku sejak masa awal nebula tata surya tanpa mengalami pelapukan."
+  },
+  {
+    id: 4,
+    title: "Kargo #4: Peta Cincin Saturnus",
+    icon: "💍",
+    badge: "Arsitektur Cincin",
+    question: "Berapa rata-rata perkiraan ketebalan vertikal lembaran cincin megah Saturnus?",
+    options: ["Hanya sekitar 10 sampai 100 meter!", "Sekitar 100.000 kilometer", "Setebal diameter Bumi", "Satu tahun cahaya"],
+    correct: 0,
+    fact: "Walau lebarnya ratusan ribu kilometer, ketebalan cincin Saturnus rata-rata hanya setebal gedung 3 lantai (±10-30 meter)!"
+  },
+  {
+    id: 5,
+    title: "Kargo #5: Detektor Aurora Kutub",
+    icon: "🌌",
+    badge: "Medan Magnet",
+    question: "Fenomena apa yang memicu pendaran tirai cahaya aurora di kutub Bumi?",
+    options: ["Tumbukan partikel angin matahari dengan gas atmosfer", "Pantulan sinar matahari pada es kutub", "Lampu sorot dari stasiun luar angkasa", "Bocoran panas dari inti bumi"],
+    correct: 0,
+    fact: "Elektron dan proton angin matahari dibelokkan medan magnet Bumi menuju kutub, menabrak oksigen dan nitrogen hingga berpendar."
+  },
+  {
+    id: 6,
+    title: "Kargo #6: Kronometer Rotasi Uranus",
+    icon: "⏳",
+    badge: "Rotasi Ekstrem",
+    question: "Apa konsekuensi unik dari kemiringan sumbu rotasi Uranus yang mencapai 97,77°?",
+    options: ["Setiap kutub mengalami siang 42 tahun dan malam 42 tahun", "Uranus tidak pernah berputar", "Uranus bergerak mundur ke masa lalu", "Orbit Uranus menjadi berbentuk segitiga"],
+    correct: 0,
+    fact: "Kemiringan 98° membuat kutub Uranus menghadap langsung ke Matahari selama 42 tahun, bergantian dengan musim dingin gelap 42 tahun."
+  }
+];
+
+// Kategori Interaksi untuk Filter Bar (Total: 54)
 const ACTIVITY_CATEGORIES = [
   { id: "all", label: "Semua", icon: "✨" },
   { id: "explore", label: "Eksplorasi", icon: "🪐", count: 10 },
   { id: "sim", label: "Simulasi", icon: "⚙️", count: 5 },
-  { id: "quiz", label: "Kuis & Cek", icon: "📝", count: 13 },
-  { id: "game", label: "Game Edukatif", icon: "🎮", count: 15 },
+  { id: "quiz", label: "Kuis & Cek", icon: "📝", count: 15 },
+  { id: "game", label: "Game Edukatif", icon: "🎮", count: 19 },
   { id: "reflect", label: "Refleksi", icon: "🧠", count: 5 }
 ];

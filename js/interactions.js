@@ -5185,4 +5185,979 @@ function initPuzzleJigsaw() {
   renderPuzzle();
 }
 
+// ==========================================================================
+// #49 REAKSI CEPAT TOMBOL (KEY REACTION)
+// ==========================================================================
+function initKeyReaction() {
+  const arena = $("#key-reaction-arena");
+  if (!arena) return;
+
+  const roundEl = $("#key-reaction-round", arena);
+  const timerEl = $("#key-reaction-timer", arena);
+  const avgEl = $("#key-reaction-avg", arena);
+  const playArea = $("#key-reaction-play-area", arena);
+  const subEl = $("#key-reaction-sub", arena);
+  const qEl = $("#key-reaction-q", arena);
+  const btnLeft = $("#key-btn-left", arena);
+  const btnRight = $("#key-btn-right", arena);
+  const labelLeft = $("#key-label-left", arena);
+  const labelRight = $("#key-label-right", arena);
+  const feedbackEl = $("#key-reaction-feedback", arena);
+  const summaryEl = $("#key-reaction-summary", arena);
+  const evalMsgEl = $("#key-reaction-eval-msg", arena);
+  const finalAvgEl = $("#key-final-avg", arena);
+  const finalBestEl = $("#key-final-best", arena);
+  const btnStart = $("#btn-key-start", arena);
+  const startScreen = $("#key-reaction-start-screen", arena);
+  const gameScreen = $("#key-reaction-game-screen", arena);
+  const finalAccEl = $("#key-final-acc", arena);
+  const btnRestart = $("#btn-key-restart", arena);
+
+  const TOTAL_ROUNDS = 5;
+  let currentRound = 0;
+  let correctCount = 0;
+  let reactionTimes = [];
+  let questionDeck = [];
+  let startTime = 0;
+  let timerRafId = null;
+  let autoTimeoutId = null;
+  let isAwaitingInput = false;
+
+  function shuffleDeck() {
+    questionDeck = [...KEY_REACTION_DATA].sort(() => Math.random() - 0.5);
+  }
+
+  function stopAllTimers() {
+    cancelAnimationFrame(timerRafId);
+    timerRafId = null;
+    if (autoTimeoutId) {
+      clearTimeout(autoTimeoutId);
+      autoTimeoutId = null;
+    }
+  }
+
+  function tickTimer() {
+    if (!isAwaitingInput) return;
+    const elapsed = Math.round(performance.now() - startTime);
+    if (timerEl) timerEl.textContent = `${elapsed} ms`;
+    timerRafId = requestAnimationFrame(tickTimer);
+  }
+
+  function startRound() {
+    stopAllTimers();
+
+    if (currentRound >= TOTAL_ROUNDS) {
+      finishGame();
+      return;
+    }
+
+    const q = questionDeck[currentRound % questionDeck.length];
+    if (!q) return;
+
+    if (roundEl) roundEl.textContent = `${currentRound + 1} / ${TOTAL_ROUNDS}`;
+    if (subEl) subEl.textContent = `Ronde ${currentRound + 1}: Reaksi Kilat`;
+    if (qEl) qEl.textContent = q.prompt;
+    if (labelLeft) labelLeft.textContent = q.leftOpt;
+    if (labelRight) labelRight.textContent = q.rightOpt;
+    if (timerEl) timerEl.textContent = "0 ms";
+
+    if (feedbackEl) {
+      feedbackEl.hidden = true;
+      feedbackEl.textContent = "";
+    }
+
+    [btnLeft, btnRight].forEach((b) => {
+      if (b) {
+        b.disabled = false;
+        b.classList.remove("is-correct", "is-wrong");
+      }
+    });
+
+    isAwaitingInput = true;
+    startTime = performance.now();
+    tickTimer();
+
+    // Batas pengaman: Otomatis berhenti setelah 10 detik agar loop tidak berjalan selamanya jika ditinggal pengguna
+    autoTimeoutId = setTimeout(() => {
+      if (isAwaitingInput) {
+        handleTimeout();
+      }
+    }, 10000);
+  }
+
+  function handleTimeout() {
+    if (!isAwaitingInput) return;
+    isAwaitingInput = false;
+    stopAllTimers();
+
+    if (timerEl) timerEl.textContent = "> 10.000 ms";
+    reactionTimes.push(10000);
+
+    const q = questionDeck[currentRound % questionDeck.length];
+    [btnLeft, btnRight].forEach((b) => { if (b) b.disabled = true; });
+
+    SoundFX.playError();
+    if (feedbackEl) {
+      feedbackEl.innerHTML = `<b>⏱ Waktu Habis (> 10 detik)!</b> ${q.explanation}`;
+      feedbackEl.hidden = false;
+    }
+
+    setTimeout(() => {
+      currentRound++;
+      startRound();
+    }, 1200);
+  }
+
+  function handleAnswer(chosenKey) {
+    if (!isAwaitingInput) return;
+    isAwaitingInput = false;
+    stopAllTimers();
+
+    const reactionTime = Math.round(performance.now() - startTime);
+    reactionTimes.push(reactionTime);
+    if (timerEl) timerEl.textContent = `${reactionTime} ms`;
+
+    const avgSoFar = Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length);
+    if (avgEl) avgEl.textContent = `${avgSoFar} ms`;
+
+    const q = questionDeck[currentRound % questionDeck.length];
+    [btnLeft, btnRight].forEach((b) => { if (b) b.disabled = true; });
+
+    const chosenBtn = chosenKey === "A" ? btnLeft : btnRight;
+    const correctBtn = q.correctKey === "A" ? btnLeft : btnRight;
+
+    if (chosenKey === q.correctKey) {
+      SoundFX.playSuccess();
+      correctCount++;
+      if (chosenBtn) chosenBtn.classList.add("is-correct");
+      if (feedbackEl) {
+        feedbackEl.innerHTML = `<b>⚡ Respon: ${reactionTime} ms!</b> ${q.explanation}`;
+        feedbackEl.hidden = false;
+      }
+    } else {
+      SoundFX.playError();
+      if (chosenBtn) chosenBtn.classList.add("is-wrong");
+      if (correctBtn) correctBtn.classList.add("is-correct");
+      if (feedbackEl) {
+        feedbackEl.innerHTML = `<b>✕ Salah! Respon: ${reactionTime} ms.</b> ${q.explanation}`;
+        feedbackEl.hidden = false;
+      }
+    }
+
+    setTimeout(() => {
+      currentRound++;
+      startRound();
+    }, 1100);
+  }
+
+  function finishGame() {
+    isAwaitingInput = false;
+    stopAllTimers();
+    if (gameScreen) gameScreen.hidden = true;
+    if (summaryEl) summaryEl.hidden = false;
+
+    const avg = reactionTimes.length > 0 ? Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length) : 0;
+    const best = reactionTimes.length > 0 ? Math.min(...reactionTimes) : 0;
+
+    if (finalAvgEl) finalAvgEl.textContent = `${avg} ms`;
+    if (finalBestEl) finalBestEl.textContent = `${best} ms`;
+    if (finalAccEl) finalAccEl.textContent = `${correctCount} / ${TOTAL_ROUNDS}`;
+
+    let rankMsg = "Kecepatan reaksi kosmikmu cukup baik. Tingkatkan latihan untuk mengasah insting!";
+    if (avg < 350 && correctCount >= 4) {
+      rankMsg = "🚀 Refleks Kelas Astronot Tempur! Waktu responmu sangat kilat dengan akurasi mengagumkan!";
+    } else if (avg < 500 && correctCount >= 3) {
+      rankMsg = "⚡ Refleks Navigasi Handal! Koordinasi motorik dan ingatan astronomimu sangat terasah.";
+    }
+    if (evalMsgEl) evalMsgEl.textContent = rankMsg;
+
+    if (correctCount >= 3) {
+      SoundFX.playFanfare();
+      AppState.complete("kreact", 15);
+    }
+  }
+
+  // Event listener tombol A dan B (Klik)
+  if (btnLeft) {
+    btnLeft.addEventListener("click", () => handleAnswer("A"));
+  }
+  if (btnRight) {
+    btnRight.addEventListener("click", () => handleAnswer("B"));
+  }
+
+  // Event listener Keyboard (A / B, Panah Kiri / Kanan)
+  window.addEventListener("keydown", (e) => {
+    if (!isAwaitingInput) return;
+    const key = e.key.toUpperCase();
+    if (key === "A" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      handleAnswer("A");
+    } else if (key === "B" || e.key === "ArrowRight") {
+      e.preventDefault();
+      handleAnswer("B");
+    }
+  });
+
+  // Hentikan timer jika pengguna berpindah tab (Page Visibility API)
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && isAwaitingInput) {
+      stopAllTimers();
+    } else if (!document.hidden && isAwaitingInput) {
+      startTime = performance.now();
+      tickTimer();
+    }
+  });
+
+  // Tombol Mulai di Layar Awal
+  if (btnStart) {
+    btnStart.addEventListener("click", () => {
+      SoundFX.playClick();
+      if (startScreen) startScreen.hidden = true;
+      if (gameScreen) gameScreen.hidden = false;
+      currentRound = 0;
+      correctCount = 0;
+      reactionTimes = [];
+      shuffleDeck();
+      startRound();
+    });
+  }
+
+  // Tombol Ulangi di Layar Ringkasan
+  if (btnRestart) {
+    btnRestart.addEventListener("click", () => {
+      SoundFX.playClick();
+      currentRound = 0;
+      correctCount = 0;
+      reactionTimes = [];
+      if (avgEl) avgEl.textContent = "-- ms";
+      if (timerEl) timerEl.textContent = "0 ms";
+      if (summaryEl) summaryEl.hidden = true;
+      if (gameScreen) gameScreen.hidden = false;
+      shuffleDeck();
+      startRound();
+    });
+  }
+}
+
+// ==========================================================================
+// #50 PENGELOMPOKAN KARTU (CARD SORT)
+// ==========================================================================
+function initCardSort() {
+  const container = $("#card-sort-container");
+  if (!container) return;
+
+  const progressEl = $("#card-sort-progress", container);
+  const btnReset = $("#btn-card-sort-reset", container);
+  const activeCardEl = $("#sort-current-card", container);
+  const cardIconEl = $("#sort-card-icon", container);
+  const cardTitleEl = $("#sort-card-title", container);
+  const cardHintEl = $("#sort-card-hint", container);
+  const feedbackEl = $("#card-sort-feedback", container);
+  const solvedBanner = $("#card-sort-solved", container);
+  const targetsArea = $("#card-sort-targets", container);
+
+  let deck = [];
+  let currentCardIdx = 0;
+  let isSortedComplete = false;
+
+  function setupDeck() {
+    deck = [...CARD_SORT_DATA.cards].sort(() => Math.random() - 0.5);
+    currentCardIdx = 0;
+    isSortedComplete = false;
+
+    // Bersihkan isi wadah
+    CARD_SORT_DATA.categories.forEach((cat) => {
+      const binItemsEl = $(`#bin-items-${cat.id}`, container);
+      if (binItemsEl) binItemsEl.innerHTML = "";
+    });
+
+    if (solvedBanner) solvedBanner.hidden = true;
+    if (feedbackEl) {
+      feedbackEl.hidden = true;
+      feedbackEl.textContent = "";
+    }
+    if (progressEl) progressEl.textContent = `Tersortir: 0 / ${deck.length}`;
+    if (activeCardEl) activeCardEl.hidden = false;
+
+    displayCurrentCard();
+  }
+
+  function displayCurrentCard() {
+    if (currentCardIdx >= deck.length) {
+      isSortedComplete = true;
+      if (activeCardEl) activeCardEl.hidden = true;
+      if (solvedBanner) solvedBanner.hidden = false;
+      SoundFX.playFanfare();
+      AppState.complete("csort", 15);
+      return;
+    }
+
+    const card = deck[currentCardIdx];
+    if (!card) return;
+
+    if (cardIconEl) cardIconEl.textContent = card.icon;
+    if (cardTitleEl) cardTitleEl.textContent = card.name;
+    if (cardHintEl) cardHintEl.textContent = card.hint;
+    if (activeCardEl) {
+      activeCardEl.setAttribute("aria-label", `Kartu aktif: ${card.name}. Petunjuk: ${card.hint}`);
+    }
+  }
+
+  function handleSortToCategory(targetCatId) {
+    if (isSortedComplete || currentCardIdx >= deck.length) return;
+    const card = deck[currentCardIdx];
+    if (!card) return;
+
+    if (card.cat === targetCatId) {
+      // Benar!
+      SoundFX.playSuccess();
+      const binItemsEl = $(`#bin-items-${targetCatId}`, container);
+      if (binItemsEl) {
+        const pill = document.createElement("span");
+        pill.className = "sort-item-pill";
+        pill.textContent = card.name;
+        binItemsEl.appendChild(pill);
+      }
+
+      if (feedbackEl) {
+        const catInfo = CARD_SORT_DATA.categories.find((c) => c.id === targetCatId);
+        feedbackEl.innerHTML = `<b>✓ Tepat!</b> ${card.name} adalah ${catInfo ? catInfo.title : "kategori yang sesuai"}.`;
+        feedbackEl.hidden = false;
+      }
+
+      currentCardIdx++;
+      if (progressEl) progressEl.textContent = `Tersortir: ${currentCardIdx} / ${deck.length}`;
+      displayCurrentCard();
+    } else {
+      // Salah!
+      SoundFX.playError();
+      if (activeCardEl) {
+        activeCardEl.classList.add("shake-card");
+        setTimeout(() => activeCardEl.classList.remove("shake-card"), 400);
+      }
+
+      if (feedbackEl) {
+        feedbackEl.innerHTML = `<b>✕ Kurang tepat!</b> ${card.name} bukan kategori tersebut. Coba analisis karakteristiknya kembali!`;
+        feedbackEl.hidden = false;
+      }
+    }
+  }
+
+  // 1. Drag & Drop via Pointer Events
+  makeDraggable({
+    container: container,
+    itemSelector: "#sort-current-card",
+    dropZone: targetsArea,
+    dropSelector: ".sort-target-bin",
+    dropOverClass: "drag-over",
+    onDrop: (_, targetBin) => {
+      if (targetBin && targetBin.dataset.cat) {
+        handleSortToCategory(targetBin.dataset.cat);
+      }
+    }
+  });
+
+  // 2. Klik langsung wadah kategori
+  if (targetsArea) {
+    targetsArea.addEventListener("click", (e) => {
+      const bin = e.target.closest(".sort-target-bin");
+      if (!bin || !bin.dataset.cat) return;
+      handleSortToCategory(bin.dataset.cat);
+    });
+  }
+
+  // 3. Aksesibilitas Keyboard: Tekan 1, 2, atau 3
+  window.addEventListener("keydown", (e) => {
+    if (isSortedComplete || (activeCardEl && activeCardEl.hidden)) return;
+    if (e.key === "1") {
+      handleSortToCategory("bintang");
+    } else if (e.key === "2") {
+      handleSortToCategory("planet");
+    } else if (e.key === "3") {
+      handleSortToCategory("satelit");
+    }
+  });
+
+  if (btnReset) {
+    btnReset.addEventListener("click", () => {
+      SoundFX.playClick();
+      setupDeck();
+    });
+  }
+
+  // Inisialisasi awal
+  setupDeck();
+}
+
+// ==========================================================================
+// #51 MESIN SLOT KOSMIK (SLOT MACHINE)
+// ==========================================================================
+function initSlotMachine() {
+  const arena = $("#slot-arena");
+  if (!arena) return;
+
+  const btnSpin = $("#btn-spin-slot", arena);
+  const completedPill = $("#slot-completed-pill", arena);
+  const challengeCard = $("#slot-challenge-card", arena);
+  const comboBadge = $("#slot-combo-badge", arena);
+  const qTextEl = $("#slot-q-text", arena);
+  const optionsGrid = $("#slot-options-grid", arena);
+  const feedbackEl = $("#slot-feedback", arena);
+  const completeBanner = $("#slot-complete-banner", arena);
+
+  const strip1 = $("#slot-strip-1", arena);
+  const strip2 = $("#slot-strip-2", arena);
+  const strip3 = $("#slot-strip-3", arena);
+
+  const ITEM_HEIGHT = 94; // tinggi satu kartu reel dalam px
+  let isSpinning = false;
+  let solvedChallenges = 0;
+  const TARGET_SOLVED = 3;
+  let currentChallenge = null;
+
+  function buildReelStrip(stripEl, items) {
+    if (!stripEl) return;
+    const fullList = [...items, ...items, ...items, ...items];
+    stripEl.innerHTML = fullList.map((item) => `
+      <div class="slot-reel-item" data-id="${item.id}">
+        <span class="slot-item-icon" aria-hidden="true">${item.icon}</span>
+        <span class="slot-item-label">${item.label}</span>
+      </div>
+    `).join("");
+  }
+
+  buildReelStrip(strip1, SLOT_MACHINE_DATA.reels.objects);
+  buildReelStrip(strip2, SLOT_MACHINE_DATA.reels.aspects);
+  buildReelStrip(strip3, SLOT_MACHINE_DATA.reels.challenges);
+
+  function spinReels() {
+    if (isSpinning) return;
+    isSpinning = true;
+    if (btnSpin) btnSpin.disabled = true;
+    if (challengeCard) challengeCard.hidden = true;
+    if (feedbackEl) feedbackEl.hidden = true;
+
+    const objList = SLOT_MACHINE_DATA.reels.objects;
+    const aspList = SLOT_MACHINE_DATA.reels.aspects;
+    const chalList = SLOT_MACHINE_DATA.reels.challenges;
+
+    const chosenObjIdx = Math.floor(Math.random() * objList.length);
+    const chosenAspIdx = Math.floor(Math.random() * aspList.length);
+    const chosenChalIdx = Math.floor(Math.random() * chalList.length);
+
+    const chosenObj = objList[chosenObjIdx];
+    const chosenAsp = aspList[chosenAspIdx];
+    const chosenChal = chalList[chosenChalIdx];
+
+    const targetOffset1 = -(objList.length * 2 + chosenObjIdx) * ITEM_HEIGHT;
+    const targetOffset2 = -(aspList.length * 2 + chosenAspIdx) * ITEM_HEIGHT;
+    const targetOffset3 = -(chalList.length * 2 + chosenChalIdx) * ITEM_HEIGHT;
+
+    if (strip1) {
+      strip1.style.transition = "transform 0.9s cubic-bezier(0.12, 0.8, 0.3, 1)";
+      strip1.style.transform = `translateY(${targetOffset1}px)`;
+    }
+    setTimeout(() => {
+      SoundFX.playClick();
+      if (strip2) {
+        strip2.style.transition = "transform 1.1s cubic-bezier(0.12, 0.8, 0.3, 1)";
+        strip2.style.transform = `translateY(${targetOffset2}px)`;
+      }
+    }, 200);
+    setTimeout(() => {
+      SoundFX.playClick();
+      if (strip3) {
+        strip3.style.transition = "transform 1.3s cubic-bezier(0.12, 0.8, 0.3, 1)";
+        strip3.style.transform = `translateY(${targetOffset3}px)`;
+      }
+    }, 450);
+
+    setTimeout(() => {
+      SoundFX.playSuccess();
+      isSpinning = false;
+      if (btnSpin) btnSpin.disabled = false;
+      displayChallenge(chosenObj, chosenAsp, chosenChal);
+    }, 1850);
+  }
+
+  function displayChallenge(obj, asp, chal) {
+    if (!challengeCard) return;
+
+    const pool = SLOT_MACHINE_DATA.challengePool;
+    let match = pool.find((c) => c.objId === obj.id && c.aspId === asp.id);
+    if (!match) {
+      match = pool.find((c) => c.objId === obj.id) || pool[Math.floor(Math.random() * pool.length)];
+    }
+    currentChallenge = match;
+
+    if (comboBadge) {
+      comboBadge.textContent = `${obj.icon} ${obj.label} + ${asp.icon} ${asp.label} + ${chal.icon} ${chal.label}`;
+    }
+    if (qTextEl) {
+      qTextEl.textContent = match.q;
+    }
+    if (optionsGrid) {
+      optionsGrid.innerHTML = match.options.map((opt, idx) => `
+        <button type="button" class="slot-opt-btn" data-idx="${idx}">
+          ${opt}
+        </button>
+      `).join("");
+    }
+
+    if (feedbackEl) {
+      feedbackEl.hidden = true;
+      feedbackEl.textContent = "";
+    }
+
+    challengeCard.hidden = false;
+  }
+
+  if (optionsGrid) {
+    optionsGrid.addEventListener("click", (e) => {
+      const btn = e.target.closest(".slot-opt-btn");
+      if (!btn || btn.disabled || !currentChallenge) return;
+
+      const chosenIdx = parseInt(btn.dataset.idx, 10);
+      $$(".slot-opt-btn", optionsGrid).forEach((b) => (b.disabled = true));
+
+      if (chosenIdx === currentChallenge.correct) {
+        SoundFX.playSuccess();
+        btn.classList.add("is-correct");
+        solvedChallenges++;
+        if (completedPill) {
+          completedPill.textContent = `Tantangan Terpecahkan: ${solvedChallenges} / ${TARGET_SOLVED}`;
+        }
+
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `<b>✓ Misi Berhasil!</b> ${currentChallenge.fact}`;
+          feedbackEl.hidden = false;
+        }
+
+        if (solvedChallenges >= TARGET_SOLVED) {
+          if (completeBanner) completeBanner.hidden = false;
+          SoundFX.playFanfare();
+          AppState.complete("slotmach", 15);
+        }
+      } else {
+        SoundFX.playError();
+        btn.classList.add("is-wrong");
+        const correctBtn = $(`[data-idx="${currentChallenge.correct}"]`, optionsGrid);
+        if (correctBtn) correctBtn.classList.add("is-correct");
+
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `<b>✕ Misi Meleset!</b> ${currentChallenge.fact}`;
+          feedbackEl.hidden = false;
+        }
+      }
+    });
+  }
+
+  if (btnSpin) {
+    btnSpin.addEventListener("click", () => {
+      SoundFX.playClick();
+      spinReels();
+    });
+  }
+}
+
+/* ==========================================================================
+   #52 Pecahkan Balon (balloon_pop)
+   ========================================================================== */
+function initBalloonPop() {
+  const arena = $("#balloon-arena");
+  if (!arena) return;
+
+  const startCard = $("#balloon-start-card", arena);
+  const btnStart = $("#btn-start-balloon", arena);
+  const activeArea = $("#balloon-active-area", arena);
+  const progressPill = $("#balloon-progress-pill", arena);
+  const scorePill = $("#balloon-score-pill", arena);
+  const qPill = $("#balloon-q-pill", arena);
+  const qTextEl = $("#balloon-q-text", arena);
+  const stage = $("#balloon-stage", arena);
+  const feedbackEl = $("#balloon-feedback", arena);
+  const completeBanner = $("#balloon-complete-banner", arena);
+
+  let currentRound = 0;
+  let score = 0;
+  let isAnswering = false;
+  let advanceTimeout = null;
+
+  // Efisiensi daya: jeda transisi saat tab tidak terlihat
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && advanceTimeout) {
+      clearTimeout(advanceTimeout);
+      advanceTimeout = null;
+    }
+  });
+
+  function renderRound() {
+    if (currentRound >= BALLOON_POP_DATA.length) {
+      if (activeArea) activeArea.hidden = true;
+      if (completeBanner) completeBanner.hidden = false;
+      SoundFX.playFanfare();
+      AppState.complete("bpop", 15);
+      return;
+    }
+
+    isAnswering = false;
+    const qData = BALLOON_POP_DATA[currentRound];
+    if (progressPill) progressPill.textContent = `Ronde ${currentRound + 1} dari ${BALLOON_POP_DATA.length}`;
+    if (scorePill) scorePill.textContent = `Skor: ${score}`;
+    if (qPill) qPill.textContent = `Tantangan Balon #${currentRound + 1}`;
+    if (qTextEl) qTextEl.textContent = qData.q;
+    if (feedbackEl) {
+      feedbackEl.hidden = true;
+      feedbackEl.textContent = "";
+    }
+
+    if (stage) {
+      stage.innerHTML = qData.options.map((opt, idx) => `
+        <button type="button" class="balloon-item" data-idx="${idx}" aria-label="Balon pilihan: ${opt.text}">
+          ${opt.text}
+        </button>
+      `).join("");
+    }
+  }
+
+  if (stage) {
+    stage.addEventListener("click", (e) => {
+      const btn = e.target.closest(".balloon-item");
+      if (!btn || btn.disabled || isAnswering) return;
+
+      const qData = BALLOON_POP_DATA[currentRound];
+      const optIdx = parseInt(btn.dataset.idx, 10);
+      const opt = qData.options[optIdx];
+
+      if (opt.isCorrect) {
+        isAnswering = true;
+        SoundFX.playSuccess();
+        btn.classList.add("is-popped");
+        score += 25;
+        if (scorePill) scorePill.textContent = `Skor: ${score}`;
+
+        $$(".balloon-item", stage).forEach((b) => (b.disabled = true));
+
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `<b>✓ Balon Meletus Tepat!</b> ${qData.explanation}`;
+          feedbackEl.hidden = false;
+        }
+
+        advanceTimeout = setTimeout(() => {
+          advanceTimeout = null;
+          currentRound++;
+          renderRound();
+        }, 1300);
+      } else {
+        SoundFX.playError();
+        btn.classList.add("is-wrong");
+        setTimeout(() => btn.classList.remove("is-wrong"), 400);
+
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `<b>✕ Balon Salah Sasaran!</b> Jawaban tersebut kurang tepat. Coba pilih balon lain!`;
+          feedbackEl.hidden = false;
+        }
+      }
+    });
+  }
+
+  if (btnStart) {
+    btnStart.addEventListener("click", () => {
+      SoundFX.playClick();
+      if (startCard) startCard.hidden = true;
+      if (activeArea) activeArea.hidden = false;
+      renderRound();
+    });
+  }
+}
+
+/* ==========================================================================
+   #53 Balapan Pesawat Antariksa (airplane_race)
+   ========================================================================== */
+function initAirplaneRace() {
+  const arena = $("#airace-arena");
+  if (!arena) return;
+
+  const startCard = $("#airace-start-card", arena);
+  const btnStart = $("#btn-start-airace", arena);
+  const activeArea = $("#airace-active-area", arena);
+  const progressPill = $("#airace-progress-pill", arena);
+  const statusPill = $("#airace-status-pill", arena);
+  const missionText = $("#airace-mission-text", arena);
+  const gatesGrid = $("#airace-gates-grid", arena);
+  const ship = $("#airace-ship", arena);
+  const btnLeft = $("#btn-airace-left", arena);
+  const btnCenter = $("#btn-airace-center", arena);
+  const btnRight = $("#btn-airace-right", arena);
+  const feedbackEl = $("#airace-feedback", arena);
+  const completeBanner = $("#airace-complete-banner", arena);
+
+  let currentStage = 0;
+  let currentLane = 1; // 0: Kiri, 1: Tengah, 2: Kanan
+  let isNavigating = false;
+  let stageAdvanceTimeout = null;
+
+  // Efisiensi daya: bersihkan jeda waktu saat layar tab disembunyikan
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden && stageAdvanceTimeout) {
+      clearTimeout(stageAdvanceTimeout);
+      stageAdvanceTimeout = null;
+    }
+  });
+
+  function updateShipPosition(laneIdx) {
+    currentLane = Math.max(0, Math.min(2, laneIdx));
+    if (ship) {
+      ship.dataset.lane = currentLane;
+    }
+  }
+
+  function renderStage() {
+    if (currentStage >= AIRPLANE_RACE_DATA.length) {
+      if (activeArea) activeArea.hidden = true;
+      if (completeBanner) completeBanner.hidden = false;
+      SoundFX.playFanfare();
+      AppState.complete("airace", 15);
+      return;
+    }
+
+    isNavigating = false;
+    const stageData = AIRPLANE_RACE_DATA[currentStage];
+    if (progressPill) progressPill.textContent = `Etape ${currentStage + 1} dari ${AIRPLANE_RACE_DATA.length}`;
+    if (statusPill) statusPill.textContent = `Status: Siap Meluncur`;
+    if (missionText) missionText.textContent = stageData.mission;
+    if (feedbackEl) {
+      feedbackEl.hidden = true;
+      feedbackEl.textContent = "";
+    }
+
+    // Default jalur tengah di awal etape
+    updateShipPosition(1);
+
+    if (gatesGrid) {
+      gatesGrid.innerHTML = stageData.lanes.map((lane, idx) => `
+        <button type="button" class="airace-gate-btn" data-lane="${idx}" aria-label="Gerbang ${idx === 0 ? 'Kiri' : idx === 1 ? 'Tengah' : 'Kanan'}: ${lane.label}">
+          <span aria-hidden="true">${idx === 0 ? '◀' : idx === 1 ? '▲' : '▶'}</span>
+          <div>${lane.label}</div>
+        </button>
+      `).join("");
+    }
+  }
+
+  function enterGate(laneIdx) {
+    if (isNavigating || currentStage >= AIRPLANE_RACE_DATA.length) return;
+    isNavigating = true;
+    updateShipPosition(laneIdx);
+    SoundFX.playClick();
+
+    const stageData = AIRPLANE_RACE_DATA[currentStage];
+    const chosenLane = stageData.lanes[laneIdx];
+    const gateBtn = $(`[data-lane="${laneIdx}"]`, gatesGrid);
+
+    if (statusPill) statusPill.textContent = `Menembus Gerbang...`;
+
+    setTimeout(() => {
+      if (chosenLane && chosenLane.isCorrect) {
+        SoundFX.playSuccess();
+        if (gateBtn) gateBtn.classList.add("is-correct");
+        $$(".airace-gate-btn", gatesGrid).forEach((b) => (b.disabled = true));
+
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `<b>✓ Gerbang Terbuka Mulus!</b> ${stageData.fact}`;
+          feedbackEl.hidden = false;
+        }
+        if (statusPill) statusPill.textContent = `Etape Selesai!`;
+
+        stageAdvanceTimeout = setTimeout(() => {
+          stageAdvanceTimeout = null;
+          currentStage++;
+          renderStage();
+        }, 1400);
+      } else {
+        SoundFX.playError();
+        if (gateBtn) gateBtn.classList.add("is-wrong");
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `<b>✕ Rute Terhalang Rintangan Kosmik!</b> Lintasan ini bukan jawaban yang benar. Belokkan pesawat ke gerbang lain!`;
+          feedbackEl.hidden = false;
+        }
+        if (statusPill) statusPill.textContent = `Peringatan Hambatan!`;
+        isNavigating = false;
+      }
+    }, 280);
+  }
+
+  if (gatesGrid) {
+    gatesGrid.addEventListener("click", (e) => {
+      const btn = e.target.closest(".airace-gate-btn");
+      if (!btn || btn.disabled) return;
+      const laneIdx = parseInt(btn.dataset.lane, 10);
+      enterGate(laneIdx);
+    });
+  }
+
+  if (btnLeft) {
+    btnLeft.addEventListener("click", () => enterGate(0));
+  }
+  if (btnCenter) {
+    btnCenter.addEventListener("click", () => enterGate(1));
+  }
+  if (btnRight) {
+    btnRight.addEventListener("click", () => enterGate(2));
+  }
+
+  // Navigasi keyboard: panah kiri/kanan/atas, tombol A, W, S, D
+  document.addEventListener("keydown", (e) => {
+    if (arena.closest(".card")?.offsetParent === null) return;
+    if (activeArea && activeArea.hidden) return;
+
+    if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+      enterGate(0);
+    } else if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "w" || e.key === "W" || e.key === "s" || e.key === "S") {
+      enterGate(1);
+    } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+      enterGate(2);
+    }
+  });
+
+  if (btnStart) {
+    btnStart.addEventListener("click", () => {
+      SoundFX.playClick();
+      if (startCard) startCard.hidden = true;
+      if (activeArea) activeArea.hidden = false;
+      renderStage();
+    });
+  }
+}
+
+/* ==========================================================================
+   #54 Buka Kotak Misteri Kosmik (open_the_box)
+   ========================================================================== */
+function initOpenTheBox() {
+  const container = $("#openbox-container");
+  if (!container) return;
+
+  const progressPill = $("#openbox-progress-pill", container);
+  const grid = $("#openbox-grid", container);
+  const modalView = $("#openbox-modal-view", container);
+  const modalBadge = $("#openbox-modal-badge", container);
+  const modalTitle = $("#openbox-modal-title", container);
+  const modalQ = $("#openbox-modal-q", container);
+  const optionsGrid = $("#openbox-options-grid", container);
+  const feedbackEl = $("#openbox-feedback", container);
+  const solvedBanner = $("#openbox-solved-banner", container);
+
+  const solvedSet = new Set();
+  let activeBoxId = null;
+
+  function renderGrid() {
+    if (!grid) return;
+    grid.innerHTML = OPEN_THE_BOX_DATA.map((box) => {
+      const isSolved = solvedSet.has(box.id);
+      return `
+        <button type="button" class="openbox-card ${isSolved ? 'is-opened' : ''}" data-box-id="${box.id}" aria-label="Kotak Kargo ${box.id}: ${box.title}">
+          <span class="openbox-card-num">Kargo #${box.id}</span>
+          <span class="openbox-card-icon" aria-hidden="true">${isSolved ? box.icon : '📦'}</span>
+          <span class="openbox-card-label">${box.title}</span>
+        </button>
+      `;
+    }).join("");
+  }
+
+  function openBox(boxId) {
+    const box = OPEN_THE_BOX_DATA.find((b) => b.id === boxId);
+    if (!box) return;
+
+    activeBoxId = boxId;
+    if (modalBadge) modalBadge.textContent = box.badge;
+    if (modalTitle) modalTitle.textContent = `${box.icon} ${box.title}`;
+    if (modalQ) modalQ.textContent = box.question;
+    if (feedbackEl) {
+      feedbackEl.hidden = true;
+      feedbackEl.textContent = "";
+    }
+
+    const isAlreadySolved = solvedSet.has(boxId);
+
+    if (optionsGrid) {
+      optionsGrid.innerHTML = box.options.map((opt, idx) => `
+        <button type="button" class="openbox-opt-btn ${isAlreadySolved && idx === box.correct ? 'is-correct' : ''}" data-idx="${idx}" ${isAlreadySolved ? 'disabled' : ''}>
+          ${opt}
+        </button>
+      `).join("");
+    }
+
+    if (isAlreadySolved && feedbackEl) {
+      feedbackEl.innerHTML = `<b>✓ Kargo Terbuka!</b> ${box.fact}`;
+      feedbackEl.hidden = false;
+    }
+
+    if (modalView) modalView.hidden = false;
+  }
+
+  if (grid) {
+    grid.addEventListener("click", (e) => {
+      const card = e.target.closest(".openbox-card");
+      if (!card) return;
+      const boxId = parseInt(card.dataset.boxId, 10);
+      SoundFX.playClick();
+      openBox(boxId);
+    });
+  }
+
+  if (optionsGrid) {
+    optionsGrid.addEventListener("click", (e) => {
+      const btn = e.target.closest(".openbox-opt-btn");
+      if (!btn || btn.disabled || !activeBoxId) return;
+
+      const box = OPEN_THE_BOX_DATA.find((b) => b.id === activeBoxId);
+      if (!box) return;
+
+      const chosenIdx = parseInt(btn.dataset.idx, 10);
+      if (chosenIdx === box.correct) {
+        SoundFX.playSuccess();
+        btn.classList.add("is-correct");
+        $$(".openbox-opt-btn", optionsGrid).forEach((b) => (b.disabled = true));
+        solvedSet.add(box.id);
+
+        if (progressPill) {
+          progressPill.textContent = `Kargo Terbuka: ${solvedSet.size} / ${OPEN_THE_BOX_DATA.length}`;
+        }
+
+        renderGrid();
+
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `<b>✓ Jawaban Tepat! Kargo Terbuka!</b> ${box.fact}`;
+          feedbackEl.hidden = false;
+        }
+
+        if (solvedSet.size >= OPEN_THE_BOX_DATA.length) {
+          if (solvedBanner) solvedBanner.hidden = false;
+          SoundFX.playFanfare();
+          AppState.complete("openbox", 15);
+        }
+      } else {
+        SoundFX.playError();
+        btn.classList.add("is-wrong");
+        setTimeout(() => btn.classList.remove("is-wrong"), 500);
+
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `<b>✕ Kunci Kargo Belum Cocok!</b> Periksa kembali wawasan astronomimu mengenai kargo ini.`;
+          feedbackEl.hidden = false;
+        }
+      }
+    });
+  }
+
+  // Pintasan keyboard: angka 1–6 untuk membuka kotak kargo langsung
+  document.addEventListener("keydown", (e) => {
+    if (container.closest(".card")?.offsetParent === null) return;
+    const num = parseInt(e.key, 10);
+    if (num >= 1 && num <= OPEN_THE_BOX_DATA.length) {
+      openBox(num);
+    }
+  });
+
+  renderGrid();
+}
+
 
